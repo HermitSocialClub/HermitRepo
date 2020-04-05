@@ -42,6 +42,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAIN
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.WHEEL_BASE;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMotorVelocityF;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
@@ -82,7 +83,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private BNO055IMU imu;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
-        super(kV, kA, kStatic, TRACK_WIDTH);
+        super(kV, kA, kStatic, TRACK_WIDTH,WHEEL_BASE);
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
@@ -145,8 +146,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new MecanumLocalizer(this));
-
+        
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
