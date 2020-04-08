@@ -1,0 +1,14 @@
+---
+startPose:
+  x: 38.0
+  y: 63.0
+  heading: -1.5707963267948966
+startHeading: -1.5707963267948966
+steps:
+- pose:
+    x: 38.0
+    y: 31.0
+    heading: -1.5707963267948966
+  interpolationType: "CONSTANT"
+resolution: 0.25
+version: 2
