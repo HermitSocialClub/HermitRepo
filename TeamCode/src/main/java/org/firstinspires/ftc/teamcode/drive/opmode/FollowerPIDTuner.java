@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
 
 /*
  * Op mode for tuning follower PID coefficients (located in the drive base classes). The robot
@@ -19,8 +21,9 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
         Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
 
         drive.setPoseEstimate(startPose);

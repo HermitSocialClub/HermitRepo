@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal
@@ -27,8 +29,9 @@ public class LocalizationTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
         waitForStart();
 
         while (!isStopRequested()) {

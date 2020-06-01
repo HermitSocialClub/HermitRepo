@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.LoggingUtil;
+import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_RPM;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
@@ -43,8 +45,10 @@ public class DriveFeedforwardTuner extends LinearOpMode {
         }
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        PersistantTelemetry pt = new PersistantTelemetry(super.telemetry);
+        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
+        vuforiaEngine.init(hardwareMap);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
 
         NanoClock clock = NanoClock.system();
 

@@ -328,6 +328,158 @@ public class AutoUtils {
      * This function is used to move while the color sensor is detecting color
      */
     // Move_With_Color has been removed temporarily
+    public void move_With_Color(Color color, Direction direction,
+                                double speed, double inches, double timeout, Side side) {
+        runtime.reset();
+        robot.left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.left_drive_2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.right_drive_2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        double initialposition = robot.left_drive.getCurrentPosition();
+        telemetry.setData("initialPosition", initialposition);
+        boolean finished = false;
+        while (!exit && !finished) {
+            switch (direction) {
+                case LEFT: {
+                    int move = (int) (Math.round(inches * cpi * meccyBias));
+
+                    robot.left_drive_2.setTargetPosition(robot.left_drive_2.getCurrentPosition() + move);
+                    robot.left_drive.setTargetPosition(robot.left_drive.getCurrentPosition() - move);
+                    robot.right_drive_2.setTargetPosition(robot.right_drive_2.getCurrentPosition() - move);
+                    robot.right_drive.setTargetPosition(robot.right_drive.getCurrentPosition() + move);
+
+                    robot.left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    robot.left_drive.setPower(1.1*speed);
+                    robot.left_drive_2.setPower(speed);
+                    robot.right_drive.setPower(1.1*speed);
+                    robot.right_drive_2.setPower(speed);
+                    break;
+                }
+                case RIGHT: {
+                    int move = (int) (Math.round(inches * cpi * meccyBias));
+
+                    robot.left_drive_2.setTargetPosition(robot.left_drive_2.getCurrentPosition() - move);
+                    robot.left_drive.setTargetPosition(robot.left_drive.getCurrentPosition() + move);
+                    robot.right_drive_2.setTargetPosition(robot.right_drive_2.getCurrentPosition() + move);
+                    robot.right_drive.setTargetPosition(robot.right_drive.getCurrentPosition() - move);
+
+                    robot.left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    robot.left_drive.setPower(1.1*speed);
+                    robot.left_drive_2.setPower(speed);
+                    robot.right_drive.setPower(1.1*speed);
+                    robot.right_drive_2.setPower(speed);
+                    break;
+                }
+                case FORWARDS: {
+                    int move = (int) (Math.round(inches * conversion));
+
+                    robot.left_drive_2.setTargetPosition(robot.left_drive_2.getCurrentPosition() + move);
+                    robot.left_drive.setTargetPosition(robot.left_drive.getCurrentPosition() + move);
+                    robot.right_drive_2.setTargetPosition(robot.right_drive_2.getCurrentPosition() + move);
+                    robot.right_drive.setTargetPosition(robot.right_drive.getCurrentPosition() + move);
+
+                    robot.left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    robot.left_drive.setPower(speed);
+                    robot.left_drive_2.setPower(speed);
+                    robot.right_drive.setPower(speed);
+                    robot.right_drive_2.setPower(speed);
+                    break;
+                }
+                case BACKWARDS: {
+                    int move = (int) (Math.round(inches * conversion));
+
+                    robot.left_drive_2.setTargetPosition(robot.left_drive_2.getCurrentPosition() - move);
+                    robot.left_drive.setTargetPosition(robot.left_drive.getCurrentPosition() - move);
+                    robot.right_drive_2.setTargetPosition(robot.right_drive_2.getCurrentPosition() - move);
+                    robot.right_drive.setTargetPosition(robot.right_drive.getCurrentPosition() - move);
+
+                    robot.left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    robot.right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+                    robot.left_drive.setPower(speed);
+                    robot.left_drive_2.setPower(speed);
+                    robot.right_drive.setPower(speed);
+                    robot.right_drive_2.setPower(speed);
+                    break;
+                }
+            }
+            // Detects skystone by assuming yellow until the condition value for RGB falls below 3
+            switch (color) {
+                case YELLOW: {
+                    while (((robot.left_drive.isBusy() && robot.right_drive.isBusy()
+                            && robot.left_drive_2.isBusy() && robot.right_drive_2.isBusy())
+                            && ((robot.colorSensor.red() * robot.colorSensor.green()) / Math.pow(robot.colorSensor.blue(), 2) >= 3)
+                            && runtime.milliseconds() <= timeout)) {
+                        telemetry.setData("Saw Skystone", (robot.colorSensor.red() * robot.colorSensor.green()) /
+                                Math.pow(robot.colorSensor.blue(), 2) >= 3);
+                        telemetry.setData("Distance Travelled", robot.left_drive.getCurrentPosition());
+                        telemetry.setData("RGB Values",
+                                "R: %d, G: %d, B: %d",
+                                robot.colorSensor.red(), robot.colorSensor.green(), robot.colorSensor.blue());
+                        //telemetry.setData("Pos","X: %f, Y: %f",vuforiaEngine.getPos()[0],vuforiaEngine.getPos()[1]);
+
+                        if (exit) {
+                            robot.right_drive.setPower(0);
+                            robot.left_drive.setPower(0);
+                            robot.right_drive_2.setPower(0);
+                            robot.left_drive_2.setPower(0);
+                            return;
+                        }
+                    }
+                    robot.left_drive.setPower(0);
+                    robot.right_drive.setPower(0);
+                    robot.left_drive_2.setPower(0);
+                    robot.right_drive_2.setPower(0);
+                    break;
+                }
+            }
+            /*stores skystone position value based on distance traveled. length of stones are 8in
+            so assumes <8in is ONE, >8 and <16 is TWO and >16 is THREE.
+            PROBLEM - this can fail depending on where BOT starts scanning.  is there a better
+            solution?
+             */if (side == Side.BLUE) {
+                if (Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi <= 8) {
+                    whichBlockIsTheSkystone = SkystoneNumber.ONE;
+                } else if (Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi >= 8 && Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi <= 19) {
+                    whichBlockIsTheSkystone = SkystoneNumber.TWO;
+                } else {
+                    whichBlockIsTheSkystone = SkystoneNumber.THREE;
+                }
+                telemetry.setData("Distance to Come", whichBlockIsTheSkystone.distance);
+                finished = true;
+            } else {
+                if (Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi <= 7) {
+                    whichBlockIsTheSkystone = SkystoneNumber.ONE;
+                } else if (Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi >= 7 && Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi <= 12) {
+                    whichBlockIsTheSkystone = SkystoneNumber.TWO;
+                } else {
+                    whichBlockIsTheSkystone = SkystoneNumber.THREE;
+                }
+                telemetry.setData("Distance to Come", whichBlockIsTheSkystone.distance);
+                finished = true;
+            }
+            strafeToPosition(5.5, .4);
+            moveToPosition(1.5, .25);
+            telemetry.setData("Distance Traveled", (robot.left_drive.getCurrentPosition() - initialposition) / cpi);
+
+        }
+        MoveUtils.setAllMotors(robot.drive_Motors, 0);
+        return;
+    }
     public void clampinator(double position) {
         robot.block_Clamper.setPosition(position);
         robot.block_Clamper_2.setPosition(Math.abs(position - 1));
@@ -801,7 +953,32 @@ public class AutoUtils {
         }catch (Exception e){ throw new RuntimeException("Encoder Thread Interrupted"); }});
         encoderCheck.start();
     }
+    Integer linearCPR = 28; //counts per rotation
+    Integer LinearGearRatio = 20; //NeverRest 20
+    Double linearDiameter = 2.0;
+    Double LinearCPI = (linearCPR * gearratio) / (linearDiameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
 
+    public void Linear(double Linear_Position, double timeoutSeconds, double inches) {
+
+        int move = (int) (Math.round(inches * LinearCPI/2));
+
+        //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
+        robot.arm.setTargetPosition(robot.arm.getCurrentPosition() - move);
+
+
+        robot.arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        robot.arm.setPower(-Linear_Position);
+        robot.arm2.setPower(Linear_Position);
+
+        while (MoveUtils.areAllMotorsBusy(new DcMotor[]{robot.arm})) {
+            robot.arm.setPower(-Linear_Position);
+            robot.arm2.setPower(Linear_Position);
+        }
+        robot.arm.setPower(0);
+        robot.arm2.setPower(0);
+    }
 }
 
 
