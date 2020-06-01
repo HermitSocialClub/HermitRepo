@@ -19,6 +19,8 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
 
 import java.util.List;
 
@@ -131,8 +133,9 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         }
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
-
-        drive = new SampleMecanumDrive(hardwareMap);
+        PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
+        drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
 
         addPidVariable();
 

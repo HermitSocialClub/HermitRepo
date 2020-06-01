@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
 
 /*
  * This is an example of a more complex path to really test the tuning.
@@ -15,8 +17,9 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
-
+        PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
         waitForStart();
 
         if (isStopRequested()) return;
