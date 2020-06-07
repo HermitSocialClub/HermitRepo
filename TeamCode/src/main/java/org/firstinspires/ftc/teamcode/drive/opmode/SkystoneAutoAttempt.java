@@ -29,10 +29,9 @@ public class SkystoneAutoAttempt extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
         TrajectoryGroupConfig tgc = new TrajectoryGroupConfig(drive.constraints.maxVel,drive.constraints.maxAccel,drive.constraints.maxAngVel,drive.constraints.maxAngAccel,15,10.75, TrajectoryGroupConfig.DriveType.MECANUM, DriveConstants.TRACK_WIDTH,DriveConstants.TRACK_WIDTH,1.0);
         try {
-            t1 = drive.trajectoryBuilder(new Pose2d()).forward(31).splineTo(new Pose2d(-5,
-                    -10,Math.toRadians(90))).build();
-            t2 = drive.trajectoryBuilder(t1.end()).splineTo(new Pose2d(-10,
-                    -20,Math.toRadians(90))).build();/*AssetsTrajectoryManager.loadConfig("Foundation Pull").
+            t1 = drive.trajectoryBuilder(new Pose2d()).forward(31).splineTo(new Pose2d(10,
+                    -20,Math.toRadians(90))).build();
+            t2 = drive.trajectoryBuilder(new Pose2d()).splineToLinearHeading(new Pose2d(32,-68,0),0).build();/*AssetsTrajectoryManager.loadConfig("Foundation Pull").
                     toTrajectory(tgc);*/
             t3 = drive.trajectoryBuilder(new Pose2d())
                     .splineToLinearHeading(
@@ -59,9 +58,9 @@ public class SkystoneAutoAttempt extends LinearOpMode {
 
         waitForStart();
         if (isStopRequested()) return;
-        drive.followTrajectory(t2);
+        drive.followTrajectory(t1);
         sleep(200);
-        //drive.followTrajectory(t2);
+        drive.followTrajectory(t2);
         //drive.followTrajectory(t3);
 
 
