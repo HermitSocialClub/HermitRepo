@@ -26,7 +26,7 @@ public class MecanumBaseOp extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
-        
+
         telemetry.speak("Hola. Cómo estás?", "spa", "mx");
 
         while (opModeIsActive()) {
