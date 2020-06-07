@@ -33,9 +33,7 @@ public class KuaiAttemptsRoadrunner extends LinearOpMode {
 
         waitForStart();
         drive.followTrajectoryAsync(t1);
-        while (drive.isBusy()) {
-            idle();
-        }
+        drive.waitForIdle();
     }
 
 }
