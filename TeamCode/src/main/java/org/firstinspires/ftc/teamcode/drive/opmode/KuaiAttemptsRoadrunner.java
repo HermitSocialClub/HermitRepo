@@ -29,7 +29,7 @@ public class KuaiAttemptsRoadrunner extends LinearOpMode {
                 DriveConstants.TRACK_WIDTH,
                 1.0);
 
-        Trajectory t1 = drive.trajectoryBuilder(new Pose2d()).forward(10).build();
+        Trajectory t1 = drive.trajectoryBuilder(new Pose2d(38, -64, -90)).splineTo(new Pose2d(0, -64)).build();
 
         waitForStart();
         drive.followTrajectoryAsync(t1);
