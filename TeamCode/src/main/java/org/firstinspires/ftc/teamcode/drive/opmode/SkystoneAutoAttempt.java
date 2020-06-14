@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
+import com.acmerobotics.roadrunner.trajectory.MarkerCallback;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -31,7 +32,8 @@ public class SkystoneAutoAttempt extends LinearOpMode {
         try {
             t1 = drive.trajectoryBuilder(new Pose2d()).forward(31).splineTo(new Pose2d(10,
                     -20,Math.toRadians(90))).build();
-            t2 = drive.trajectoryBuilder(new Pose2d()).splineToLinearHeading(new Pose2d(32,-68,0),0).build();/*AssetsTrajectoryManager.loadConfig("Foundation Pull").
+            t2 = drive.trajectoryBuilder(new Pose2d()).splineToLinearHeading(new Pose2d(32,-68,0),0).build();
+            /*AssetsTrajectoryManager.loadConfig("Foundation Pull").
                     toTrajectory(tgc);*/
             t3 = drive.trajectoryBuilder(new Pose2d())
                     .splineToLinearHeading(

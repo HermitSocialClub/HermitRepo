@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.pandemicpanic.MoveUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +80,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private List<Pose2d> poseHistory;
 
-    public DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront, arm, arm2;
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
 
@@ -122,6 +123,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
+        arm = hardwareMap.get(DcMotorEx.class,"arm");
+        arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -341,5 +344,31 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
+    }
+    Integer linearCPR = 28; //counts per rotation
+    Integer LinearGearRatio = 20; //NeverRest 20
+    Double linearDiameter = 2.0;
+    Double LinearCPI = (linearCPR * 20) / (linearDiameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
+
+    public void Linear(double Linear_Position, double inches) {
+
+        int move = (int) (Math.round(inches * LinearCPI/2));
+
+        //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
+        arm.setTargetPosition(arm.getCurrentPosition() - move);
+
+
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        arm.setPower(-Linear_Position);
+        arm2.setPower(Linear_Position);
+
+        while (MoveUtils.areAllMotorsBusy(new DcMotor[]{arm})) {
+            arm.setPower(-Linear_Position);
+            arm2.setPower(Linear_Position);
+        }
+        arm.setPower(0);
+        arm2.setPower(0);
     }
 }
