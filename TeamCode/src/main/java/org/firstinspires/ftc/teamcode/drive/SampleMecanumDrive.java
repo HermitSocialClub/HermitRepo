@@ -371,4 +371,30 @@ public class SampleMecanumDrive extends MecanumDrive {
         arm.setPower(0);
         arm2.setPower(0);
     }
+
+    public void LinearSync(double Linear_Position, double inches) {
+
+        int move = (int) (Math.round(inches * LinearCPI/2));
+
+        //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
+        arm.setTargetPosition(arm.getCurrentPosition() - move);
+
+
+        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        arm.setPower(-Linear_Position);
+        arm2.setPower(Linear_Position);
+
+        while (MoveUtils.areAllMotorsBusy(new DcMotor[]{arm})) {
+            arm.setPower(-Linear_Position);
+            arm2.setPower(Linear_Position);
+                update();
+
+        }
+        arm.setPower(0);
+        arm2.setPower(0);
+        while (isBusy()){update();}
+
+    }
 }
