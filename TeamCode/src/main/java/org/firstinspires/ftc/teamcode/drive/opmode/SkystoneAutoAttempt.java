@@ -52,7 +52,7 @@ public class SkystoneAutoAttempt extends LinearOpMode {
             t2 = drive.trajectoryBuilder(new Pose2d(33.0,0),0).splineToLinearHeading(new Pose2d(15.0,
                     9.0),Math.toRadians(90)).build();/*AssetsTrajectoryManager.loadConfig("Foundation Pull").
                     toTrajectory(tgc);*/
-            t3 = drive.trajectoryBuilder(t2.end(),t2.end().getHeading())
+            t3 = drive.trajectoryBuilder(drive.getPoseEstimate(),drive.getExternalHeading())
                     .splineToLinearHeading(
                     new Pose2d(-64,-15),Math.toRadians(90)).build();
             t5 = AssetsTrajectoryManager.loadConfig("Blocks to Foundation").
@@ -68,6 +68,13 @@ public class SkystoneAutoAttempt extends LinearOpMode {
         telemetry.setData("Start",t2.start().toString());
         telemetry.setData("Path",t2.getPath().toString());
         telemetry.setData("Velocity", t2.velocity(t2.duration()).toString());
+        telemetry.setData("Trajectories", "initialized");
+        telemetry.setData("Acceleration",t3.acceleration(t3.duration()).toString());
+        telemetry.setData("Duration",t3.duration());
+        telemetry.setData("End",t3.end().toString());
+        telemetry.setData("Start",t3.start().toString());
+        telemetry.setData("Path",t3.getPath().toString());
+        telemetry.setData("Velocity", t3.velocity(t3.duration()).toString());
         waitForStart();
         if (isStopRequested()) return;
 
