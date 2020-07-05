@@ -33,11 +33,7 @@ package org.firstinspires.ftc.robotcontroller.internal;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.hardware.usb.UsbDevice;
@@ -62,17 +58,9 @@ import android.widget.TextView;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.google.blocks.ftcrobotcontroller.ProgrammingWebHandlers;
 import com.google.blocks.ftcrobotcontroller.runtime.BlocksOpMode;
-import com.qualcomm.ftccommon.ClassManagerFactory;
-import com.qualcomm.ftccommon.FtcAboutActivity;
-import com.qualcomm.ftccommon.FtcEventLoop;
-import com.qualcomm.ftccommon.FtcEventLoopIdle;
-import com.qualcomm.ftccommon.FtcRobotControllerService;
+import com.qualcomm.ftccommon.*;
 import com.qualcomm.ftccommon.FtcRobotControllerService.FtcRobotControllerBinder;
-import com.qualcomm.ftccommon.FtcRobotControllerSettingsActivity;
-import com.qualcomm.ftccommon.LaunchActivityConstantsList;
 import com.qualcomm.ftccommon.LaunchActivityConstantsList.RequestCode;
-import com.qualcomm.ftccommon.Restarter;
-import com.qualcomm.ftccommon.UpdateUI;
 import com.qualcomm.ftccommon.configuration.EditParameters;
 import com.qualcomm.ftccommon.configuration.FtcLoadFileActivity;
 import com.qualcomm.ftccommon.configuration.RobotConfigFile;
@@ -86,29 +74,17 @@ import com.qualcomm.robotcore.hardware.configuration.LynxConstants;
 import com.qualcomm.robotcore.hardware.configuration.Utility;
 import com.qualcomm.robotcore.robot.Robot;
 import com.qualcomm.robotcore.robot.RobotState;
-import com.qualcomm.robotcore.util.Device;
-import com.qualcomm.robotcore.util.Dimmer;
-import com.qualcomm.robotcore.util.ImmersiveMode;
-import com.qualcomm.robotcore.util.RobotLog;
-import com.qualcomm.robotcore.util.WebServer;
+import com.qualcomm.robotcore.util.*;
 import com.qualcomm.robotcore.wifi.NetworkConnection;
 import com.qualcomm.robotcore.wifi.NetworkConnectionFactory;
 import com.qualcomm.robotcore.wifi.NetworkType;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import org.firstinspires.ftc.ftccommon.external.SoundPlayingRobotMonitor;
 import org.firstinspires.ftc.ftccommon.internal.FtcRobotControllerWatchdogService;
 import org.firstinspires.ftc.ftccommon.internal.ProgramAndManageActivity;
 import org.firstinspires.ftc.onbotjava.OnBotJavaHelperImpl;
 import org.firstinspires.ftc.onbotjava.OnBotJavaProgrammingMode;
 import org.firstinspires.ftc.robotcore.external.navigation.MotionDetection;
 import org.firstinspires.ftc.robotcore.internal.hardware.android.AndroidBoard;
-import org.firstinspires.ftc.robotcore.internal.network.DeviceNameManagerFactory;
-import org.firstinspires.ftc.robotcore.internal.network.PreferenceRemoterRC;
-import org.firstinspires.ftc.robotcore.internal.network.StartResult;
-import org.firstinspires.ftc.robotcore.internal.network.WifiDirectChannelChanger;
-import org.firstinspires.ftc.robotcore.internal.network.WifiMuteEvent;
-import org.firstinspires.ftc.robotcore.internal.network.WifiMuteStateMachine;
+import org.firstinspires.ftc.robotcore.internal.network.*;
 import org.firstinspires.ftc.robotcore.internal.opmode.ClassManager;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
@@ -119,6 +95,10 @@ import org.firstinspires.ftc.robotcore.internal.ui.UILocation;
 import org.firstinspires.ftc.robotcore.internal.webserver.RobotControllerWebInfo;
 import org.firstinspires.ftc.robotserver.internal.programmingmode.ProgrammingModeManager;
 import org.firstinspires.inspection.RcInspectionActivity;
+import org.hermitsocialclub.psydra.ftc.PsydraFtc;
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @SuppressWarnings("WeakerAccess")
 public class FtcRobotControllerActivity extends Activity
@@ -135,46 +115,48 @@ public class FtcRobotControllerActivity extends Activity
   protected ProgrammingModeManager programmingModeManager;
 
   protected UpdateUI.Callback callback;
-  protected Context context;
-  protected Utility utility;
-  protected StartResult prefRemoterStartResult = new StartResult();
-  protected StartResult deviceNameStartResult = new StartResult();
-  protected PreferencesHelper preferencesHelper;
-  protected final SharedPreferencesListener sharedPreferencesListener = new SharedPreferencesListener();
+    protected Context context;
+    protected Utility utility;
+    protected StartResult prefRemoterStartResult = new StartResult();
+    protected StartResult deviceNameStartResult = new StartResult();
+    protected PreferencesHelper preferencesHelper;
+    protected final SharedPreferencesListener sharedPreferencesListener = new SharedPreferencesListener();
 
-  protected ImageButton buttonMenu;
-  protected TextView textDeviceName;
-  protected TextView textNetworkConnectionStatus;
-  protected TextView textRobotStatus;
-  protected TextView[] textGamepad = new TextView[NUM_GAMEPADS];
-  protected TextView textOpMode;
-  protected TextView textErrorMessage;
-  protected ImmersiveMode immersion;
+    protected ImageButton buttonMenu;
+    protected TextView textDeviceName;
+    protected TextView textNetworkConnectionStatus;
+    protected TextView textRobotStatus;
+    protected TextView[] textGamepad = new TextView[NUM_GAMEPADS];
+    protected TextView textOpMode;
+    protected TextView textErrorMessage;
+    protected ImmersiveMode immersion;
 
-  protected UpdateUI updateUI;
-  protected Dimmer dimmer;
-  protected LinearLayout entireScreenLayout;
+    protected UpdateUI updateUI;
+    protected Dimmer dimmer;
+    protected LinearLayout entireScreenLayout;
 
-  protected FtcRobotControllerService controllerService;
-  protected NetworkType networkType;
+    protected FtcRobotControllerService controllerService;
+    protected NetworkType networkType;
 
-  protected FtcEventLoop eventLoop;
-  protected Queue<UsbDevice> receivedUsbAttachmentNotifications;
+    protected FtcEventLoop eventLoop;
+    protected Queue<UsbDevice> receivedUsbAttachmentNotifications;
 
-  protected WifiMuteStateMachine wifiMuteStateMachine;
-  protected MotionDetection motionDetection;
+    protected WifiMuteStateMachine wifiMuteStateMachine;
+    protected MotionDetection motionDetection;
 
-  private static boolean permissionsValidated = false;
+    protected PsydraFtc psydraFtc = new PsydraFtc();
 
-  private WifiDirectChannelChanger wifiDirectChannelChanger;
+    private static boolean permissionsValidated = false;
 
-  protected class RobotRestarter implements Restarter {
+    private WifiDirectChannelChanger wifiDirectChannelChanger;
 
-    public void requestRestart() {
-      requestRobotRestart();
+    protected class RobotRestarter implements Restarter {
+
+      public void requestRestart() {
+        requestRobotRestart();
+      }
+
     }
-
-  }
 
   protected boolean serviceShouldUnbind = false;
   protected ServiceConnection connection = new ServiceConnection() {
@@ -298,8 +280,8 @@ public class FtcRobotControllerActivity extends Activity
     preferencesHelper.writeBooleanPrefIfDifferent(context.getString(R.string.pref_rc_connected), true);
     preferencesHelper.getSharedPreferences().registerOnSharedPreferenceChangeListener(sharedPreferencesListener);
 
-    entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
-    buttonMenu = (ImageButton) findViewById(R.id.menu_buttons);
+    entireScreenLayout = findViewById(R.id.entire_screen);
+    buttonMenu = findViewById(R.id.menu_buttons);
     buttonMenu.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -341,13 +323,13 @@ public class FtcRobotControllerActivity extends Activity
       cfgFileMgr.setActiveConfig(false, configFile);
     }
 
-    textDeviceName = (TextView) findViewById(R.id.textDeviceName);
-    textNetworkConnectionStatus = (TextView) findViewById(R.id.textNetworkConnectionStatus);
-    textRobotStatus = (TextView) findViewById(R.id.textRobotStatus);
-    textOpMode = (TextView) findViewById(R.id.textOpMode);
-    textErrorMessage = (TextView) findViewById(R.id.textErrorMessage);
-    textGamepad[0] = (TextView) findViewById(R.id.textGamepad1);
-    textGamepad[1] = (TextView) findViewById(R.id.textGamepad2);
+    textDeviceName = findViewById(R.id.textDeviceName);
+    textNetworkConnectionStatus = findViewById(R.id.textNetworkConnectionStatus);
+    textRobotStatus = findViewById(R.id.textRobotStatus);
+    textOpMode = findViewById(R.id.textOpMode);
+    textErrorMessage = findViewById(R.id.textErrorMessage);
+    textGamepad[0] = findViewById(R.id.textGamepad1);
+    textGamepad[1] = findViewById(R.id.textGamepad2);
     immersion = new ImmersiveMode(getWindow().getDecorView());
     dimmer = new Dimmer(this);
     dimmer.longBright();
@@ -392,9 +374,7 @@ public class FtcRobotControllerActivity extends Activity
   }
 
   protected UpdateUI.Callback createUICallback(UpdateUI updateUI) {
-    UpdateUI.Callback result = updateUI.new Callback();
-    result.setStateMonitor(new SoundPlayingRobotMonitor());
-    return result;
+    return psydraFtc.buildUpdateUICallback(updateUI, true);
   }
 
   @Override
@@ -551,11 +531,7 @@ public class FtcRobotControllerActivity extends Activity
 
     RobotState robotState = robot.eventLoopManager.state;
 
-    if (robotState != RobotState.RUNNING) {
-      return false;
-    } else {
-      return true;
-    }
+    return robotState == RobotState.RUNNING;
   }
 
   @Override
@@ -618,7 +594,7 @@ public class FtcRobotControllerActivity extends Activity
    * tfodMonitorView) based on the given configuration. Makes the children split the space.
    */
   private void updateMonitorLayout(Configuration configuration) {
-    LinearLayout monitorContainer = (LinearLayout) findViewById(R.id.monitorContainer);
+    LinearLayout monitorContainer = findViewById(R.id.monitorContainer);
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       // When the phone is landscape, lay out the monitor views horizontally.
       monitorContainer.setOrientation(LinearLayout.HORIZONTAL);
@@ -702,7 +678,7 @@ public class FtcRobotControllerActivity extends Activity
     }
 
     OpModeRegister userOpModeRegister = createOpModeRegister();
-    eventLoop = new FtcEventLoop(hardwareFactory, userOpModeRegister, callback, this);
+    eventLoop = psydraFtc.buildCustomEventLoop(controllerService, hardwareFactory, userOpModeRegister, callback, this);
     FtcEventLoopIdle idleLoop = new FtcEventLoopIdle(hardwareFactory, userOpModeRegister, callback, this);
 
     controllerService.setCallback(callback);

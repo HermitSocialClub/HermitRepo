@@ -2,13 +2,13 @@
 startPose:
   x: 0.0
   y: 0.0
-  heading: 0.0
-startHeading: 0.0
+  heading: 1.5707963267948966
+startHeading: 1.5707963267948966
 steps:
 - pose:
     x: 0.0
     y: 33.0
-    heading: 0.0
+    heading: 1.5707963267948966
   interpolationType: "TANGENT"
 resolution: 0.25
 version: 2
