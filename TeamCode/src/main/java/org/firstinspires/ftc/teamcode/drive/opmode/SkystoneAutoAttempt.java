@@ -26,8 +26,8 @@ public class SkystoneAutoAttempt extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
         PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
-        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(telemetry);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
+        SkystoneVuforiaEngine engine = SkystoneVuforiaEngine.get(telemetry);
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,engine);
         TrajectoryGroupConfig tgc = new TrajectoryGroupConfig(drive.constraints.maxVel,drive.constraints.maxAccel,drive.constraints.maxAngVel,drive.constraints.maxAngAccel,15,10.75, TrajectoryGroupConfig.DriveType.MECANUM, DriveConstants.TRACK_WIDTH,DriveConstants.TRACK_WIDTH,1.0);
         try {
             t1 = drive.trajectoryBuilder(new Pose2d()).forward(31).splineTo(new Pose2d(10,

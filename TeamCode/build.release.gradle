@@ -11,4 +11,5 @@ dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.3.8'
 
     implementation (name: 'PsydraFTC-debug', ext: 'aar')
+    implementation 'org.openftc:easyopencv:1.3.2'
 }
