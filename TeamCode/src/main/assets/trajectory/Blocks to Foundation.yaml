@@ -3,7 +3,6 @@ startPose:
   x: 0.0
   y: 0.0
   heading: 1.0471975511965976
-startHeading:
 steps:
 - pose:
     x: 84.0

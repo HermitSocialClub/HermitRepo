@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,12 +9,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.util.AssetsTrajectoryManager;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
 
-@Autonomous(name = "RR Auto Skystone AC")
-public class SkystoneAutoAttemptAbsoluteCoordinates extends LinearOpMode {
+@Autonomous(name = "RR Auto Skystone AC3")
+public class SkystoneAutoAttemptAbsoluteCoordinates3 extends LinearOpMode {
     Trajectory t3;
     Trajectory t5;
     Trajectory t2;
@@ -32,25 +30,19 @@ public class SkystoneAutoAttemptAbsoluteCoordinates extends LinearOpMode {
         SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(telemetry);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
         TrajectoryGroupConfig tgc = new TrajectoryGroupConfig(drive.constraints.maxVel,drive.constraints.maxAccel,drive.constraints.maxAngVel,drive.constraints.maxAngAccel,15,10.75, TrajectoryGroupConfig.DriveType.MECANUM, DriveConstants.TRACK_WIDTH,DriveConstants.TRACK_WIDTH,1.0);
-        drive.setPoseEstimate(new Pose2d(38,64,Math.toRadians(-90)));
+        drive.setPoseEstimate(new Pose2d(-9,63,Math.toRadians(-90)));
         try {
-            t1 = drive.trajectoryBuilder(drive.getPoseEstimate()).splineTo(new Pose2d( 38, 33, Math.toRadians(-90)))
-                    .splineTo(new Pose2d(28,44,Math.toRadians(0)))
-                    .addTemporalMarker(.2,()->{drive.topClaw.setPosition(.1);}).build();
-            t6 = drive.trajectoryBuilder(new Pose2d()).splineTo(new Pose2d(28,44,Math.toRadians(0))).build();
-            t2 = drive.trajectoryBuilder(t1.end()).splineToLinearHeading(new Pose2d(-37,28,Math.toRadians(-90)),Math.toRadians(-90)).build();
-            /*AssetsTrajectoryManager.loadConfig("Foundation Pull").
-                    toTrajectory(tgc);*/
-            t3 = drive.trajectoryBuilder(new Pose2d())
-                    .splineToLinearHeading(
-                    new Pose2d(-64,-15),Math.toRadians(90)).build();
-            t5 = AssetsTrajectoryManager.loadConfig("Blocks to Foundation").
-                    toTrajectory(tgc);
-            t7 = drive.trajectoryBuilder(new Pose2d(-32,30,Math.toRadians(90)),Math.toRadians(-90))
-                    .splineToLinearHeading(new Pose2d(16,32,Math.toRadians(-90)),Math.toRadians(-90)).build();
-            t8 = drive.trajectoryBuilder(new Pose2d(-61, 26,Math.toRadians(0)),Math.toRadians(-90)).splineToLinearHeading(new Pose2d(20, 42, Math.toRadians(0)), Math.toRadians(-90)).splineToLinearHeading(new Pose2d(0, 42,Math.toRadians(0)),Math.toRadians(-90)).addTemporalMarker(3.66,()->{drive.topClaw.setPosition(0);}).build();
-            t9 = drive.trajectoryBuilder(new Pose2d(16,32,Math.toRadians(90)),Math.toRadians(-90))
-                    .splineToLinearHeading(new Pose2d(-61,26,Math.toRadians(-90)),Math.toRadians(-90)).build();
+            t1 = drive.trajectoryBuilder(drive.getPoseEstimate()).splineTo(new Pose2d( -54, 34.5, Math.toRadians(160)))
+                    .addTemporalMarker(.2,()->{drive.topClaw.setPosition(.1);})
+                    .addTemporalMarker(1.2,()->{}).build();
+            t2 = drive.trajectoryBuilder(new Pose2d(-28,32,75),-90)
+                    .splineToLinearHeading(new Pose2d(14,36,Math.toRadians(0)),Math.toRadians(0)).build();
+            t7 = drive.trajectoryBuilder(new Pose2d(14,36,Math.toRadians(180)),Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d(-52,30,Math.toRadians(245)),Math.toRadians(-90)).build();
+            t8 = drive.trajectoryBuilder(new Pose2d(-52, 30,Math.toRadians(65)),Math.toRadians(-90))
+                    .splineToLinearHeading(new Pose2d(14, 36, Math.toRadians(0)), Math.toRadians(0)).build();
+            t9 = drive.trajectoryBuilder(new Pose2d(14,36,Math.toRadians(0)),Math.toRadians(0))
+                    .splineToConstantHeading(new Pose2d(0,36,Math.toRadians(0))).build();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,20 +63,17 @@ public class SkystoneAutoAttemptAbsoluteCoordinates extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         runtime.reset();
-        drive.Linear(-.9,-11);
-        drive.followTrajectoryAsync(t1);
-        while (drive.isBusy()){
-            drive.update();
-        }
-        drive.followTrajectory(t2);
+        drive.followTrajectory(t1);
         drive.topClaw.setPosition(.8);
-        sleep(400);
-        drive.followTrajectory(t7);
+        sleep(300);
+        drive.followTrajectory(t2);
         drive.topClaw.setPosition(.1);
-        drive.followTrajectory(t9);
+        drive.followTrajectory(t7);
         drive.topClaw.setPosition(.8);
         sleep(300);
         drive.followTrajectory(t8);
+        drive.topClaw.setPosition(.1);
+        drive.followTrajectory(t9);
         //drive.followTrajectory(t3);
 
 

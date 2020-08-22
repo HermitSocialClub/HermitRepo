@@ -23,12 +23,15 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
@@ -81,11 +84,21 @@ public class SampleMecanumDrive extends MecanumDrive {
     private List<Pose2d> poseHistory;
 
     public DcMotorEx leftFront, leftRear, rightRear, rightFront, arm, arm2;
+    public Servo topClaw;
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
+    public ColorSensor colorSensor;
+    public HardwareMap hwMap;
+
+    public enum SKYSTONE{
+        ONE,TWO,THREE
+    }
+    public SKYSTONE skystone;
 
     public SampleMecanumDrive(HardwareMap hardwareMap, SkystoneVuforiaEngine vuforiaEngine) {
         super(kV, kA, kStatic, TRACK_WIDTH,WHEEL_BASE);
+
+        hwMap = hardwareMap;
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
@@ -125,6 +138,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
         arm = hardwareMap.get(DcMotorEx.class,"arm");
         arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
+        topClaw = hardwareMap.get(Servo.class,"topClaw");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -396,5 +410,33 @@ public class SampleMecanumDrive extends MecanumDrive {
         arm2.setPower(0);
         while (isBusy()){update();}
 
+    }
+    public void LinearTime(double Linear_Position, double time) {
+
+        ElapsedTime armTime = new ElapsedTime();
+
+        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        arm.setPower(-Linear_Position);
+        arm2.setPower(Linear_Position);
+
+        while (armTime.seconds() < time) {
+            arm.setPower(-Linear_Position);
+            arm2.setPower(Linear_Position);
+        }
+        arm.setPower(0);
+        arm2.setPower(0);
+    }
+    public void skystoneDetect(){
+        colorSensor = hwMap.get(ColorSensor.class,"Color Sensor");
+        while(isBusy()&& ((colorSensor.red() * colorSensor.green()) / Math.pow(colorSensor.blue(), 2) >= 3)){
+        if(!isBusy()){return;  }
+        }
+        if (getPoseEstimate().getX()>-40){
+            skystone = SKYSTONE.ONE;
+        } else if(getPoseEstimate().getX() > -47){
+            skystone = SKYSTONE.TWO;
+        } else skystone = SKYSTONE.THREE;
     }
 }
