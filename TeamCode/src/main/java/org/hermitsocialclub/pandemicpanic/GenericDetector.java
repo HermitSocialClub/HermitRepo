@@ -6,7 +6,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.*;
 import org.opencv.*;
 
-import kotlin.sequences.DropWhileSequence;
+//import kotlin.sequences.DropWhileSequence;
 
 public class GenericDetector extends OpenCvPipeline {
     private Mat workingMatrix = new Mat();
@@ -24,5 +24,6 @@ public class GenericDetector extends OpenCvPipeline {
         Mat matLeft = workingMatrix.submat(120,150,10,50);
         Mat matCenter = workingMatrix.submat(120,150,80,120);
         Mat matRight = workingMatrix.submat(120,150,150,190);
+        return new Mat();
     }
 }

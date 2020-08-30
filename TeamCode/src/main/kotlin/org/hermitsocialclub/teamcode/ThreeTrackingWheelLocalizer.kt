@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode
+package org.hermitsocialclub.teamcode
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.localization.Localizer
@@ -17,6 +17,7 @@ abstract class ThreeTrackingWheelLocalizer(
         wheelPoses: List<Pose2d>
 ) : Localizer {
     private var _poseEstimate = Pose2d()
+    private var ultrasonicEstimates = Pose2d()
     override var poseEstimate: Pose2d
         get() = _poseEstimate
         set(value) {
