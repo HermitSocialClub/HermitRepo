@@ -1,5 +1,6 @@
 package org.hermitsocialclub.hydra;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -21,6 +22,8 @@ public abstract class HydraConfig {
     public abstract DcMotorController getBackLeftWheel();
 
     public abstract DcMotorController getBackRightWheel();
+
+    public abstract BNO055IMU getImu();
 
     public abstract DistanceSensor getDistanceSensor();
 
