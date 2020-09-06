@@ -69,4 +69,6 @@ abstract class ThreeTrackingWheelLocalizer(
      * Returns the positions of the tracking wheels in the desired distance units (not encoder counts!)
      */
     abstract fun getWheelPositions(): List<Double>
+
+    abstract fun getUltrasonicDistances(): List<Double>
 }

@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
+import org.hermitsocialclub.teamcode.*;
+
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -34,6 +36,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
 
     private DcMotor leftEncoder, rightEncoder, frontEncoder;
+    private ModernRoboticsI2cRangeSensor leftSensor, rightSensor, backSensor;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -45,6 +48,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
         rightEncoder = hardwareMap.dcMotor.get("rightEncoder");
         frontEncoder = hardwareMap.dcMotor.get("frontEncoder");
+        leftSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class,"leftSensor");
+        rightSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class,"rightSensor");
+        backSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class,"backSensor");
     }
 
     public static double encoderTicksToInches(int ticks) {
@@ -58,6 +64,17 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 encoderTicksToInches(leftEncoder.getCurrentPosition()),
                 encoderTicksToInches(rightEncoder.getCurrentPosition()),
                 encoderTicksToInches(frontEncoder.getCurrentPosition())
+        );
+    }
+
+    @NonNull
+    @Override
+    public List<Double> getUltrasonicDistances(){
+        return Arrays.asList(
+                leftSensor.cmUltrasonic(),
+                rightSensor.cmUltrasonic(),
+                backSensor.cmUltrasonic()
+
         );
     }
 }
