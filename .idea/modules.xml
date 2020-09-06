@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FtcRobotController/FtcRobotController.iml" filepath="$PROJECT_DIR$/FtcRobotController/FtcRobotController.iml" group="PandemicPanic/FtcRobotController" />
-      <module fileurl="file://$PROJECT_DIR$/pandemicpanic.iml" filepath="$PROJECT_DIR$/pandemicpanic.iml" group="PandemicPanic" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/PandemicPanic.iml" filepath="$PROJECT_DIR$/.idea/modules/PandemicPanic.iml" group="PandemicPanic" />
       <module fileurl="file://$PROJECT_DIR$/TeamCode/PandemicPanic-TeamCode.iml" filepath="$PROJECT_DIR$/TeamCode/PandemicPanic-TeamCode.iml" group="PandemicPanic/TeamCode" />
-      <module fileurl="file://$PROJECT_DIR$/TeamCode/TeamCode.iml" filepath="$PROJECT_DIR$/TeamCode/TeamCode.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TeamCode/TeamCode.iml" filepath="$PROJECT_DIR$/TeamCode/TeamCode.iml" group="PandemicPanic/TeamCode" />
     </modules>
   </component>
 </project>

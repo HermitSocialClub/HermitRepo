@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
 
-@Autonomous(name = "RR Auto Skystone AC3")
-public class SkystoneAutoAttemptAbsoluteCoordinates3 extends LinearOpMode {
+@Autonomous(name = "RR Auto Skystone AC3 two")
+public class AaaahLetsTryThisAgain extends LinearOpMode {
     Trajectory t3;
     Trajectory t5;
     Trajectory t2;
