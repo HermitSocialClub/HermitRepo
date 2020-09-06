@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
-import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 /**
  * This is a simple teleop routine for testing localization. Drive the robot around like a normal

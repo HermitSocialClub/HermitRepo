@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.LoggingUtil;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
-import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MAX_RPM;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;

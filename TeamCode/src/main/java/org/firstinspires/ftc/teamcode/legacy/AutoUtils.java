@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.hermitsocialclub.pandemicpanic.MecanumConfiguration;
 import org.hermitsocialclub.pandemicpanic.MoveUtils;
-import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
-import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 /*
  * Op mode for tuning follower PID coefficients (located in the drive base classes). The robot

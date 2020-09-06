@@ -25,7 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 import org.firstinspires.ftc.teamcode.legacy.AutoUtils;
 import org.firstinspires.ftc.teamcode.legacy.DataDump;
 import org.hermitsocialclub.pandemicpanic.MecanumConfiguration;
-import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
+import org.hermitsocialclub.telecat.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;

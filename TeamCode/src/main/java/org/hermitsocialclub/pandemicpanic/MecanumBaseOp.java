@@ -3,7 +3,7 @@ package org.hermitsocialclub.pandemicpanic;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.hermitsocialclub.pandemicpanic.telecat.PersistantTelemetry;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum Base Op", group = "Hermit")
 
