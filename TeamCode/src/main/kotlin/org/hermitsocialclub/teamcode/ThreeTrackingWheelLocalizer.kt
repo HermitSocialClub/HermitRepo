@@ -1,4 +1,5 @@
-package org.firstinspires.ftc.teamcode
+package org.hermitsocialclub.teamcode
+
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.localization.Localizer
@@ -6,7 +7,6 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix
 import org.apache.commons.math3.linear.DecompositionSolver
 import org.apache.commons.math3.linear.LUDecomposition
 import org.apache.commons.math3.linear.MatrixUtils
-
 
 /**
  * Localizer based on three unpowered tracking omni wheels.
@@ -17,6 +17,7 @@ abstract class ThreeTrackingWheelLocalizer(
         wheelPoses: List<Pose2d>
 ) : Localizer {
     private var _poseEstimate = Pose2d()
+    private var ultrasonicEstimates = Pose2d()
     override var poseEstimate: Pose2d
         get() = _poseEstimate
         set(value) {
@@ -68,4 +69,6 @@ abstract class ThreeTrackingWheelLocalizer(
      * Returns the positions of the tracking wheels in the desired distance units (not encoder counts!)
      */
     abstract fun getWheelPositions(): List<Double>
+
+    abstract fun getUltrasonicDistances(): List<Double>
 }

@@ -8,7 +8,7 @@ import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.*;
 import org.opencv.*;
 
-import kotlin.sequences.DropWhileSequence;
+//import kotlin.sequences.DropWhileSequence;
 
 public class GenericDetector extends OpenCvPipeline {
     private Mat workingMatrix = new Mat();
