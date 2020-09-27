@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -32,7 +33,7 @@ public class SkystoneAutoAttemptAbsoluteCoordinates3 extends LinearOpMode {
         TrajectoryGroupConfig tgc = new TrajectoryGroupConfig(drive.constraints.maxVel,drive.constraints.maxAccel,drive.constraints.maxAngVel,drive.constraints.maxAngAccel,15,10.75, TrajectoryGroupConfig.DriveType.MECANUM, DriveConstants.TRACK_WIDTH,DriveConstants.TRACK_WIDTH,1.0);
         drive.setPoseEstimate(new Pose2d(-9,63,Math.toRadians(-90)));
         try {
-            t1 = drive.trajectoryBuilder(drive.getPoseEstimate()).splineTo(new Pose2d( -54, 34.5, Math.toRadians(160)))
+            t1 = drive.trajectoryBuilder(drive.getPoseEstimate()).splineTo(new Vector2d( -54, 34.5), Math.toRadians(160))
                     .addTemporalMarker(.2,()->{drive.topClaw.setPosition(.1);})
                     .addTemporalMarker(1.2,()->{}).build();
             t2 = drive.trajectoryBuilder(new Pose2d(-28,32,75),-90)
@@ -42,7 +43,7 @@ public class SkystoneAutoAttemptAbsoluteCoordinates3 extends LinearOpMode {
             t8 = drive.trajectoryBuilder(new Pose2d(-52, 30,Math.toRadians(65)),Math.toRadians(-90))
                     .splineToLinearHeading(new Pose2d(14, 36, Math.toRadians(0)), Math.toRadians(0)).build();
             t9 = drive.trajectoryBuilder(new Pose2d(14,36,Math.toRadians(0)),Math.toRadians(0))
-                    .splineToConstantHeading(new Pose2d(0,36,Math.toRadians(0))).build();
+                    .splineToConstantHeading(new Vector2d(0,36),Math.toRadians(0)).build();
         } catch (Exception e) {
             e.printStackTrace();
         }

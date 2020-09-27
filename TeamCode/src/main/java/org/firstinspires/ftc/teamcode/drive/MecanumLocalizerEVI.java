@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.util.Angle;
 import org.firstinspires.ftc.teamcode.vision.IVuforiaEngine;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,5 +82,11 @@ public class MecanumLocalizerEVI implements Localizer {
     @Override
     public Pose2d getPoseEstimate() {
         return poseEstimate;
+    }
+
+    @Nullable
+    @Override
+    public Pose2d getPoseVelocity() {
+        return null;
     }
 }

@@ -34,10 +34,10 @@ public class SkystoneAutoAttemptAbsoluteCoordinates extends LinearOpMode {
         TrajectoryGroupConfig tgc = new TrajectoryGroupConfig(drive.constraints.maxVel,drive.constraints.maxAccel,drive.constraints.maxAngVel,drive.constraints.maxAngAccel,15,10.75, TrajectoryGroupConfig.DriveType.MECANUM, DriveConstants.TRACK_WIDTH,DriveConstants.TRACK_WIDTH,1.0);
         drive.setPoseEstimate(new Pose2d(38,64,Math.toRadians(-90)));
         try {
-            t1 = drive.trajectoryBuilder(drive.getPoseEstimate()).splineTo(new Pose2d( 38, 33, Math.toRadians(-90)))
-                    .splineTo(new Pose2d(28,44,Math.toRadians(0)))
+            t1 = drive.trajectoryBuilder(drive.getPoseEstimate()).splineTo(new Vector2d( 38, 33), Math.toRadians(-90))
+                    .splineTo(new Vector2d(28,44),Math.toRadians(0))
                     .addTemporalMarker(.2,()->{drive.topClaw.setPosition(.1);}).build();
-            t6 = drive.trajectoryBuilder(new Pose2d()).splineTo(new Pose2d(28,44,Math.toRadians(0))).build();
+            t6 = drive.trajectoryBuilder(new Pose2d()).splineTo(new Vector2d(28,44),Math.toRadians(0)).build();
             t2 = drive.trajectoryBuilder(t1.end()).splineToLinearHeading(new Pose2d(-37,28,Math.toRadians(-90)),Math.toRadians(-90)).build();
             /*AssetsTrajectoryManager.loadConfig("Foundation Pull").
                     toTrajectory(tgc);*/

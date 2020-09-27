@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -29,7 +30,7 @@ public class KuaiAttemptsRoadrunner extends LinearOpMode {
                 DriveConstants.TRACK_WIDTH,
                 1.0);
 
-        Trajectory t1 = drive.trajectoryBuilder(new Pose2d(38, -64, -90)).splineTo(new Pose2d(0, -64)).build();
+        Trajectory t1 = drive.trajectoryBuilder(new Pose2d(38, -64, -90)).splineTo(new Vector2d(0, -64),2).build();
 
         waitForStart();
         drive.followTrajectoryAsync(t1);

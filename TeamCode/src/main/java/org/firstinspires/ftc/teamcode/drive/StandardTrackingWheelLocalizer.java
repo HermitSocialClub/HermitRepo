@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import org.hermitsocialclub.teamcode.*;
+import org.jetbrains.annotations.Nullable;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -77,5 +78,10 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 backSensor.cmUltrasonic()
 
         );
+    }
+    @NonNull
+    @Override
+    public Pose2d getPoseVelocity() {
+        return null;
     }
 }
