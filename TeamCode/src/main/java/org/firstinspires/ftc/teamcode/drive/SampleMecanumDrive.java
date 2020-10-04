@@ -165,6 +165,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
            // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
+            setLocalizer(new StandardTrackingWheelLocalizer(hwMap));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
