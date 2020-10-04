@@ -10,42 +10,86 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.opencv.core.Mat;
 
 @Autonomous(name="Ultimate Goal Zone B Attempt 1")
 public class UltimateGoalAutoAttempt1 extends LinearOpMode {
-    Trajectory entirePath;
+    static Trajectory zoneAPath;
+    static Trajectory zoneBPath;
+    static Trajectory zoneCPath;
+    private enum Zone {
+        ZONEA(zoneAPath), ZONEB(zoneBPath), ZONEC(zoneCPath);
+        Trajectory path;
+        Zone(Trajectory path){
+            this.path = path;
+        }
+    }
+    Zone dropOffZone;
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
         PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
         SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(telemetry);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
-        drive.setPoseEstimate(new Pose2d(-9,63,Math.toRadians(-90)));
+        drive.setPoseEstimate(new Pose2d(-63,-50,Math.toRadians(0)));
+        dropOffZone = openCVStuff();
         try {
-            entirePath = drive.trajectoryBuilder(drive.getPoseEstimate(),0)
-                    .splineTo(new Vector2d(-15.00,48.00),0)
-                    .splineToLinearHeading(new Pose2d(0,0,0),-90)
-                    .splineToLinearHeading(new Pose2d(48,36,0.00),90)
-                    .splineTo(new Vector2d(-28,36),90)
-                    .splineToConstantHeading(new Vector2d(-20,36),0)
-                    .splineToConstantHeading(new Vector2d(-40,26),180)
-                    .splineToSplineHeading(new Pose2d(20,36,180),0)
-                    .splineToSplineHeading(new Pose2d(10,36,180),0)
-                    .build();
+            switch (dropOffZone) {
+                case ZONEA: {
+                zoneAPath = drive.trajectoryBuilder(drive.getPoseEstimate())
+                        .splineToConstantHeading(new Vector2d(24.00, -60.00), 0)
+                        .splineToConstantHeading(new Vector2d(-4, -30), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-4, 0), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-36, -22), Math.toRadians(200))
+                        .splineToSplineHeading(new Pose2d(12, -44, 90), 0)
+                        .build();
+                break;
+                }
+                case ZONEB: {
+                    zoneBPath = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineTo(new Vector2d(-15.00, -50.00), 0)
+                            .splineToLinearHeading(new Pose2d(0, 0, 0), Math.toRadians(90))
+                            .splineToLinearHeading(new Pose2d(48, -36, 0.00), Math.toRadians(-90))
+                            .splineToConstantHeading(new Vector2d(-36, -36), Math.toRadians(90))
+                            .splineToConstantHeading(new Vector2d(-20, -36), 0)
+                            .splineToConstantHeading(new Vector2d(-40, -26), Math.toRadians(180))
+                            .splineToSplineHeading(new Pose2d(20, -36, Math.toRadians(180)), 0)
+                            .splineToSplineHeading(new Pose2d(10, -36, Math.toRadians(180)), 0)
+                            .build();
+                    break;
+                }
+                case ZONEC: {
+                    zoneCPath = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineToConstantHeading(new Vector2d(0, -36), Math.toRadians(90))
+                            .splineToConstantHeading(new Vector2d(0, 0), Math.toRadians(90))
+                            .splineToSplineHeading(new Pose2d(50, -44, Math.toRadians(90)), Math.toRadians(180))
+                            .splineToSplineHeading(new Pose2d(-20, -36, Math.toRadians(180)), Math.toRadians(180))
+                            .splineToSplineHeading(new Pose2d(-40, -26, 0), Math.toRadians(180))
+                            .splineToSplineHeading(new Pose2d(50, -60, Math.toRadians(180)), 0)
+                            .build();
+                    break;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        telemetry.setData("Acceleration", entirePath.acceleration(entirePath.duration()).toString());
-        telemetry.setData("Duration", entirePath.duration());
-        telemetry.setData("End", entirePath.end().toString());
-        telemetry.setData("Start", entirePath.start().toString());
-        telemetry.setData("Path", entirePath.getPath().toString());
-        telemetry.setData("Velocity", entirePath.velocity(entirePath.duration()).toString());
+        telemetry.setData("Acceleration", zoneBPath.acceleration(zoneBPath.duration()).toString());
+        telemetry.setData("Duration", zoneBPath.duration());
+        telemetry.setData("End", zoneBPath.end().toString());
+        telemetry.setData("Start", zoneBPath.start().toString());
+        telemetry.setData("Path", zoneBPath.getPath().toString());
+        telemetry.setData("Velocity", zoneBPath.velocity(zoneBPath.duration()).toString());
         waitForStart();
         if (isStopRequested()) return;
         runtime.reset();
-        drive.followTrajectory(entirePath);
+        switch (dropOffZone) {
+            case ZONEA: drive.followTrajectory(zoneAPath); break;
+            case ZONEB: drive.followTrajectory(zoneBPath); break;
+            case ZONEC: drive.followTrajectory(zoneCPath); break;
+        }
     }
-
+        private Zone openCVStuff(){
+        return Zone.ZONEB;
+        }
 
 }
