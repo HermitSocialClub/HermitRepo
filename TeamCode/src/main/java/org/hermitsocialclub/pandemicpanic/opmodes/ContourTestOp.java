@@ -3,8 +3,11 @@ package org.hermitsocialclub.pandemicpanic.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.hermitsocialclub.hydra.vision.DistanceToObjectDetector;
-import org.opencv.core.Mat;
-import org.openftc.easyopencv.*;
+import org.hermitsocialclub.hydra.vision.VisionPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @TeleOp(name = "Contour Test")
 public class ContourTestOp extends LinearOpMode {
@@ -15,7 +18,7 @@ public class ContourTestOp extends LinearOpMode {
         OpenCvCamera phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam.openCameraDevice();
 
-        phoneCam.setPipeline(new SamplePipeline());
+        phoneCam.setPipeline(new VisionPipeline(new DistanceToObjectDetector()));
         phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
         waitForStart();
@@ -39,17 +42,6 @@ public class ContourTestOp extends LinearOpMode {
 
             sleep(100);
         }
-    }
-
-    private static class SamplePipeline extends OpenCvPipeline {
-
-        private final DistanceToObjectDetector distance2Obj = new DistanceToObjectDetector();
-
-        @Override
-        public Mat processFrame(Mat input) {
-            return distance2Obj.apply(input);
-        }
-
     }
 
 }
