@@ -13,16 +13,19 @@ class DistanceToObjectDetector : IVisionPipelineComponent {
         GaussianBlur(gray, gray, Size(5.0, 5.0), 0.0)
         Canny(gray, edged, 35.0, 125.0)
 
-        val cnts: List<MatOfPoint> = emptyList()
+        val cnts: List<MatOfPoint> = ArrayList()
         findContours(edged, cnts, Mat(), RETR_LIST, CHAIN_APPROX_SIMPLE)
-        val c = cnts.stream().max { o1: Mat, o2: Mat -> (contourArea(o1) - contourArea(o2)).roundToInt() }.get()
+        if (cnts.isNotEmpty()) {
+            val c = cnts.stream().max { o1: Mat, o2: Mat -> (contourArea(o1) - contourArea(o2)).roundToInt() }
+            if (c.isPresent) {
+                val boundingBox = minAreaRect(MatOfPoint2f(c.get()))
 
-        val boundingBox = minAreaRect(MatOfPoint2f(c))
-
-        val boundingBoxPoints = arrayOfNulls<Point>(4)
-        boundingBox.points(boundingBoxPoints)
-        val boundingBoxMat = MatOfPoint(*boundingBoxPoints)
-        fillConvexPoly(image, boundingBoxMat, Scalar(69.0 / 255, 230.0 / 255, 1.0))
+                val boundingBoxPoints = arrayOfNulls<Point>(4)
+                boundingBox.points(boundingBoxPoints)
+                val boundingBoxMat = MatOfPoint(*boundingBoxPoints)
+                fillConvexPoly(image, boundingBoxMat, Scalar(69.0 / 255, 230.0 / 255, 1.0))
+            }
+        }
         return image
     }
 
