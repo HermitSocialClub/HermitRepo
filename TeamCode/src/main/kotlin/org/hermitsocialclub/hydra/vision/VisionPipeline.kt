@@ -5,11 +5,7 @@ import org.openftc.easyopencv.OpenCvPipeline
 
 class VisionPipeline(vararg components: IVisionPipelineComponent) : OpenCvPipeline() {
 
-    var pipeline: MutableList<IVisionPipelineComponent> = mutableListOf()
-
-    init {
-        pipeline.addAll(components)
-    }
+    var pipeline: MutableList<IVisionPipelineComponent> = mutableListOf(*components)
 
     override fun processFrame(input: Mat): Mat {
         var mat = input
