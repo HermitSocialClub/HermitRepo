@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.hermitsocialclub.hydra.vision.DistanceToObjectDetector;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -18,7 +19,7 @@ public class ContourTestOp extends LinearOpMode {
         OpenCvCamera phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam.openCameraDevice();
 
-        phoneCam.setPipeline(new VisionPipeline(new DistanceToObjectDetector()));
+        phoneCam.setPipeline(new VisionPipeline(new PersistantTelemetry(telemetry), new DistanceToObjectDetector()));
         phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
         waitForStart();
