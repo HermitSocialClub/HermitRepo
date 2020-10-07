@@ -1,16 +1,12 @@
 package org.firstinspires.ftc.teamcode.drive;
-
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import org.hermitsocialclub.teamcode.*;
-import org.jetbrains.annotations.Nullable;
-
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,15 +26,14 @@ import java.util.List;
  */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 0;
+    public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 2; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 10; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 4; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 13; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = 9; // in; offset of the lateral wheel
 
-    private DcMotor leftEncoder, rightEncoder, frontEncoder;
-    private ModernRoboticsI2cRangeSensor leftSensor, rightSensor, backSensor;
+    private Encoder leftEncoder, rightEncoder, frontEncoder;
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap) {
         super(Arrays.asList(
@@ -47,15 +42,17 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        leftEncoder = hardwareMap.dcMotor.get("leftEncoder");
-        rightEncoder = hardwareMap.dcMotor.get("rightEncoder");
-        frontEncoder = hardwareMap.dcMotor.get("frontEncoder");
-        leftSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class,"leftSensor");
-        rightSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class,"rightSensor");
-        backSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class,"backSensor");
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "tapeShooter"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "arm"));
+
+        // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+        //leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
+        rightEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
-    public static double encoderTicksToInches(int ticks) {
+    public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
 
@@ -71,17 +68,15 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     @NonNull
     @Override
-    public List<Double> getUltrasonicDistances(){
-        return Arrays.asList(
-                leftSensor.cmUltrasonic(),
-                rightSensor.cmUltrasonic(),
-                backSensor.cmUltrasonic()
+    public List<Double> getWheelVelocities() {
+        // TODO: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
+        //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
+        //  compensation method
 
+        return Arrays.asList(
+                encoderTicksToInches(leftEncoder.getCorrectedVelocity()),
+                encoderTicksToInches(rightEncoder.getCorrectedVelocity()),
+                encoderTicksToInches(frontEncoder.getCorrectedVelocity())
         );
-    }
-    @NonNull
-    @Override
-    public Pose2d getPoseVelocity() {
-        return null;
     }
 }
