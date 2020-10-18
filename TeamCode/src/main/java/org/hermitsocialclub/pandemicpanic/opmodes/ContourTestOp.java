@@ -19,7 +19,8 @@ public class ContourTestOp extends LinearOpMode {
         OpenCvCamera phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam.openCameraDevice();
 
-        phoneCam.setPipeline(new VisionPipeline(new PersistantTelemetry(telemetry), new DistanceToObjectDetector()));
+        VisionPipeline pipeline = new VisionPipeline(new PersistantTelemetry(telemetry), new DistanceToObjectDetector());
+        phoneCam.setPipeline(pipeline);
         phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
         waitForStart();
@@ -33,15 +34,18 @@ public class ContourTestOp extends LinearOpMode {
             telemetry.addData("Theoretical max FPS", phoneCam.getCurrentPipelineMaxFps());
             telemetry.update();
 
-            if (gamepad1.a) {
-                phoneCam.stopStreaming();
-            } else if (gamepad1.x) {
-                phoneCam.pauseViewport();
-            } else if (gamepad1.y) {
-                phoneCam.resumeViewport();
+            if (gamepad1.dpad_up) {
+                pipeline.setCannyUpperThreshold(pipeline.getCannyUpperThreshold() + 5);
+            } else if (gamepad1.dpad_down) {
+                pipeline.setCannyUpperThreshold(pipeline.getCannyUpperThreshold() - 5);
+            }
+            if (gamepad1.dpad_left) {
+                pipeline.setCannyLowerThreshold(pipeline.getCannyLowerThreshold() + 5);
+            } else if (gamepad1.dpad_right) {
+                pipeline.setCannyLowerThreshold(pipeline.getCannyLowerThreshold() - 5);
             }
 
-            sleep(100);
+            sleep(10);
         }
     }
 
