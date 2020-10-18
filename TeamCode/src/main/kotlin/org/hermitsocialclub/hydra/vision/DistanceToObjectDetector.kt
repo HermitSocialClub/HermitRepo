@@ -4,9 +4,6 @@ import org.hermitsocialclub.hydra.vision.VisionUtils.toMatOfPoint2f
 import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc.*
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.math.roundToInt
 
 class DistanceToObjectDetector : IVisionPipelineComponent {
 
@@ -21,18 +18,12 @@ class DistanceToObjectDetector : IVisionPipelineComponent {
         findContours(edged, cnts, Mat(), RETR_LIST, CHAIN_APPROX_SIMPLE)
         if (cnts.isNotEmpty()) {
             telemetry.setData("Contours found", "true")
-            val c = cnts.stream().max { o1: Mat, o2: Mat -> (contourArea(o1) - contourArea(o2)).roundToInt() }
-            if (c.isPresent) {
-                telemetry.setData("Largest contour found", "true")
-                telemetry.setData("Contour", Arrays.toString(c.get().toArray()))
-                val boundingBox = minAreaRect(toMatOfPoint2f(c.get()))
-
+            // val c = cnts.stream().max { o1: Mat, o2: Mat -> (contourArea(o1) - contourArea(o2)).roundToInt() }
+            for (c in cnts) {
+                val boundingBox = minAreaRect(toMatOfPoint2f(c))
                 val boundingBoxPoints = arrayOfNulls<Point>(4)
                 boundingBox.points(boundingBoxPoints)
-                val boundingBoxMat = MatOfPoint(*boundingBoxPoints)
-                fillConvexPoly(image, boundingBoxMat, Scalar(69.0 / 255, 230.0 / 255, 1.0))
-            } else {
-                telemetry.setData("Largest contour found", "false")
+                polylines(image, boundingBoxPoints.map { MatOfPoint(it) }, true, Scalar(69.0, 230.0, 255.0))
             }
         } else {
             telemetry.setData("Contours found", "false")
