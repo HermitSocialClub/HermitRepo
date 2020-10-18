@@ -23,7 +23,10 @@ class DistanceToObjectDetector : IVisionPipelineComponent {
                 val boundingBox = minAreaRect(toMatOfPoint2f(c))
                 val boundingBoxPoints = arrayOfNulls<Point>(4)
                 boundingBox.points(boundingBoxPoints)
-                polylines(image, boundingBoxPoints.map { MatOfPoint(it) }, true, Scalar(69.0, 230.0, 255.0))
+                var actualPoints =
+                    boundingBoxPoints.toList().zipWithNext().map { MatOfPoint(it.first, it.second) }.toMutableList()
+                actualPoints.add(MatOfPoint(boundingBoxPoints[boundingBoxPoints.size - 1], boundingBoxPoints[0]))
+                polylines(image, actualPoints, true, Scalar(69.0, 230.0, 255.0))
             }
         } else {
             telemetry.setData("Contours found", "false")
