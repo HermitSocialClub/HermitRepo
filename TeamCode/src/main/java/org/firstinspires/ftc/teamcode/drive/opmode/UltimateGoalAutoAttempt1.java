@@ -29,8 +29,7 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
         PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
-        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(telemetry);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,telemetry);
         drive.setPoseEstimate(new Pose2d(-63,-50,Math.toRadians(0)));
         dropOffZone = openCVStuff();
         try {
@@ -73,6 +72,9 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        telemetry.setDebug("Localizer",drive.getLocalizer().toString());
+        telemetry.setDebug("Wheel Positions",drive.getWheelPositions());
+        telemetry.setDebug("Pose Estimate","%.2f, %.2f",drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY());
         telemetry.setData("Acceleration", zoneBPath.acceleration(zoneBPath.duration()).toString());
         telemetry.setData("Duration", zoneBPath.duration());
         telemetry.setData("End", zoneBPath.end().toString());
@@ -82,11 +84,12 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         runtime.reset();
-        switch (dropOffZone) {
+       /* switch (dropOffZone) {
             case ZONEA: drive.followTrajectory(zoneAPath); break;
-            case ZONEB: drive.followTrajectory(zoneBPath); break;
+            case ZONEB: telemetry.setData("Drivin", "weeee");drive.followTrajectory(zoneBPath); break;
             case ZONEC: drive.followTrajectory(zoneCPath); break;
-        }
+        }*/
+       drive.followTrajectory(zoneBPath);
     }
         private Zone openCVStuff(){
         return Zone.ZONEB;

@@ -111,7 +111,12 @@ public class MecanumBaseOp extends LinearOpMode {
                 topClawPosition = 0.2;
                 robot.topClaw.setPosition(topClawPosition);
             }
-
+            pt.setDebug("leftEncoder ticks",robot.leftEncoder.getCurrentPosition());
+            pt.setDebug("leftEncoder velocity",robot.leftEncoder.getVelocity());
+            pt.setDebug("rightEncoder ticks",robot.rightEncoder.getCurrentPosition());
+            pt.setDebug("rightEncoder velocity",robot.rightEncoder.getVelocity());
+            pt.setDebug("topEncoder ticks",robot.frontEncoder.getCurrentPosition());
+            pt.setDebug("topEncoder velocity",robot.frontEncoder.getVelocity());
         }
 
     }
