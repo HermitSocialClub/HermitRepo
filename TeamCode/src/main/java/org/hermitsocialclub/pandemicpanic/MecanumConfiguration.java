@@ -56,6 +56,7 @@ public class MecanumConfiguration {
     public Servo block_Clamper_2;
     public Servo capSlinger;
     public Servo topClaw;
+    public DcMotorEx spinner;
 
     public static final double MID_SERVO = 1;
     public static final double ARM_UP_POWER = 0.45;
@@ -93,6 +94,8 @@ public class MecanumConfiguration {
         leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
         rightEncoder = hwMap.get(DcMotorEx.class, "tapeShooter");
         frontEncoder = hwMap.get(DcMotorEx.class, "arm");
+        spinner = hwMap.get(DcMotorEx.class,"tapeShooter" +
+                "");
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors
         right_drive.setDirection(DcMotor.Direction.REVERSE);   // Set to FORWARD if using AndyMark motors

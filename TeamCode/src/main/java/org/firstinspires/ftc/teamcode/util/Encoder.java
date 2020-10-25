@@ -48,7 +48,7 @@ public class Encoder {
 
         this.direction = Direction.FORWARD;
 
-        this.lastPosition = 0;
+        this.lastPosition = motor.getCurrentPosition();
         this.velocityEstimate = 0.0;
         this.lastUpdateTime = clock.seconds();
     }

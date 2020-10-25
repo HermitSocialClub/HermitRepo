@@ -39,6 +39,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.pandemicpanic.MoveUtils;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,6 +70,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         TURN,
         FOLLOW_TRAJECTORY
     }
+
+    private PersistantTelemetry telemetry;
 
     private FtcDashboard dashboard;
     private NanoClock clock;
@@ -165,7 +168,81 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
            // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,telemetry));
+    }
+
+    public SampleMecanumDrive(HardwareMap hardwareMap, SkystoneVuforiaEngine vuforiaEngine, PersistantTelemetry telemetry){
+        super(kV, kA, kStatic, TRACK_WIDTH,WHEEL_BASE);
+
+        hwMap = hardwareMap;
+
+        dashboard = FtcDashboard.getInstance();
+        dashboard.setTelemetryTransmissionInterval(25);
+
+        this.telemetry = telemetry;
+
+        clock = NanoClock.system();
+
+        mode = Mode.IDLE;
+
+        turnController = new PIDFController(HEADING_PID);
+        turnController.setInputBounds(0, 2 * Math.PI);
+
+        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+
+        poseHistory = new ArrayList<>();
+
+        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
+
+        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        }
+
+        // TODO: adjust the names of the following hardware devices to match your configuration
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        imu.initialize(parameters);
+
+        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
+        // upward (normal to the floor) using a command like the following:
+        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "left_drive");
+        leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
+        rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
+        rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
+        arm = hardwareMap.get(DcMotorEx.class,"arm");
+        arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
+        topClaw = hardwareMap.get(Servo.class,"topClaw");
+
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+
+        for (DcMotorEx motor : motors) {
+            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+            motor.setMotorType(motorConfigurationType);
+        }
+
+        if (RUN_USING_ENCODER) {
+            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+            setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+        }
+
+        // TODO: reverse any motors using DcMotor.setDirection()
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // TODO: if desired, use setLocalizer() to change the localization method
+        // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,telemetry));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
