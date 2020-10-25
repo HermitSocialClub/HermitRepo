@@ -2,13 +2,13 @@ package org.hermitsocialclub.pandemicpanic.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.hermitsocialclub.hydra.vision.DistanceToObjectDetector;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
 @TeleOp(name = "Contour Test")
 public class ContourTestOp extends LinearOpMode {
@@ -16,7 +16,7 @@ public class ContourTestOp extends LinearOpMode {
     @Override
     public void runOpMode() {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        OpenCvCamera phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        OpenCvCamera phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webCam"), cameraMonitorViewId);
         phoneCam.openCameraDevice();
 
         VisionPipeline pipeline = new VisionPipeline(new PersistantTelemetry(telemetry), new DistanceToObjectDetector());
