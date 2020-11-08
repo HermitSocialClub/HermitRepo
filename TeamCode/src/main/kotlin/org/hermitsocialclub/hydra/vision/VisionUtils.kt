@@ -8,6 +8,8 @@ import org.opencv.imgcodecs.Imgcodecs.*
 
 object VisionUtils {
 
+    val EMPTY_MAT = Mat()
+
     fun toMatOfPoint2f(input: MatOfPoint): MatOfPoint2f {
         return MatOfPoint2f(*input.toArray())
     }

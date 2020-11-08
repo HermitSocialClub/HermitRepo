@@ -1,5 +1,6 @@
 package org.hermitsocialclub.hydra.vision
 
+import org.hermitsocialclub.hydra.vision.VisionUtils.EMPTY_MAT
 import org.opencv.core.Mat
 import org.opencv.core.MatOfDMatch
 import org.opencv.core.MatOfKeyPoint
@@ -30,7 +31,7 @@ class BetterVuforia : IVisionPipelineComponent {
     override fun apply(t: Mat, u: VisionPipeline): Mat {
         val kp2 = MatOfKeyPoint()
         val des2 = Mat()
-        detector.detectAndCompute(t, null, kp2, des2)
+        detector.detectAndCompute(t, EMPTY_MAT, kp2, des2)
 
         val matcher = BFMatcher()
         val matches = ArrayList<MatOfDMatch>()
