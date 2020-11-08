@@ -1,6 +1,7 @@
 package org.hermitsocialclub.hydra.vision
 
 import org.hermitsocialclub.hydra.vision.VisionUtils.EMPTY_MAT
+import org.opencv.core.Core.NORM_HAMMING
 import org.opencv.core.Mat
 import org.opencv.core.MatOfDMatch
 import org.opencv.core.MatOfKeyPoint
@@ -25,10 +26,6 @@ class BetterVuforia : IVisionPipelineComponent {
         des1 = Mat()
 
         detector = ORB.create()
-        visionPipeline.telemetry.setData("skystone image", skystoneImg.nativeObj)
-        visionPipeline.telemetry.setData("kp1", kp1.nativeObj)
-        visionPipeline.telemetry.setData("des1", des1.nativeObj)
-        visionPipeline.telemetry.setData("EMPTY_MAT", EMPTY_MAT.nativeObj)
         detector.detectAndCompute(skystoneImg, EMPTY_MAT, kp1, des1)
     }
 
@@ -37,7 +34,7 @@ class BetterVuforia : IVisionPipelineComponent {
         val des2 = Mat()
         detector.detectAndCompute(t, EMPTY_MAT, kp2, des2)
 
-        val matcher = BFMatcher()
+        val matcher = BFMatcher(NORM_HAMMING, true)
         val matches = ArrayList<MatOfDMatch>()
         matcher.knnMatch(des1, des2, matches, 2)
 
