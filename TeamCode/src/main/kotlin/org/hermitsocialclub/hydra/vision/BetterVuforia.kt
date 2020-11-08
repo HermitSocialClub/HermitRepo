@@ -25,6 +25,10 @@ class BetterVuforia : IVisionPipelineComponent {
         des1 = Mat()
 
         detector = ORB.create()
+        visionPipeline.telemetry.setData("skystone image", skystoneImg.nativeObj)
+        visionPipeline.telemetry.setData("kp1", kp1.nativeObj)
+        visionPipeline.telemetry.setData("des1", des1.nativeObj)
+        visionPipeline.telemetry.setData("EMPTY_MAT", EMPTY_MAT.nativeObj)
         detector.detectAndCompute(skystoneImg, EMPTY_MAT, kp1, des1)
     }
 
