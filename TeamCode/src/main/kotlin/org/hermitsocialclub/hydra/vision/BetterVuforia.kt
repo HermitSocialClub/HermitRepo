@@ -25,7 +25,7 @@ class BetterVuforia : IVisionPipelineComponent {
         des1 = Mat()
 
         detector = ORB.create()
-        detector.detectAndCompute(skystoneImg, null, kp1, des1)
+        detector.detectAndCompute(skystoneImg, EMPTY_MAT, kp1, des1)
     }
 
     override fun apply(t: Mat, u: VisionPipeline): Mat {
