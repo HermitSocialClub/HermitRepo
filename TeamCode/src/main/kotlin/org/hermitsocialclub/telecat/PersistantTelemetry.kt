@@ -38,13 +38,13 @@ class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telem
         update()
     }
 
-    fun setXData(key: String, formatKey: String?, values: Array<Any?>) {
-        telemetryData[key] = String.format(formatKey!!, *values)
+    fun setXData(key: String, formatKey: String, values: Array<Any>) {
+        telemetryData[key] = String.format(formatKey, *values)
         update()
     }
 
-    fun setData(key: String, formatKey: String?, vararg values: Any?) {
-        telemetryData[key] = String.format(formatKey!!, *values)
+    fun setData(key: String, formatKey: String, vararg values: Any) {
+        telemetryData[key] = String.format(formatKey, *values)
         update()
     }
 
@@ -58,13 +58,13 @@ class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telem
         update()
     }
 
-    fun setXDebug(key: String, formatKey: String?, values: Array<Any?>) {
-        debugData[key] = String.format(formatKey!!, *values)
+    fun setXDebug(key: String, formatKey: String, values: Array<Any>) {
+        debugData[key] = String.format(formatKey, *values)
         update()
     }
 
-    fun setDebug(key: String, formatKey: String?, vararg values: Any?) {
-        debugData[key] = String.format(formatKey!!, *values)
+    fun setDebug(key: String, formatKey: String, vararg values: Any) {
+        debugData[key] = String.format(formatKey, *values)
         update()
     }
 

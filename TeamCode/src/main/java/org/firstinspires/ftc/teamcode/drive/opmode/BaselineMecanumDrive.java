@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.drive.opmode;
 
 
 import androidx.annotation.NonNull;
@@ -24,7 +24,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -32,13 +31,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
-import org.hermitsocialclub.pandemicpanic.MoveUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;
@@ -49,7 +45,6 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAIN
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.WHEEL_BASE;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMotorVelocityF;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
@@ -60,18 +55,17 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class SampleMecanumDrive extends MecanumDrive {
+public class BaselineMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(3, 5, 1);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 5, 1);
 
+    public static double LATERAL_MULTIPLIER = 1;
 
     public enum Mode {
         IDLE,
         TURN,
         FOLLOW_TRAJECTORY
     }
-
-    private PersistantTelemetry telemetry;
 
     private FtcDashboard dashboard;
     private NanoClock clock;
@@ -82,103 +76,25 @@ public class SampleMecanumDrive extends MecanumDrive {
     private MotionProfile turnProfile;
     private double turnStart;
 
-    public DriveConstraints constraints;
+    private DriveConstraints constraints;
     private TrajectoryFollower follower;
 
     private List<Pose2d> poseHistory;
 
-    public DcMotorEx leftFront, leftRear, rightRear, rightFront, arm, arm2;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront, arm, arm2;
     public Servo topClaw;
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
-    public ColorSensor colorSensor;
-    public HardwareMap hwMap;
 
-    public enum SKYSTONE{
-        ONE,TWO,THREE
-    }
-    public SKYSTONE skystone;
+    private Pose2d lastPoseOnTurn;
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, SkystoneVuforiaEngine vuforiaEngine) {
-        super(kV, kA, kStatic, TRACK_WIDTH,WHEEL_BASE);
+    private PersistantTelemetry telemetry;
 
-        hwMap = hardwareMap;
+    public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry telemetry) {
+        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         dashboard = FtcDashboard.getInstance();
         dashboard.setTelemetryTransmissionInterval(25);
-
-        clock = NanoClock.system();
-
-        mode = Mode.IDLE;
-
-        turnController = new PIDFController(HEADING_PID);
-        turnController.setInputBounds(0, 2 * Math.PI);
-
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
-
-        poseHistory = new ArrayList<>();
-
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-
-        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
-        // upward (normal to the floor) using a command like the following:
-        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "left_drive");
-        leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
-        rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
-        rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
-        arm = hardwareMap.get(DcMotorEx.class,"arm");
-        arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
-        topClaw = hardwareMap.get(Servo.class,"topClaw");
-
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
-
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
-
-        if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
-
-        // TODO: reverse any motors using DcMotor.setDirection()
-       rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // TODO: if desired, use setLocalizer() to change the localization method
-           // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,telemetry));
-    }
-
-    public SampleMecanumDrive(HardwareMap hardwareMap, SkystoneVuforiaEngine vuforiaEngine, PersistantTelemetry telemetry){
-        super(kV, kA, kStatic, TRACK_WIDTH,WHEEL_BASE);
-
-        hwMap = hardwareMap;
-
-        dashboard = FtcDashboard.getInstance();
-        dashboard.setTelemetryTransmissionInterval(25);
-
         this.telemetry = telemetry;
 
         clock = NanoClock.system();
@@ -239,10 +155,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         // TODO: reverse any motors using DcMotor.setDirection()
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-
         // TODO: if desired, use setLocalizer() to change the localization method
-        // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
+        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,telemetry));
+
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -259,6 +175,9 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void turnAsync(double angle) {
         double heading = getPoseEstimate().getHeading();
+
+        lastPoseOnTurn = getPoseEstimate();
+
         turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
                 new MotionState(heading, 0, 0, 0),
                 new MotionState(heading + angle, 0, 0, 0),
@@ -266,6 +185,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                 constraints.maxAngAccel,
                 constraints.maxAngJerk
         );
+
         turnStart = clock.seconds();
         mode = Mode.TURN;
     }
@@ -309,14 +229,21 @@ public class SampleMecanumDrive extends MecanumDrive {
         Canvas fieldOverlay = packet.fieldOverlay();
 
         packet.put("mode", mode);
+        telemetry.setDebug("mode", mode);
 
         packet.put("x", currentPose.getX());
         packet.put("y", currentPose.getY());
         packet.put("heading", currentPose.getHeading());
+        telemetry.setDebug("x", currentPose.getX());
+        telemetry.setDebug("y", currentPose.getY());
+        telemetry.setDebug("heading", currentPose.getHeading());
 
         packet.put("xError", lastError.getX());
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
+       telemetry.setDebug("xError", lastError.getX());
+       telemetry.setDebug("yError", lastError.getY());
+        telemetry.setDebug("headingError", lastError.getHeading());
 
         switch (mode) {
             case IDLE:
@@ -339,6 +266,11 @@ public class SampleMecanumDrive extends MecanumDrive {
                         0, 0, targetAlpha
                 )));
 
+                Pose2d newPose = lastPoseOnTurn.copy(lastPoseOnTurn.getX(), lastPoseOnTurn.getY(), targetState.getX());
+
+                fieldOverlay.setStroke("#4CAF50");
+                DashboardUtil.drawRobot(fieldOverlay, newPose);
+
                 if (t >= turnProfile.duration()) {
                     mode = Mode.IDLE;
                     setDriveSignal(new DriveSignal());
@@ -352,14 +284,13 @@ public class SampleMecanumDrive extends MecanumDrive {
                 Trajectory trajectory = follower.getTrajectory();
 
                 fieldOverlay.setStrokeWidth(1);
-                fieldOverlay.setStroke("4CAF50");
+                fieldOverlay.setStroke("#4CAF50");
                 DashboardUtil.drawSampledPath(fieldOverlay, trajectory.getPath());
                 double t = follower.elapsedTime();
                 DashboardUtil.drawRobot(fieldOverlay, trajectory.get(t));
 
                 fieldOverlay.setStroke("#3F51B5");
                 DashboardUtil.drawPoseHistory(fieldOverlay, poseHistory);
-                DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
                 if (!follower.isFollowing()) {
                     mode = Mode.IDLE;
@@ -369,6 +300,9 @@ public class SampleMecanumDrive extends MecanumDrive {
                 break;
             }
         }
+
+        fieldOverlay.setStroke("#3F51B5");
+        DashboardUtil.drawRobot(fieldOverlay, currentPose);
 
         dashboard.sendTelemetryPacket(packet);
     }
@@ -437,85 +371,5 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
-    }
-    Integer linearCPR = 28; //counts per rotation
-    Integer LinearGearRatio = 20; //NeverRest 20
-    Double linearDiameter = 2.0;
-    Double LinearCPI = (linearCPR * 20) / (linearDiameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
-
-    public void Linear(double Linear_Position, double inches) {
-
-        int move = (int) (Math.round(inches * LinearCPI/2));
-
-        //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
-        arm.setTargetPosition(arm.getCurrentPosition() - move);
-
-
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        arm.setPower(-Linear_Position);
-        arm2.setPower(Linear_Position);
-
-        while (MoveUtils.areAllMotorsBusy(new DcMotor[]{arm})) {
-            arm.setPower(-Linear_Position);
-            arm2.setPower(Linear_Position);
-        }
-        arm.setPower(0);
-        arm2.setPower(0);
-    }
-
-    public void LinearSync(double Linear_Position, double inches) {
-
-        int move = (int) (Math.round(inches * LinearCPI/2));
-
-        //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
-        arm.setTargetPosition(arm.getCurrentPosition() - move);
-
-
-        arm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        arm.setPower(-Linear_Position);
-        arm2.setPower(Linear_Position);
-
-        while (MoveUtils.areAllMotorsBusy(new DcMotor[]{arm})) {
-            arm.setPower(-Linear_Position);
-            arm2.setPower(Linear_Position);
-                update();
-
-        }
-        arm.setPower(0);
-        arm2.setPower(0);
-        while (isBusy()){update();}
-
-    }
-    public void LinearTime(double Linear_Position, double time) {
-
-        ElapsedTime armTime = new ElapsedTime();
-
-        arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        arm2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        arm.setPower(-Linear_Position);
-        arm2.setPower(Linear_Position);
-
-        while (armTime.seconds() < time) {
-            arm.setPower(-Linear_Position);
-            arm2.setPower(Linear_Position);
-        }
-        arm.setPower(0);
-        arm2.setPower(0);
-    }
-    public void skystoneDetect(){
-        colorSensor = hwMap.get(ColorSensor.class,"Color Sensor");
-        while(isBusy()&& ((colorSensor.red() * colorSensor.green()) / Math.pow(colorSensor.blue(), 2) >= 3)){
-        if(!isBusy()){return;  }
-        }
-        if (getPoseEstimate().getX()>-40){
-            skystone = SKYSTONE.ONE;
-        } else if(getPoseEstimate().getX() > -47){
-            skystone = SKYSTONE.TWO;
-        } else skystone = SKYSTONE.THREE;
     }
 }

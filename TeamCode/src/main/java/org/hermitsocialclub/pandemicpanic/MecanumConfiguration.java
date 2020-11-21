@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class MecanumConfiguration {
 
@@ -42,6 +43,7 @@ public class MecanumConfiguration {
     public DcMotor right_drive = null;
     public DcMotor right_drive_2 = null;
     public DcMotor[] drive_Motors;
+    public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
     public DcMotor tapeShooter;
     public Servo foundation_Mover = null;
     public Servo foundation_Mover_2 = null;
@@ -54,6 +56,7 @@ public class MecanumConfiguration {
     public Servo block_Clamper_2;
     public Servo capSlinger;
     public Servo topClaw;
+    public DcMotorEx spinner;
 
     public static final double MID_SERVO = 1;
     public static final double ARM_UP_POWER = 0.45;
@@ -88,6 +91,11 @@ public class MecanumConfiguration {
         tapeShooter = hwMap.get(DcMotor.class, "tapeShooter");
         capSlinger = hwMap.get(Servo.class, "capSlinger");
         topClaw = hwMap.get(Servo.class, "topClaw");
+        leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
+        rightEncoder = hwMap.get(DcMotorEx.class, "tapeShooter");
+        frontEncoder = hwMap.get(DcMotorEx.class, "arm");
+        spinner = hwMap.get(DcMotorEx.class,"tapeShooter" +
+                "");
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors
         right_drive.setDirection(DcMotor.Direction.REVERSE);   // Set to FORWARD if using AndyMark motors

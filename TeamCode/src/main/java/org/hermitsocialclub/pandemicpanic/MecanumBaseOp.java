@@ -20,12 +20,18 @@ public class MecanumBaseOp extends LinearOpMode {
     double clamperPosition = 0;
     double topClawPosition = 0;
     private boolean foundationPull = false;
+    private double initialLeftTicks, initialRightTicks, initialTopTicks;
+
 
     @Override
     public void runOpMode() {
         robot.init(hardwareMap);
 
         waitForStart();
+        initialLeftTicks = robot.leftEncoder.getCurrentPosition();
+        initialRightTicks = robot.rightEncoder.getCurrentPosition();
+        initialTopTicks = robot.frontEncoder.getCurrentPosition();
+
 
         telemetry.speak("Hola. Cómo estás?", "spa", "mx");
 
@@ -111,7 +117,21 @@ public class MecanumBaseOp extends LinearOpMode {
                 topClawPosition = 0.2;
                 robot.topClaw.setPosition(topClawPosition);
             }
-
+            if(gamepad1.x){
+                robot.spinner.setPower(1);
+            }else if(gamepad1.y){
+                robot.spinner.setPower(.75);
+            } else if(gamepad1.a){
+                robot.spinner.setPower(.5);
+            }else if(gamepad1.b){
+                robot.spinner.setPower(.25);
+            }
+            pt.setDebug("leftEncoder ticks",robot.leftEncoder.getCurrentPosition()-initialLeftTicks);
+            pt.setDebug("leftEncoder velocity",robot.leftEncoder.getVelocity());
+            pt.setDebug("rightEncoder ticks",robot.rightEncoder.getCurrentPosition()-initialRightTicks);
+            pt.setDebug("rightEncoder velocity",robot.rightEncoder.getVelocity());
+            pt.setDebug("topEncoder ticks",robot.frontEncoder.getCurrentPosition()-initialTopTicks);
+            pt.setDebug("topEncoder velocity",robot.frontEncoder.getVelocity());
         }
 
     }
