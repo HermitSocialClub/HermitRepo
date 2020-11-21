@@ -120,7 +120,11 @@ public class MecanumBaseOp extends LinearOpMode {
             if(gamepad1.x){
                 robot.spinner.setPower(1);
             }else if(gamepad1.y){
-                robot.spinner.setPower(1);
+                robot.spinner.setPower(.75);
+            } else if(gamepad1.a){
+                robot.spinner.setPower(.5);
+            }else if(gamepad1.b){
+                robot.spinner.setPower(.25);
             }
             pt.setDebug("leftEncoder ticks",robot.leftEncoder.getCurrentPosition()-initialLeftTicks);
             pt.setDebug("leftEncoder velocity",robot.leftEncoder.getVelocity());
