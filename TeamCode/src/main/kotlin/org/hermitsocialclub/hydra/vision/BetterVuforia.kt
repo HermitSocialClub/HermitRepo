@@ -1,6 +1,7 @@
 package org.hermitsocialclub.hydra.vision
 
-import org.hermitsocialclub.hydra.vision.VisionUtils.EMPTY_MAT
+import org.hermitsocialclub.hydra.vision.util.VisionUtils
+import org.hermitsocialclub.hydra.vision.util.VisionUtils.EMPTY_MAT
 import org.opencv.core.Core.NORM_HAMMING
 import org.opencv.core.Mat
 import org.opencv.core.MatOfDMatch

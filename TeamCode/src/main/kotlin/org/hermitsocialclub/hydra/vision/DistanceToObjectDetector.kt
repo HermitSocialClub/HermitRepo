@@ -1,14 +1,15 @@
 package org.hermitsocialclub.hydra.vision
 
-import org.hermitsocialclub.hydra.vision.VisionUtils.toMatOfPoint2f
+import org.hermitsocialclub.hydra.vision.util.VisionUtils.toMatOfPoint2f
+import org.hermitsocialclub.hydra.vision.util.VisionUtils.zero
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc.*
 
 class DistanceToObjectDetector : IVisionPipelineComponent {
 
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
-        val gray = Mat(image.width(), image.height(), image.depth())
-        val edged = Mat(image.width(), image.height(), image.depth())
+        val gray = zero(image)
+        val edged = zero(image)
         cvtColor(image, gray, COLOR_BGR2GRAY)
         GaussianBlur(gray, gray, Size(5.0, 5.0), 0.0)
         Canny(gray, edged, pipeline.cannyLowerThreshold, pipeline.cannyUpperThreshold)
