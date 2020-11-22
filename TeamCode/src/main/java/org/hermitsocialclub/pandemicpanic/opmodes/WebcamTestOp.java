@@ -22,7 +22,7 @@ public class WebcamTestOp extends LinearOpMode {
         OpenCvCamera webCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class,"webCam"),cameraMonitorViewId);
         webCam.openCameraDevice();
 
-        webCam.setPipeline(new VisionPipeline(new PersistantTelemetry(telemetry), new DistanceToObjectDetector()));
+        webCam.setPipeline(new VisionPipeline(hardwareMap,new PersistantTelemetry(telemetry), new DistanceToObjectDetector()));
         webCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
 
         waitForStart();

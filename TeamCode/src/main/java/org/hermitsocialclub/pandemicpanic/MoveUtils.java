@@ -36,10 +36,10 @@ public class MoveUtils {
      * @return an array of 4 doubles, in the form [left_motor, right_motor, left_motor_2, right_motor_2]
      */
     public static double[] theAlgorithm(double power, double angle, double turnOffset, double speedModifier) {
-        final double v1 = (power * Math.sin(angle) - turnOffset) * speedModifier;
-        final double v2 = (power * Math.cos(angle) + turnOffset) * speedModifier;
-        final double v3 = (power * Math.cos(angle) - turnOffset) * speedModifier;
-        final double v4 = (power * Math.sin(angle) + turnOffset) * speedModifier;
+        final double v1 = (power * Math.sin(angle) + turnOffset) * speedModifier;
+        final double v2 = (power * Math.cos(angle) - turnOffset) * speedModifier;
+        final double v3 = (power * Math.sin(angle) + turnOffset) * speedModifier;
+        final double v4 = (power * Math.cos(angle) - turnOffset) * speedModifier;
         return new double[]{v1, v2, v3, v4};
     }
 
