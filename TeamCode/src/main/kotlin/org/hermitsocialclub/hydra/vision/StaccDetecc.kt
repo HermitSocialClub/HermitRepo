@@ -2,6 +2,7 @@ package org.hermitsocialclub.hydra.vision
 
 import org.hermitsocialclub.hydra.vision.util.VisionUtils.zero
 import org.opencv.core.Core.*
+import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Rect
 import org.opencv.core.Scalar
@@ -44,10 +45,16 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
     }
 
     private fun findStacc(image: Mat, filter: Mat): Rect? {
+        filter.convertTo(filter, CvType.CV_8U)
         val labels = Mat()
         val stats = Mat()
         val centroids = Mat()
         val nbComponents = connectedComponentsWithStats(filter, labels, stats, centroids, 4)
+
+        println("Labels")
+        println(labels.dump())
+        println("Stats")
+        println(stats.dump())
 
         var maxLabel: Int = -1
         var maxSize: Double = -1.0
