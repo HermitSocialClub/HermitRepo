@@ -82,6 +82,19 @@ public class Encoder {
         return currentPosition;
     }
 
+    public int correctRawPosition(int rawPos) {
+        int multiplier = direction.getMultiplier();
+        int currentPosition = rawPos * multiplier;
+        if (currentPosition != lastPosition) {
+            double currentTime = clock.seconds();
+            double dt = currentTime - lastUpdateTime;
+            velocityEstimate = (currentPosition - lastPosition) / dt;
+            lastPosition = currentPosition;
+            lastUpdateTime = currentTime;
+        }
+        return currentPosition;
+    }
+
     public double getRawVelocity() {
         int multiplier = direction.getMultiplier();
         return motor.getVelocity() * multiplier;
@@ -89,5 +102,9 @@ public class Encoder {
 
     public double getCorrectedVelocity() {
         return inverseOverflow(getRawVelocity(), velocityEstimate);
+    }
+    public double getTwiceCorrectedVelocity(double rawVel) {
+        int multiplier = direction.getMultiplier();
+        return inverseOverflow(rawVel * multiplier, velocityEstimate);
     }
 }

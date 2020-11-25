@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 
 @I2cDeviceType
 @DeviceProperties(name = "HC-SR04 Ultrasonic Sensor", description = "Speedy Ultrasonic Sensor from Adafruit", xmlTag = "HCSR04")
-class SensorUltraSonicHedgehogButBetter extends I2cDeviceSynchDevice<I2cDeviceSynch> {
+public class SensorUltraSonicHedgehogButBetter extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     final I2cAddr ADDRESS_I2C_DEFAULT = new I2cAddr(0x57);
     @Override
     public Manufacturer getManufacturer()
