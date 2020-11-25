@@ -51,8 +51,6 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         val centroids = Mat()
         val nbComponents = connectedComponentsWithStats(filter, labels, stats, centroids, 4)
 
-        println("Labels")
-        println(labels.dump())
         println("Stats")
         println(stats.dump())
 
