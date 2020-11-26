@@ -89,6 +89,7 @@ class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telem
                 txtLogBuilder.append("$key: $value\n")
                 logBuilder.append("$key: $value\n\u001b[1G")
             }
+            txtLogBuilder.append("\n")
             val event = AsciicastBuilder.buildEvent(logUUID, cal.timeInMillis, logBuilder.toString())
             FileLogger.logToFile("telemetryLog-$logUUID.cast", event)
             FileLogger.logToFile("telemetryLog-latest.cast", event)
