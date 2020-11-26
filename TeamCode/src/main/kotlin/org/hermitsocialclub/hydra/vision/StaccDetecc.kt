@@ -33,12 +33,16 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         inRange(hsvImg, config.lowerYellow, config.upperYellow, colorFilter)
 
         // Find largest square area in image
-        val fsout = findStacc(image, colorFilter)
-        if (fsout != null) {
-            pipeline.telemetry.setData("Stacc found", "true")
-            rectangle(image, fsout, Scalar(0.0, 255.0, 0.0), 3)
-        } else {
-            pipeline.telemetry.setData("Stacc found", "false")
+        try {
+            val fsout = findStacc(image, colorFilter)
+            if (fsout != null) {
+                pipeline.telemetry.setData("Stacc found", "true")
+                rectangle(image, fsout, Scalar(0.0, 255.0, 0.0), 3)
+            } else {
+                pipeline.telemetry.setData("Stacc found", "false")
+            }
+        } catch (ex: NullPointerException) {
+            pipeline.telemetry.setData("Stacc found", "false (NPE)")
         }
 
         return image
@@ -55,15 +59,18 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         println(stats.dump())
 
         var maxLabel: Int = -1
-        var maxSize: Double = -1.0
+        var maxSize: Int = -1
+        val areaBuffer = intArrayOf(1)
+        val widthBuffer = intArrayOf(1)
+        val heightBuffer = intArrayOf(1)
         for (i in 2..nbComponents) {
-            val area = stats[i, CC_STAT_AREA][0]
-            if (area > maxSize) {
-                val width = stats[i, CC_STAT_WIDTH][0]
-                val height = stats[i, CC_STAT_HEIGHT][0]
-                if (max(width / height, height / width) < config.maxStackRatio) {
+            stats[i, CC_STAT_AREA, areaBuffer]
+            if (areaBuffer[0] > maxSize) {
+                stats[i, CC_STAT_WIDTH, widthBuffer]
+                stats[i, CC_STAT_HEIGHT, heightBuffer]
+                if (max(widthBuffer[0] / heightBuffer[0], heightBuffer[0] / widthBuffer[0]) < config.maxStackRatio) {
                     maxLabel = i
-                    maxSize = area
+                    maxSize = areaBuffer[0]
                 }
             }
         }
@@ -71,11 +78,17 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         return if (maxLabel == -1) {
             null
         } else {
+            val leftBuffer = intArrayOf(1)
+            val topBuffer = intArrayOf(1)
+            stats[maxLabel, CC_STAT_LEFT, leftBuffer]
+            stats[maxLabel, CC_STAT_TOP, topBuffer]
+            stats[maxLabel, CC_STAT_WIDTH, widthBuffer]
+            stats[maxLabel, CC_STAT_HEIGHT, heightBuffer]
             Rect(
-                stats[maxLabel, CC_STAT_LEFT][0].toInt(),
-                stats[maxLabel, CC_STAT_TOP][0].toInt(),
-                stats[maxLabel, CC_STAT_WIDTH][0].toInt(),
-                stats[maxLabel, CC_STAT_HEIGHT][0].toInt(),
+                leftBuffer[0],
+                topBuffer[0],
+                widthBuffer[0],
+                heightBuffer[0],
             )
         }
     }
