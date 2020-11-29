@@ -11,7 +11,7 @@ import kotlin.math.max
 
 /**
  * # StaccDetecc
- * Based on the python implementation [here](https://gist.github.com/Arc-blroth/4e2a66b648b89e4fbc9cc70f78d776b9)
+ * Based on the python implementation [here](https://gist.github.com/Arc-blroth/b091121c41543cbdb5d92043cbeca6d2)
  *
  * @author Arc'blroth
  */
