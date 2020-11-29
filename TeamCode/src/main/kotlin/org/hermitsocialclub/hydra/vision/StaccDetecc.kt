@@ -22,9 +22,33 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
          * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
          */
         var normUpper = 300.0
+
+        /**
+         * "Lower" HSV color to look for.
+         */
         var lowerYellow = Scalar(0.0, 100.0, 100.0)
+
+        /**
+         * "Upper" HSV color to look for.
+         */
         var upperYellow = Scalar(46.0, 255.0, 255.0)
+
+        /**
+         * Pixel regions with a ratio greater than this are discarded by the algorithm.
+         */
         var maxStackRatio = Int.MAX_VALUE
+
+        /**
+         * If more than this number of pixel regions are detected, we assume there is
+         * no stack in the image and that the algorithm is probably picking up on the floor.
+         */
+        var maxStackNoise = 100
+
+        /**
+         * Stacks with a ratio greater than this are considered one-ring stacks.
+         * Stacks with a ratio less than this are considered four-ring stacks.
+         */
+        var oneStackRatio = 2
     }
 
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
@@ -39,7 +63,8 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         try {
             val fsout = findStacc(image, colorFilter)
             if (fsout != null) {
-                pipeline.telemetry.setData("Stacc found", "true")
+                val isOneStacc = max(fsout.width / fsout.height, fsout.height / fsout.width) > config.oneStackRatio
+                pipeline.telemetry.setData("Stacc found", "true [${if (isOneStacc) "1" else "4"}]")
                 rectangle(image, fsout, Scalar(0.0, 255.0, 0.0), 3)
             } else {
                 pipeline.telemetry.setData("Stacc found", "false")
@@ -57,6 +82,10 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         val stats = Mat()
         val centroids = Mat()
         val nbComponents = connectedComponentsWithStats(filter, labels, stats, centroids, 4)
+
+        if (nbComponents > config.maxStackNoise) {
+            return null
+        }
 
         var maxLabel: Int = -1
         var maxSize: Int = -1
