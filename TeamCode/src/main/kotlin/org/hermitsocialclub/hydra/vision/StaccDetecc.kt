@@ -11,17 +11,20 @@ import kotlin.math.max
 
 /**
  * # StaccDetecc
- * Based on the python implementation [here](https://gist.github.com/Arc-blroth/4e2a66b648b89e4fbc9cc70f78d776b9)
+ * Based on the python implementation [here](https://gist.github.com/Arc-blroth/b091121c41543cbdb5d92043cbeca6d2)
  *
  * @author Arc'blroth
  */
 class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComponent {
 
     class StaccConfig {
+        /**
+         * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
+         */
         var normUpper = 300.0
-        var lowerYellow = Scalar(19.0, 50.0, 0.0)
+        var lowerYellow = Scalar(0.0, 100.0, 100.0)
         var upperYellow = Scalar(46.0, 255.0, 255.0)
-        var maxStackRatio = 1.5
+        var maxStackRatio = Int.MAX_VALUE
     }
 
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
@@ -54,9 +57,6 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         val stats = Mat()
         val centroids = Mat()
         val nbComponents = connectedComponentsWithStats(filter, labels, stats, centroids, 4)
-
-        println("Stats")
-        println(stats.dump())
 
         var maxLabel: Int = -1
         var maxSize: Int = -1
