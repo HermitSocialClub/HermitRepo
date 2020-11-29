@@ -45,10 +45,10 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         var maxStackNoise = 100
 
         /**
-         * Stacks with a ratio greater than this are considered one-ring stacks.
-         * Stacks with a ratio less than this are considered four-ring stacks.
+         * Stacks with a ratio less than this are considered one-ring stacks.
+         * Stacks with a ratio greater than this are considered four-ring stacks.
          */
-        var oneStackRatio = 2
+        var oneStackRatio = 0.5
     }
 
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
@@ -63,13 +63,16 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         try {
             val fsout = findStacc(image, colorFilter)
             if (fsout != null) {
-                val isOneStacc = max(fsout.width / fsout.height, fsout.height / fsout.width) > config.oneStackRatio
-                pipeline.telemetry.setData("Stacc found", "true [${if (isOneStacc) "1" else "4"}]")
+                val ratio = fsout.height / fsout.width
+                pipeline.telemetry.setData("Stacc ratio", ratio)
+                pipeline.telemetry.setData("Stacc found", "true [${if (ratio < config.oneStackRatio) "1" else "4"}]")
                 rectangle(image, fsout, Scalar(0.0, 255.0, 0.0), 3)
             } else {
+                pipeline.telemetry.removeData("Stacc ratio")
                 pipeline.telemetry.setData("Stacc found", "false")
             }
         } catch (ex: NullPointerException) {
+            pipeline.telemetry.removeData("Stacc ratio")
             pipeline.telemetry.setData("Stacc found", "false (NPE)")
         }
 
