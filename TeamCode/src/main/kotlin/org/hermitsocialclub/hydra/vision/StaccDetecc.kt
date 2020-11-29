@@ -21,7 +21,7 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         /**
          * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
          */
-        var normUpper = 300.0
+        var normUpper = 1000.0
 
         /**
          * "Lower" HSV color to look for.
@@ -63,7 +63,7 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         try {
             val fsout = findStacc(image, colorFilter)
             if (fsout != null) {
-                val ratio = fsout.height / fsout.width
+                val ratio = fsout.height.toDouble() / fsout.width.toDouble()
                 pipeline.telemetry.setData("Stacc ratio", ratio)
                 pipeline.telemetry.setData("Stacc found", "true [${if (ratio < config.oneStackRatio) "1" else "4"}]")
                 rectangle(image, fsout, Scalar(0.0, 255.0, 0.0), 3)
