@@ -36,10 +36,10 @@ public class MecanumBaseOpBasic extends LinearOpMode {
         left_drive_2 = hardwareMap.get(DcMotor.class, "left_drive_2");
         right_drive_2 = hardwareMap.get(DcMotor.class, "right_drive_2");
 
-        left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors
+        left_drive.setDirection(DcMotor.Direction.REVERSE);    // Set to REVERSE if using AndyMark motors
         right_drive.setDirection(DcMotor.Direction.REVERSE);   // Set to FORWARD if using AndyMark motors
-        left_drive_2.setDirection(DcMotor.Direction.REVERSE);  // Set to REVERSE if using AndyMark motors
-        right_drive_2.setDirection(DcMotor.Direction.FORWARD); // Set to FORWARD if using AndyMark motors
+        left_drive_2.setDirection(DcMotor.Direction.FORWARD);  // Set to REVERSE if using AndyMark motors
+        right_drive_2.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
 
         left_drive.setPower(0);
         right_drive.setPower(0);

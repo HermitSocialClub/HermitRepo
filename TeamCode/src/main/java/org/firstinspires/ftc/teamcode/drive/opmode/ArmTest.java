@@ -15,11 +15,12 @@ public class ArmTest extends LinearOpMode {
         waitForStart();
 
        // gamepad1.left_stick_x =
-        Arm.setPower(Math.abs(gamepad1.left_stick_x));
+        while (opModeIsActive()) {
+            Arm.setPower(-gamepad1.left_stick_x);
 
-        if (gamepad1.left_stick_x == 0){
-            Arm.setPower(0);
+            if (Math.abs(gamepad1.left_stick_x) >= 0.05) {
+                Arm.setPower(0);
+            }
         }
-
     }
 }

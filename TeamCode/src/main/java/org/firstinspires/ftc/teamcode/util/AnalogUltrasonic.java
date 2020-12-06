@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.RevBulkData;
 
 import java.util.concurrent.TimeUnit;
 
@@ -19,6 +21,10 @@ public class AnalogUltrasonic {
     AnalogInput echo;
     AnalogOutput trigger;
 
+    RevBulkData bulk;
+
+    ExpansionHubEx rev;
+
     private ElapsedTime time = new ElapsedTime();
     private ElapsedTime echoTime = new ElapsedTime();
     private ElapsedTime triggerTime = new ElapsedTime();
@@ -28,9 +34,14 @@ public class AnalogUltrasonic {
 
     private boolean pulseFinished = false;
 
-    public AnalogUltrasonic(AnalogInput echo, AnalogOutput trigger, PersistantTelemetry telemetry){
+    public AnalogUltrasonic(AnalogInput echo, AnalogOutput trigger, PersistantTelemetry telemetry, RevBulkData bulk,
+                            ExpansionHubEx rev){
         this.echo = echo;
         this.trigger = trigger;
+
+        this.bulk = bulk;
+
+        this.rev = rev;
 
         this.telemetry = telemetry;
 
@@ -41,11 +52,15 @@ public class AnalogUltrasonic {
         pulseFinished = false;
         triggerTime.reset();
         trigger.setAnalogOutputVoltage(640);
-        while(triggerTime.nanoseconds() <= TRIGGER_PULSE_PERIOD){}
+        while(triggerTime.nanoseconds() * 1000 <= TRIGGER_PULSE_PERIOD){}
+        telemetry.setData("trigger time %f microseconds",triggerTime.nanoseconds()*1000);
         trigger.setAnalogOutputVoltage(0);
         echoTime.reset();
-        while (echo.getVoltage() > RESTING_VOLTAGE){}
-        distance = echoTime.nanoseconds()/MICROSECONDS_TO_INCHES;
+        bulk = rev.getBulkInputData();
+        while (bulk.getAnalogInputValue(echo) > RESTING_VOLTAGE){bulk = rev.getBulkInputData();
+        telemetry.setData("Bulk Analog Input",bulk.getAnalogInputValue(echo));
+        telemetry.setData("echo time %f microseconds",echoTime.nanoseconds()*1000);}
+        distance = (echoTime.nanoseconds()*1000)/MICROSECONDS_TO_INCHES;
         pulseFinished = true;
     }
 

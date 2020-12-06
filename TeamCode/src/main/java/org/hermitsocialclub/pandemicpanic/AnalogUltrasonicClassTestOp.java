@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.hardware.AnalogOutput;
 
 import org.firstinspires.ftc.teamcode.util.AnalogUltrasonic;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.RevBulkData;
 
 @TeleOp(name = "Ultrasonic Test Op")
-public class UltasonicTestOp extends LinearOpMode {
+public class AnalogUltrasonicClassTestOp extends LinearOpMode {
 
     AnalogInput echo;
     AnalogOutput trigger;
@@ -20,10 +22,12 @@ public class UltasonicTestOp extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        ExpansionHubEx rev = hardwareMap.get(ExpansionHubEx.class,"Control Hub");
+        RevBulkData bulkData = rev.getBulkInputData();
 
         echo = hardwareMap.get(AnalogInput.class,"echo");
         trigger = hardwareMap.get(AnalogOutput.class, "trigger");
-        ultra = new AnalogUltrasonic(echo,trigger,telemetry);
+        ultra = new AnalogUltrasonic(echo,trigger,telemetry,bulkData,rev);
 
         waitForStart();
 
