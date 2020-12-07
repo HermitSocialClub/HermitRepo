@@ -39,13 +39,13 @@ import java.util.List;
  */
 @Config
 public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer {
-    public static double TICKS_PER_REV = 2048;
+    public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 1; // in
     public static MotorConfigurationType neverRest20GearMotor = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
-    public static double GEAR_RATIO = neverRest20GearMotor.getGearing(); // output (wheel) speed / input (encoder) speed
+    public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 13; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 9; // in; offset of the lateral wheel
+    public static double LATERAL_DISTANCE = 13.25; // in; distance between the left and right wheels
+    public static double FORWARD_OFFSET = 8; // in; offset of the lateral wheel
 
     private PersistantTelemetry telemetry;
 
@@ -67,15 +67,15 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "tapeShooter"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "arm"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_drive"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_drive"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_drive_2"));
 
-        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        expansionHub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
 
-        motor0 = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "leftEncoder");
-        motor1 = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "tapeShooter");
-        motor2 = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "arm");
+        motor0 = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "right_drive");
+        motor1 = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_drive");
+        motor2 = (ExpansionHubMotor) hardwareMap.get(DcMotorEx.class, "left_drive_2");
 /*
         trigger1 = hardwareMap.get(AnalogOutput.class,"trigger1");
         trigger2 = hardwareMap.get(AnalogOutput.class,"trigger2");
@@ -87,9 +87,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         ultra2 = new AnalogUltrasonic(echo2,trigger2,telemetry,bulkData,expansionHub);
 */
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        //leftEncoder.setDirection(Encoder.Direction.REVERSE);
-        frontEncoder.setDirection(Encoder.Direction.REVERSE);
-        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        //frontEncoder.setDirection(Encoder.Direction.REVERSE);
+        //rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
         this.telemetry = telemetry;
 
@@ -102,22 +102,12 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     @NonNull
     @Override
     public List<Double> getWheelPositions() {
-        bulkData = expansionHub.getBulkInputData();
-        telemetry.setDebug("leftEncoder Raw Input",leftEncoder.correctRawPosition(bulkData.getMotorCurrentPosition(motor0)));
-        telemetry.setDebug("leftEncoder Inches", encoderTicksToInches(leftEncoder.correctRawPosition
-                (bulkData.getMotorCurrentPosition(motor0))));
-        telemetry.setDebug("rightEncoder Raw Input",rightEncoder.correctRawPosition(bulkData.getMotorCurrentPosition(motor1)));
-        telemetry.setDebug("rightEncoder Inches", encoderTicksToInches(rightEncoder.correctRawPosition
-                (bulkData.getMotorCurrentPosition(motor1))));
-        telemetry.setDebug("frontEncoder Raw Input",frontEncoder.correctRawPosition(bulkData.getMotorCurrentPosition(motor2)));
-        telemetry.setDebug("frontEncoder Inches", encoderTicksToInches(frontEncoder.correctRawPosition
-                (bulkData.getMotorCurrentPosition(motor2))));
 
         return Arrays.asList(
 
-                encoderTicksToInches(leftEncoder.correctRawPosition(bulkData.getMotorCurrentPosition(motor0))),
-                encoderTicksToInches(rightEncoder.correctRawPosition(bulkData.getMotorCurrentPosition(motor1))),
-                encoderTicksToInches(frontEncoder.correctRawPosition(bulkData.getMotorCurrentPosition(motor2)))
+                encoderTicksToInches(leftEncoder.getCurrentPosition()),
+                encoderTicksToInches(rightEncoder.getCurrentPosition()),
+                encoderTicksToInches(frontEncoder.getCurrentPosition())
         );
     }
 
@@ -128,12 +118,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
         //  compensation method
 
-        bulkData = expansionHub.getBulkInputData();
 
         return Arrays.asList(
-                encoderTicksToInches(leftEncoder.getTwiceCorrectedVelocity(bulkData.getMotorVelocity(motor0))),
-                encoderTicksToInches(rightEncoder.getTwiceCorrectedVelocity(bulkData.getMotorVelocity(motor1))),
-                encoderTicksToInches(frontEncoder.getTwiceCorrectedVelocity(bulkData.getMotorVelocity(motor2)))
+                encoderTicksToInches(leftEncoder.getCorrectedVelocity()),
+                encoderTicksToInches(rightEncoder.getCorrectedVelocity()),
+                encoderTicksToInches(frontEncoder.getCorrectedVelocity())
         );
     }
 /*

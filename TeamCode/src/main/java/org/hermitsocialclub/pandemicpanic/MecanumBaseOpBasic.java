@@ -36,7 +36,7 @@ public class MecanumBaseOpBasic extends LinearOpMode {
         left_drive_2 = hardwareMap.get(DcMotor.class, "left_drive_2");
         right_drive_2 = hardwareMap.get(DcMotor.class, "right_drive_2");
 
-        left_drive.setDirection(DcMotor.Direction.REVERSE);    // Set to REVERSE if using AndyMark motors
+        left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors
         right_drive.setDirection(DcMotor.Direction.REVERSE);   // Set to FORWARD if using AndyMark motors
         left_drive_2.setDirection(DcMotor.Direction.FORWARD);  // Set to REVERSE if using AndyMark motors
         right_drive_2.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
@@ -50,10 +50,10 @@ public class MecanumBaseOpBasic extends LinearOpMode {
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        left_drive_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_drive_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         left_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

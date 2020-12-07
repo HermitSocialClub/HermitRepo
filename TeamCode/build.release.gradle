@@ -7,8 +7,7 @@ dependencies {
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
 
     implementation 'com.acmerobotics.roadrunner:core:0.5.2'
-    implementation 'com.acmerobotics.dashboard:dashboard:0.3.8'
-
+    implementation ('com.acmerobotics.dashboard:dashboard:0.3.10')
     // implementation (name: 'PsydraFTC-debug', ext: 'aar')
     implementation "org.joml:joml:1.9.25"
     implementation 'org.openftc:easyopencv:1.4.1'

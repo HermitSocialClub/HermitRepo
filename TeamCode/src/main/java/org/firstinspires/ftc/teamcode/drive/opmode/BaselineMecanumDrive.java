@@ -130,9 +130,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
-        arm = hardwareMap.get(DcMotorEx.class,"arm");
-        arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
-        topClaw = hardwareMap.get(Servo.class,"topClaw");
+        //arm = hardwareMap.get(DcMotorEx.class,"arm");
+        //arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
+        //topClaw = hardwareMap.get(Servo.class,"topClaw");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

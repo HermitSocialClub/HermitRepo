@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 /*
@@ -25,14 +26,14 @@ public class DriveConstants {
      * These are motor constants that should be listed online for your motors.
      */
     public static final double TICKS_PER_REV = 537.6;
-    public static final double MAX_RPM = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class).getMaxRPM();
+    public static final double MAX_RPM = 340;
 
     /*
      * Set the first flag appropriately. If using the built-in motor velocity PID, update
      * MOTOR_VELO_PID with the tuned coefficients from DriveVelocityPIDTuner.
      */
-    public static final boolean RUN_USING_ENCODER = true;
-    public static final PIDCoefficients MOTOR_VELO_PID = null;
+    public static final boolean RUN_USING_ENCODER = false;
+    public static final PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(0,0,0);
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -42,10 +43,10 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 2;
+    public static double WHEEL_RADIUS = 1.9685;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14;
-    public static double WHEEL_BASE = 11;
+    public static double TRACK_WIDTH = 17.5;
+    public static double WHEEL_BASE = 13.25;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -66,7 +67,7 @@ public class DriveConstants {
      * forces acceleration-limited profiling).
      */
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            15, 15, 0.0,
+            30.0, 30.0, 0.0,
             Math.toRadians(180.0), Math.toRadians(180.0), 0.0
     );
 

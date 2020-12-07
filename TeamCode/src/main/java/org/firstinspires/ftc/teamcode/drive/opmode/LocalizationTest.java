@@ -31,7 +31,7 @@ public class LocalizationTest extends LinearOpMode {
 
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
         SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
         waitForStart();
 
         while (!isStopRequested()) {
