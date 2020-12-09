@@ -86,6 +86,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.MotionDetection;
 import org.firstinspires.ftc.robotcore.internal.hardware.android.AndroidBoard;
 import org.firstinspires.ftc.robotcore.internal.network.*;
 import org.firstinspires.ftc.robotcore.internal.opmode.ClassManager;
+import org.firstinspires.ftc.robotcore.internal.system.AppAliveNotifier;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.robotcore.internal.system.Assert;
 import org.firstinspires.ftc.robotcore.internal.system.PreferencesHelper;
@@ -574,6 +575,9 @@ public class FtcRobotControllerActivity extends Activity {
           task.finishAndRemoveTask();
         }
       }
+
+      // Allow the user to use the Control Hub operating system's UI, instead of relaunching the app
+      AppAliveNotifier.getInstance().disableAppWatchdogUntilNextAppStart();
 
       //Finally, nuke the VM from orbit
       AppUtil.getInstance().exitApplication();
