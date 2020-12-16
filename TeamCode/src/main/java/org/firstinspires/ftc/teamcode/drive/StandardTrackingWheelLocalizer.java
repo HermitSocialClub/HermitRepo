@@ -51,7 +51,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    private final double X_MULTIPLIER = 69/-56.42137206749;
+    private final double X_MULTIPLIER = 69/56.42137206749;
     private final double Y_MULTIPLIER = 37/28.990683875252298;
 
 
@@ -84,9 +84,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         ultra2 = new AnalogUltrasonic(echo2,trigger2,telemetry,bulkData,expansionHub);
 */
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        //leftEncoder.setDirection(Encoder.Direction.REVERSE);
         //frontEncoder.setDirection(Encoder.Direction.REVERSE);
-        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        //rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
         this.telemetry = telemetry;
 

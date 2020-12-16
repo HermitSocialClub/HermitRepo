@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 /*
@@ -15,15 +14,17 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
  */
 @Config
 @Autonomous(group = "drive")
-public class StraightTest extends LinearOpMode {
-    public static double DISTANCE = 60;
+public class StrafeTest extends LinearOpMode {
+    public static double DISTANCE = 60; // in
+
+    PersistantTelemetry pt = new PersistantTelemetry(super.telemetry);
 
     @Override
     public void runOpMode() throws InterruptedException {
-        PersistantTelemetry pt = new PersistantTelemetry(telemetry);
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
+
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
+                .strafeRight(DISTANCE)
                 .build();
 
         waitForStart();
@@ -31,5 +32,13 @@ public class StraightTest extends LinearOpMode {
         if (isStopRequested()) return;
 
         drive.followTrajectory(trajectory);
+
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("finalX", poseEstimate.getX());
+        telemetry.addData("finalY", poseEstimate.getY());
+        telemetry.addData("finalHeading", poseEstimate.getHeading());
+        telemetry.update();
+
+        while (!isStopRequested() && opModeIsActive()) ;
     }
 }
