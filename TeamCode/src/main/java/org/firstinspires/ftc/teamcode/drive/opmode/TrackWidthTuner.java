@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -12,7 +11,6 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 /*
@@ -27,8 +25,8 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 @Config
 @Autonomous(group = "drive")
 public class TrackWidthTuner extends LinearOpMode {
-    public static double ANGLE = 90; // deg
-    public static int NUM_TRIALS = 4;
+    public static double ANGLE = 180; // deg
+    public static int NUM_TRIALS = 5;
     public static int DELAY = 1000; // ms
 
     @Override
@@ -36,8 +34,9 @@ public class TrackWidthTuner extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
-        SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);        // TODO: if you haven't already, set the localizer to something that doesn't depend on
+
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
+        // TODO: if you haven't already, set the localizer to something that doesn't depend on
         // drive encoders for computing the heading
 
         telemetry.addLine("Press play to begin the track width tuner routine");

@@ -20,7 +20,7 @@ public class TurnTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
         SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
         waitForStart();
 
         if (isStopRequested()) return;
