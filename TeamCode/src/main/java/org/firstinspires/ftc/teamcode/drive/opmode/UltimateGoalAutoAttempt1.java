@@ -36,11 +36,11 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
             switch (dropOffZone) {
                 case ZONEA: {
                 zoneAPath = drive.trajectoryBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(24.00, -60.00), 0)
+                        .splineToConstantHeading(new Vector2d(24.00, -55.00), 0)
                         .splineToConstantHeading(new Vector2d(-4, -30), Math.toRadians(90))
-                        .splineToConstantHeading(new Vector2d(-4, 0), Math.toRadians(90))
+                        .splineToConstantHeading(new Vector2d(-4, 4), Math.toRadians(90))
                         .splineToConstantHeading(new Vector2d(-36, -22), Math.toRadians(200))
-                        .splineToSplineHeading(new Pose2d(12, -44, 90), 0)
+                        .splineToSplineHeading(new Pose2d(24, -44, 90), 0)
                         .build();
                 break;
                 }

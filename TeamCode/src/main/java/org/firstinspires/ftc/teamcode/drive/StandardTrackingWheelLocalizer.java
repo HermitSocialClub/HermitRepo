@@ -51,8 +51,8 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    private final double X_MULTIPLIER = 69/56.42137206749;
-    private final double Y_MULTIPLIER = 37/28.990683875252298;
+    public static double X_MULTIPLIER = 71.25/60.07878281971142;//69/56.42137206749;
+    public static double Y_MULTIPLIER = 1;//37/28.990683875252298;
 
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, PersistantTelemetry telemetry) {
