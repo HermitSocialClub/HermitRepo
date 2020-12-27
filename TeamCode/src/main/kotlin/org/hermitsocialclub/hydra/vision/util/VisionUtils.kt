@@ -25,11 +25,11 @@ object VisionUtils {
         }
     }
 
-    fun loadImageColor(pipeline: VisionPipeline, name: String): Mat {
+    inline fun loadImageColor(pipeline: VisionPipeline, name: String): Mat {
         return loadImage(pipeline, name, IMREAD_COLOR)
     }
 
-    fun loadImageGrayscale(pipeline: VisionPipeline, name: String): Mat {
+    inline fun loadImageGrayscale(pipeline: VisionPipeline, name: String): Mat {
         return loadImage(pipeline, name, IMREAD_GRAYSCALE)
     }
 

@@ -15,7 +15,7 @@ import kotlin.math.max
  *
  * @author Arc'blroth
  */
-class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComponent {
+class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfig()) : IVisionPipelineComponent {
 
     class StaccConfig {
         /**
@@ -51,6 +51,12 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
         var oneStackRatio = 0.5
     }
 
+    /**
+     * The last stack height we detected. Either 0, 1, or 4.
+     */
+    var lastStackHeight = 0
+        private set
+
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
         // Filter image for a certain color
         val hsvImg = zero(image)
@@ -64,14 +70,17 @@ class StaccDetecc(val config: StaccConfig = StaccConfig()) : IVisionPipelineComp
             val fsout = findStacc(image, colorFilter)
             if (fsout != null) {
                 val ratio = fsout.height.toDouble() / fsout.width.toDouble()
+                this.lastStackHeight = if (ratio < config.oneStackRatio) 1 else 4
                 pipeline.telemetry.setData("Stacc ratio", ratio)
-                pipeline.telemetry.setData("Stacc found", "true [${if (ratio < config.oneStackRatio) "1" else "4"}]")
+                pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
                 rectangle(image, fsout, Scalar(0.0, 255.0, 0.0), 3)
             } else {
+                this.lastStackHeight = 0
                 pipeline.telemetry.removeData("Stacc ratio")
                 pipeline.telemetry.setData("Stacc found", "false")
             }
         } catch (ex: NullPointerException) {
+            this.lastStackHeight = 0
             pipeline.telemetry.removeData("Stacc ratio")
             pipeline.telemetry.setData("Stacc found", "false (NPE)")
         }

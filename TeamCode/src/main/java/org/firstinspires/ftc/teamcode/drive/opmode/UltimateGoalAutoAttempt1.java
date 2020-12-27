@@ -7,45 +7,55 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.hydra.vision.StaccDetecc;
+import org.hermitsocialclub.hydra.vision.VisionPipeline;
+import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-import org.opencv.core.Mat;
 
-@Autonomous(name="Ultimate Goal Zone B Attempt 1")
+@Autonomous(name = "Ultimate Goal Zone B Attempt 1")
 public class UltimateGoalAutoAttempt1 extends LinearOpMode {
-    static Trajectory zoneAPath;
-    static Trajectory zoneBPath;
-    static Trajectory zoneCPath;
+
     private enum Zone {
-        ZONEA(zoneAPath), ZONEB(zoneBPath), ZONEC(zoneCPath);
-        Trajectory path;
-        Zone(Trajectory path){
-            this.path = path;
-        }
+        ZONE_A,
+        ZONE_B,
+        ZONE_C
     }
-    Zone dropOffZone;
+
+    private PersistantTelemetry telemetry;
+
+    private VisionPipeline visionPipeline;
+    private StaccDetecc stackDetector;
+    private VisionSemaphore semaphore;
+
+    private Zone dropOffZone;
+    private Trajectory dropOffPath;
+
     @Override
     public void runOpMode() throws InterruptedException {
         ElapsedTime runtime = new ElapsedTime();
-        PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
-        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,telemetry);
-        drive.setPoseEstimate(new Pose2d(-63,-50,Math.toRadians(0)));
-        dropOffZone = openCVStuff();
+        telemetry = new PersistantTelemetry(super.telemetry);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, telemetry);
+        drive.setPoseEstimate(new Pose2d(-63, -50, Math.toRadians(0)));
+
+        stackDetector = new StaccDetecc();
+        semaphore = new VisionSemaphore();
+        visionPipeline = new VisionPipeline(hardwareMap, telemetry, stackDetector, semaphore);
+        dropOffZone = getZoneFromOpenCV();
+
         try {
             switch (dropOffZone) {
-                case ZONEA: {
-                zoneAPath = drive.trajectoryBuilder(drive.getPoseEstimate())
-                        .splineToConstantHeading(new Vector2d(24.00, -55.00), 0)
-                        .splineToConstantHeading(new Vector2d(-4, -30), Math.toRadians(90))
-                        .splineToConstantHeading(new Vector2d(-4, 4), Math.toRadians(90))
-                        .splineToConstantHeading(new Vector2d(-36, -22), Math.toRadians(200))
-                        .splineToSplineHeading(new Pose2d(24, -44, 90), 0)
-                        .build();
-                break;
+                case ZONE_A: {
+                    dropOffPath = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineToConstantHeading(new Vector2d(24.00, -55.00), 0)
+                            .splineToConstantHeading(new Vector2d(-4, -30), Math.toRadians(90))
+                            .splineToConstantHeading(new Vector2d(-4, 4), Math.toRadians(90))
+                            .splineToConstantHeading(new Vector2d(-36, -22), Math.toRadians(200))
+                            .splineToSplineHeading(new Pose2d(24, -44, 90), 0)
+                            .build();
+                    break;
                 }
-                case ZONEB: {
-                    zoneBPath = drive.trajectoryBuilder(drive.getPoseEstimate())
+                case ZONE_B: {
+                    dropOffPath = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .splineTo(new Vector2d(-15.00, -50.00), 0)
                             .splineToLinearHeading(new Pose2d(0, 0, 0), Math.toRadians(90))
                             .splineToLinearHeading(new Pose2d(48, -36, 0.00), Math.toRadians(-90))
@@ -57,8 +67,8 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
                             .build();
                     break;
                 }
-                case ZONEC: {
-                    zoneCPath = drive.trajectoryBuilder(drive.getPoseEstimate())
+                case ZONE_C: {
+                    dropOffPath = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .splineToConstantHeading(new Vector2d(0, -36), Math.toRadians(90))
                             .splineToConstantHeading(new Vector2d(0, 0), Math.toRadians(90))
                             .splineToSplineHeading(new Pose2d(50, -44, Math.toRadians(90)), Math.toRadians(180))
@@ -72,27 +82,32 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        telemetry.setDebug("Localizer",drive.getLocalizer().toString());
-        telemetry.setDebug("Wheel Positions",drive.getWheelPositions());
-        telemetry.setDebug("Pose Estimate","%.2f, %.2f",drive.getPoseEstimate().getX(),drive.getPoseEstimate().getY());
-        telemetry.setData("Acceleration", zoneBPath.acceleration(zoneBPath.duration()).toString());
-        telemetry.setData("Duration", zoneBPath.duration());
-        telemetry.setData("End", zoneBPath.end().toString());
-        telemetry.setData("Start", zoneBPath.start().toString());
-        telemetry.setData("Path", zoneBPath.getPath().toString());
-        telemetry.setData("Velocity", zoneBPath.velocity(zoneBPath.duration()).toString());
+        telemetry.setDebug("Localizer", drive.getLocalizer().toString());
+        telemetry.setDebug("Wheel Positions", drive.getWheelPositions());
+        telemetry.setDebug("Pose Estimate", "%.2f, %.2f", drive.getPoseEstimate().getX(), drive.getPoseEstimate().getY());
+        telemetry.setData("Acceleration", dropOffPath.acceleration(dropOffPath.duration()).toString());
+        telemetry.setData("Duration", dropOffPath.duration());
+        telemetry.setData("End", dropOffPath.end().toString());
+        telemetry.setData("Start", dropOffPath.start().toString());
+        telemetry.setData("Path", dropOffPath.getPath().toString());
+        telemetry.setData("Velocity", dropOffPath.velocity(dropOffPath.duration()).toString());
+
         waitForStart();
         if (isStopRequested()) return;
+
         runtime.reset();
-       /* switch (dropOffZone) {
-            case ZONEA: drive.followTrajectory(zoneAPath); break;
-            case ZONEB: telemetry.setData("Drivin", "weeee");drive.followTrajectory(zoneBPath); break;
-            case ZONEC: drive.followTrajectory(zoneCPath); break;
-        }*/
-       drive.followTrajectory(zoneBPath);
+        drive.followTrajectory(dropOffPath);
     }
-        private Zone openCVStuff(){
-        return Zone.ZONEB;
+
+    private Zone getZoneFromOpenCV() {
+        semaphore.waitForFrame();
+        int lastStackHeight = stackDetector.getLastStackHeight();
+        switch (lastStackHeight) {
+            case 0:  return Zone.ZONE_A;
+            case 1:  return Zone.ZONE_B;
+            case 4:  return Zone.ZONE_C;
+            default: throw new IllegalStateException("Detected " + lastStackHeight + " ring stack - this should be impossible!");
         }
+    }
 
 }
