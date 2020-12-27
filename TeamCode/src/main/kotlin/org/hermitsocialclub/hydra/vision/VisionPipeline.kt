@@ -8,15 +8,23 @@ import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
 import org.openftc.easyopencv.OpenCvPipeline
+import java.io.Closeable
 
 class VisionPipeline(
     val hardwareMap: HardwareMap,
     val telemetry: PersistantTelemetry,
     vararg components: IVisionPipelineComponent
-) : OpenCvPipeline() {
+) : OpenCvPipeline(), Closeable {
 
     val camera: OpenCvCamera
-    val pipeline: List<IVisionPipelineComponent> = listOf(*components)
+    private val pipelineMutex = Object()
+    var pipeline: List<IVisionPipelineComponent> = listOf(*components)
+        set(value) {
+            synchronized(pipelineMutex) {
+                field = value
+            }
+        }
+
     var cannyLowerThreshold: Double = 35.0
     var cannyUpperThreshold: Double = 125.0
 
@@ -30,18 +38,32 @@ class VisionPipeline(
             .createWebcam(hardwareMap.get(WebcamName::class.java, "webCam"), cameraMonitorViewId)
         camera.openCameraDevice()
 
-        pipeline.forEach {
-            it.init(this)
+        synchronized(pipelineMutex) {
+            pipeline.forEach {
+                it.init(this)
+            }
         }
 
         camera.setPipeline(this)
-        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
+        start()
     }
 
     override fun processFrame(input: Mat): Mat {
         var mat = input
         pipeline.forEach { mat = it.apply(mat, this) }
         return mat
+    }
+
+    fun start() {
+        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
+    }
+
+    fun pause() {
+        camera.stopStreaming()
+    }
+
+    override fun close() {
+        camera.closeCameraDevice()
     }
 
 }

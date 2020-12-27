@@ -12,6 +12,9 @@ import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 @Autonomous(name = "Ultimate Goal Zone B Attempt 1")
 public class UltimateGoalAutoAttempt1 extends LinearOpMode {
 
