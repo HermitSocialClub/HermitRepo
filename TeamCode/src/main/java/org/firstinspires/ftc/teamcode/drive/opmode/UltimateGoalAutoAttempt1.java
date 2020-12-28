@@ -21,7 +21,8 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
     private enum Zone {
         ZONE_A,
         ZONE_B,
-        ZONE_C
+        ZONE_C,
+        DEBUG
     }
 
     private PersistantTelemetry telemetry;
@@ -44,6 +45,7 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
         semaphore = new VisionSemaphore();
         visionPipeline = new VisionPipeline(hardwareMap, telemetry, stackDetector, semaphore);
         dropOffZone = getZoneFromOpenCV();
+        dropOffZone = Zone.DEBUG;
 
         try {
             switch (dropOffZone) {
@@ -60,7 +62,7 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
                 case ZONE_B: {
                     dropOffPath = drive.trajectoryBuilder(drive.getPoseEstimate())
                             .splineTo(new Vector2d(-15.00, -50.00), 0)
-                            .splineToLinearHeading(new Pose2d(0, 0, 0), Math.toRadians(90))
+                            .splineToLinearHeading(new Pose2d(0, -8, 0), Math.toRadians(90))
                             .splineToLinearHeading(new Pose2d(48, -36, 0.00), Math.toRadians(-90))
                             .splineToConstantHeading(new Vector2d(-36, -36), Math.toRadians(90))
                             .splineToConstantHeading(new Vector2d(-20, -36), 0)
@@ -75,9 +77,19 @@ public class UltimateGoalAutoAttempt1 extends LinearOpMode {
                             .splineToConstantHeading(new Vector2d(0, -36), Math.toRadians(90))
                             .splineToConstantHeading(new Vector2d(0, 0), Math.toRadians(90))
                             .splineToSplineHeading(new Pose2d(50, -44, Math.toRadians(90)), Math.toRadians(180))
-                            .splineToSplineHeading(new Pose2d(-20, -36, Math.toRadians(180)), Math.toRadians(180))
+                            .splineToSplineHeading(new Pose2d( -20, -36, Math.toRadians(180)), Math.toRadians(180))
                             .splineToSplineHeading(new Pose2d(-40, -26, 0), Math.toRadians(180))
                             .splineToSplineHeading(new Pose2d(50, -60, Math.toRadians(180)), 0)
+                            .build();
+                    break;
+                }
+                case DEBUG:{
+                    dropOffPath = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineToConstantHeading(new Vector2d(-36, -36), Math.toRadians(90))
+                            .splineToConstantHeading(new Vector2d(-28,-36),0)
+                            .splineToConstantHeading(new Vector2d(40,-36),-30)
+                            .splineToConstantHeading(new Vector2d(-36,-28),90)
+                            .splineToConstantHeading(new Vector2d(46,-32),-60)
                             .build();
                     break;
                 }
