@@ -34,6 +34,11 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         var upperYellow = Scalar(46.0, 255.0, 255.0)
 
         /**
+         * Pixel regions with an area smaller than this are discarded by the algorithm.
+         */
+        var minStackArea = 1024
+
+        /**
          * Pixel regions with a ratio greater than this are discarded by the algorithm.
          */
         var maxStackRatio = Int.MAX_VALUE
@@ -100,7 +105,7 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         }
 
         var maxLabel: Int = -1
-        var maxSize: Int = -1
+        var maxSize: Int = config.minStackArea
         val areaBuffer = intArrayOf(1)
         val widthBuffer = intArrayOf(1)
         val heightBuffer = intArrayOf(1)
