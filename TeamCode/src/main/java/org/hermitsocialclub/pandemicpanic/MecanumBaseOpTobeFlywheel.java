@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -28,12 +29,15 @@ public class MecanumBaseOpTobeFlywheel extends LinearOpMode {
     //private DistanceSensor sonicHedgehogSensor;
     private DcMotorEx tobeFlywheel;
 
+    private Servo kicker;
+
 
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         tobeFlywheel = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
+        kicker = hardwareMap.get(Servo.class,"kicker");
         //sonicHedgehogSensor = hardwareMap.get(DistanceSensor.class,"Sonic the Hedgehog");
         //tobePowerRatio = Math.max(sonicHedgehogSensor.getDistance(DistanceUnit.CM) * tobeDistanceRatio,1);
 
@@ -47,16 +51,21 @@ public class MecanumBaseOpTobeFlywheel extends LinearOpMode {
 
 
             if (gamepad1.dpad_up){
-                tobeFlywheel.setPower(tobeMaxEncoder);
+                tobeFlywheel.setPower(-tobeMaxEncoder);
             }else if (gamepad1.dpad_down){
-                tobeFlywheel.setPower(tobeSpeedOneEncoder);
+                tobeFlywheel.setPower(-tobeSpeedOneEncoder);
             }else if (gamepad1.dpad_left){
-                tobeFlywheel.setPower(tobeSpeedTwoEncoder);
+                tobeFlywheel.setPower(-tobeSpeedTwoEncoder);
             }else if (gamepad1.dpad_right){
-                tobeFlywheel.setPower(tobeSpeedThreeEncoder);
+                tobeFlywheel.setPower(-tobeSpeedThreeEncoder);
             }
             if (gamepad2.x){
                 //tobeFlywheel.setPower(-tobePowerRatio);
+            }
+            if(gamepad1.right_bumper){
+                kicker.setPosition(1);
+            }else if(gamepad1.left_bumper) {
+                kicker.setPosition(0);
             }
             //pt.setData("raw ultrasonic", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
             //pt.setData("cm", "%.2f cm", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
