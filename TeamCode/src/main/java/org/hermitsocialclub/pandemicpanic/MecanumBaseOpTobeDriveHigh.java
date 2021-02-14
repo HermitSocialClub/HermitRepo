@@ -4,21 +4,25 @@ import com.qualcomm.hardware.motors.GoBILDA5201Series;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TobeFly", group = "Hermit")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TobeDriveHigh", group = "Hermit")
 
-public class MecanumBaseOpTobeFlywheel extends LinearOpMode {
+public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
 
     private PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+    MecanumConfiguration robot = new MecanumConfiguration();
     ElapsedTime runtime = new ElapsedTime();
+    private boolean lastAMash = false;
+    private boolean lastBMash = false;
+    public boolean precisionMode = false;
+    public double precisionModifier = 1.25;
+    public double invertedControls = 1;
+    private double initialLeftTicks, initialRightTicks, initialTopTicks;
     private double ticksPerRevolution = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getTicksPerRev();
     private double tobeMaxEncoder = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getAchieveableMaxTicksPerSecond();;
     private double tobeSpeedThreeEncoder = tobeMaxEncoder * .5;
@@ -47,12 +51,49 @@ public class MecanumBaseOpTobeFlywheel extends LinearOpMode {
 
 
         waitForStart();
+        initialLeftTicks = robot.leftEncoder.getCurrentPosition();
+        initialRightTicks = robot.rightEncoder.getCurrentPosition();
+        initialTopTicks = robot.frontEncoder.getCurrentPosition();
         telemetry.speak("Hola. Cómo estás?", "spa", "mx");
         telemetry.update();
 
         while (opModeIsActive()) {
             //tobePowerRatio = Math.max(sonicHedgehogSensor.getDistance(DistanceUnit.CM) * tobeDistanceRatio,1);
 
+            if (!lastAMash && gamepad1.a) {
+
+                if (precisionMode) {
+                    precisionMode = false;
+                    precisionModifier = 1.2;
+                    pt.setData("Precision Mode", "DEACTIVATED!");
+
+                } else {
+                    precisionMode = true;
+                    precisionModifier = 0.5;
+                    pt.setData("Precision Mode", "ACTIVATED!");
+
+                }
+                runtime.reset();
+
+            }
+            lastAMash = gamepad1.a;
+
+            if (!lastBMash && gamepad1.b) {
+                if (invertedControls == 1) {
+                    invertedControls = -1;
+                    pt.setData("Inverse Controls", "ACTIVATED!");
+                } else if (invertedControls == -1) {
+                    invertedControls = 1;
+                    pt.setData("Inverse Controls", "DEACTIVATED");
+                }
+            }
+            lastBMash = gamepad1.b;
+
+            double r = MoveUtils.joystickXYToRadius(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.left_stick_x, gamepad1.left_stick_y);
+
+            double[] powers = MoveUtils.theAlgorithm(r, robotAngle, -gamepad1.right_stick_x, precisionModifier * invertedControls);
+            MoveUtils.setEachMotor(new DcMotor[]{robot.left_drive, robot.right_drive, robot.left_drive_2, robot.right_drive_2}, powers);
 
             if (gamepad1.dpad_up){
                 tobeFlywheel.setPower(1);
