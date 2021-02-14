@@ -46,6 +46,7 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
 
         tobeFlywheel = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
         kicker = hardwareMap.get(Servo.class,"kicker");
+        robot.init(hardwareMap);
         //sonicHedgehogSensor = hardwareMap.get(DistanceSensor.class,"Sonic the Hedgehog");
         //tobePowerRatio = Math.max(sonicHedgehogSensor.getDistance(DistanceUnit.CM) * tobeDistanceRatio,1);
 
