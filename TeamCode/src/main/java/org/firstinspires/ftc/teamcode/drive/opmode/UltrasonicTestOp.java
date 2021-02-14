@@ -85,16 +85,17 @@ public class UltrasonicTestOp extends LinearOpMode {
             telemetry.setDebug("echo",echo.getVoltage());
             triggerTime.reset();
             while(triggerTime.nanoseconds() / 1000 <= TRIGGER_PULSE_PERIOD+5 && opModeIsActive()){ }
-            trigger.setState(false);
+
             echoTime.reset();
             while (echo.getVoltage()<RESTING_VOLTAGE && opModeIsActive()){
-                TelemetryPacket pack = new TelemetryPacket();
-                telemetry.setDebug("in loop",echoTime);
-                pack.put("in loop",echoTime);
-                telemetry.setDebug("echo",echo.getVoltage());
-                pack.put("echo",echo.getVoltage());
-                dash.sendTelemetryPacket(pack);
-                telemetry.setDebug("trigger",trigger.getState());
+                trigger.setState(false);
+                //TelemetryPacket pack = new TelemetryPacket();
+                //telemetry.setDebug("in loop",echoTime);
+                //pack.put("in loop",echoTime);
+                //telemetry.setDebug("echo",echo.getVoltage());
+                //pack.put("echo",echo.getVoltage());
+                //dash.sendTelemetryPacket(pack);
+                //telemetry.setDebug("trigger",trigger.getState());
             }
         /*for (int i = 0; i < distanceArray.length; i++) {
             echo.getState();
