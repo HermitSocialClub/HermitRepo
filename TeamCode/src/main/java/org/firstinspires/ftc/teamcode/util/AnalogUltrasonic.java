@@ -25,9 +25,9 @@ public class AnalogUltrasonic {
 
     ExpansionHubEx rev;
 
-    private ElapsedTime time = new ElapsedTime();
-    private ElapsedTime echoTime = new ElapsedTime();
-    private ElapsedTime triggerTime = new ElapsedTime();
+    private final ElapsedTime time = new ElapsedTime();
+    private final ElapsedTime echoTime = new ElapsedTime();
+    private final ElapsedTime triggerTime = new ElapsedTime();
 
     PersistantTelemetry telemetry;
     double distance;
@@ -51,16 +51,26 @@ public class AnalogUltrasonic {
     public void pulse(){
         pulseFinished = false;
         triggerTime.reset();
+
+        // Set high and wait 10 us
         trigger.setAnalogOutputVoltage(640);
-        while(triggerTime.nanoseconds() * 1000 <= TRIGGER_PULSE_PERIOD){}
+        while (triggerTime.nanoseconds() * 10000 <= TRIGGER_PULSE_PERIOD) {}
         telemetry.setData("trigger time %f microseconds",triggerTime.nanoseconds()*1000);
+
+        // Set low and wait for data
         trigger.setAnalogOutputVoltage(0);
-        echoTime.reset();
         bulk = rev.getBulkInputData();
-        while (bulk.getAnalogInputValue(echo) > RESTING_VOLTAGE){bulk = rev.getBulkInputData();
-        telemetry.setData("Bulk Analog Input",bulk.getAnalogInputValue(echo));
-        telemetry.setData("echo time %f microseconds",echoTime.nanoseconds()*1000);}
-        distance = (echoTime.nanoseconds()*1000)/MICROSECONDS_TO_INCHES;
+        while (bulk.getAnalogInputValue(echo) == RESTING_VOLTAGE) {
+            bulk = rev.getBulkInputData();
+        }
+
+        echoTime.reset();
+        while (bulk.getAnalogInputValue(echo) > RESTING_VOLTAGE) {
+            bulk = rev.getBulkInputData();
+            // telemetry.setData("Bulk Analog Input",bulk.getAnalogInputValue(echo));
+            // telemetry.setData("echo time %f microseconds",echoTime.nanoseconds()*1000);
+        }
+        distance = (echoTime.nanoseconds() * 1000) / MICROSECONDS_TO_INCHES;
         pulseFinished = true;
     }
 
