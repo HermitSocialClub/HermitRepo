@@ -45,14 +45,14 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double LATERAL_DISTANCE = 17.3; // in; distance between the left and right wheels
-    public static double FORWARD_OFFSET = 8; // in; offset of the lateral wheel
+    public static double FORWARD_OFFSET = 0; // in; offset of the lateral wheel
 
     private PersistantTelemetry telemetry;
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
     public static double X_MULTIPLIER = 71.25/60.07878281971142;//69/56.42137206749;
-    public static double Y_MULTIPLIER = (99.25/100)*(98.625/100)*77/59.94436059903564;//37/28.990683875252298;
+    public static double Y_MULTIPLIER = (99.25/100)*(98.625/100)*77/59.94436059903564 *(42.125/88.68691433432166)*(53.75/26.662470262090235);//37/28.990683875252298;
 
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, PersistantTelemetry telemetry) {
@@ -62,9 +62,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
                 new Pose2d(FORWARD_OFFSET, 0, Math.toRadians(90)) // front
         ));
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_drive"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_drive"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_drive_2"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "right_drive_2"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_drive_2"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "left_drive"));
 /*
         expansionHub = hardwareMap.get(ExpansionHubEx.class, "Control Hub");
 
@@ -84,9 +84,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         ultra2 = new AnalogUltrasonic(echo2,trigger2,telemetry,bulkData,expansionHub);
 */
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        //leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
-        //rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
         this.telemetry = telemetry;
 

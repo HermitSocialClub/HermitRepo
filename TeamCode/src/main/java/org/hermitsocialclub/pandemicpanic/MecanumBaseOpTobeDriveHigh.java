@@ -2,12 +2,14 @@ package org.hermitsocialclub.pandemicpanic;
 
 import com.qualcomm.hardware.motors.GoBILDA5201Series;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TobeDriveHigh", group = "Hermit")
@@ -15,14 +17,14 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
 
     private PersistantTelemetry pt = new PersistantTelemetry(telemetry);
-    MecanumConfiguration robot = new MecanumConfiguration();
+    UltimateGoalConfiguration robot = new UltimateGoalConfiguration();
     ElapsedTime runtime = new ElapsedTime();
     private boolean lastAMash = false;
     private boolean lastBMash = false;
     public boolean precisionMode = false;
     public double precisionModifier = 1.25;
     public double invertedControls = 1;
-    private double initialLeftTicks, initialRightTicks, initialTopTicks;
+    //private double initialLeftTicks, initialRightTicks, initialTopTicks;
     private double ticksPerRevolution = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getTicksPerRev();
     private double tobeMaxEncoder = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getAchieveableMaxTicksPerSecond();;
     private double tobeSpeedThreeEncoder = tobeMaxEncoder * .5;
@@ -36,8 +38,9 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
 
     //private DistanceSensor sonicHedgehogSensor;
     private DcMotorEx tobeFlywheel;
+    private DcMotorEx takeruFlyOut;
 
-    private Servo kicker;
+    private CRServo kicker;
 
 
 
@@ -45,7 +48,8 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         tobeFlywheel = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
-        kicker = hardwareMap.get(Servo.class,"kicker");
+        kicker = hardwareMap.get(CRServo.class,"kicker");
+        takeruFlyOut = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
         robot.init(hardwareMap);
         //sonicHedgehogSensor = hardwareMap.get(DistanceSensor.class,"Sonic the Hedgehog");
         //tobePowerRatio = Math.max(sonicHedgehogSensor.getDistance(DistanceUnit.CM) * tobeDistanceRatio,1);
@@ -95,27 +99,35 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
 
             double[] powers = MoveUtils.theAlgorithm(r, robotAngle, -gamepad1.right_stick_x, precisionModifier * invertedControls);
             MoveUtils.setEachMotor(new DcMotor[]{robot.left_drive, robot.right_drive, robot.left_drive_2, robot.right_drive_2}, powers);
-
-            if (gamepad1.dpad_up){
+            if(gamepad1.left_bumper){
+                tobeFlywheel.setPower(0);
+            }
+            else if (gamepad1.x) {
+                takeruFlyOut.setPower(0);
+            }
+            else if (gamepad1.dpad_up){
                 tobeFlywheel.setPower(1);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeMaxEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_down){
-                tobeFlywheel.setPower(.25);
+                takeruFlyOut.setPower(-0.9);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedOneEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_left){
-                tobeFlywheel.setPower(.62);
+                takeruFlyOut.setPower(-1);
+               // tobeFlywheel.setPower(.62);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedTwoEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_right){
                 tobeFlywheel.setPower(.75);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedThreeEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }
-            if (gamepad2.x){
+            //if (gamepad2.x){
                 //tobeFlywheel.setPower(-tobePowerRatio);
-            }
-            if(gamepad1.right_bumper){
-                kicker.setPosition(1);
-            }else if(gamepad1.left_bumper) {
-                kicker.setPosition(0);
+           // }
+            if(gamepad1.right_trigger > 0.5){
+                kicker.setPower(1);
+            }else if(gamepad1.left_trigger > 0.5) {
+                kicker.setPower(-1);
+            }else{
+                kicker.setPower(0);
             }
             //pt.setData("raw ultrasonic", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
             //pt.setData("cm", "%.2f cm", sonicHedgehogSensor.getDistance(DistanceUnit.CM));

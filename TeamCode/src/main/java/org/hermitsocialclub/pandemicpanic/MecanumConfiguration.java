@@ -115,10 +115,10 @@ public class MecanumConfiguration {
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        left_drive_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_drive_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         left_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
