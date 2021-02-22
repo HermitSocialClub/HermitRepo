@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 
+import android.app.ApplicationErrorReport;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -24,6 +26,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -56,8 +59,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class BaselineMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8, 0, 0.3);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(15, 0, 0.3);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.3, 0, 0.4);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(17, 0, 0.5);
 
     public static double LATERAL_MULTIPLIER = 60/45.75;
 
@@ -87,9 +90,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private LinkedList<Pose2d> poseHistory;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront, outtake, intake, wobbleArm;
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
+
+    public CRServo wobbleGrab, kicker;
 
     private VoltageSensor batteryVoltageSensor;
 
@@ -141,6 +146,14 @@ public class BaselineMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
 
+        wobbleArm = hardwareMap.get(DcMotorEx.class,"wobbleArm");
+        wobbleGrab = hardwareMap.get(CRServo.class,"wobbleGrab");
+
+        intake = hardwareMap.get(DcMotorEx.class,"tobeFlywheel");
+
+        outtake = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
+        kicker = hardwareMap.get(CRServo.class,"kicker");
+
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
@@ -152,8 +165,12 @@ public class BaselineMecanumDrive extends MecanumDrive {
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
+        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
@@ -162,6 +179,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
         // TODO: reverse any motors using DcMotor.setDirection()
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));

@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -33,12 +32,13 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
     private double tobeDistanceRatio = 0.0625; //based off observed distance of ring at max rpm
     private double tobePowerRatio;
 
+    private final double WOBBLE_GRAB_INCREMENT = .02;
 
 
 
     //private DistanceSensor sonicHedgehogSensor;
     private DcMotorEx tobeFlywheel;
-    private DcMotorEx takeruFlyOut;
+    private DcMotorEx outtake;
 
     private CRServo kicker;
 
@@ -49,7 +49,7 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
 
         tobeFlywheel = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
         kicker = hardwareMap.get(CRServo.class,"kicker");
-        takeruFlyOut = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
+        outtake = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
         robot.init(hardwareMap);
         //sonicHedgehogSensor = hardwareMap.get(DistanceSensor.class,"Sonic the Hedgehog");
         //tobePowerRatio = Math.max(sonicHedgehogSensor.getDistance(DistanceUnit.CM) * tobeDistanceRatio,1);
@@ -103,16 +103,16 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
                 tobeFlywheel.setPower(0);
             }
             else if (gamepad1.x) {
-                takeruFlyOut.setPower(0);
+                outtake.setPower(0);
             }
             else if (gamepad1.dpad_up){
                 tobeFlywheel.setPower(1);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeMaxEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_down){
-                takeruFlyOut.setPower(-0.9);
+                outtake.setPower(-0.9);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedOneEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_left){
-                takeruFlyOut.setPower(-1);
+                outtake.setPower(-1);
                // tobeFlywheel.setPower(.62);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedTwoEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_right){
@@ -129,6 +129,18 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
             }else{
                 kicker.setPower(0);
             }
+
+            if(gamepad2.right_trigger > .05){
+                robot.wobbleArm.setPower(gamepad2.right_trigger);
+            }else if(gamepad2.left_trigger > .05){
+                robot.wobbleArm.setPower( -gamepad2.left_trigger);
+            } else robot.wobbleArm.setPower(0);
+            if(gamepad2.right_bumper){
+                robot.wobbleGrab.setPower(1);
+            } else if(gamepad2.left_bumper){
+                robot.wobbleGrab.setPower(-1);
+            }else robot.wobbleGrab.setPower(0);
+
             //pt.setData("raw ultrasonic", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
             //pt.setData("cm", "%.2f cm", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
         }

@@ -19,7 +19,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
-@Autonomous(name = "Ultimate Goal Zone B Attempt 1")
+@Autonomous(name = "Ultimate Goal Zone B Attempt 2")
 public class UltimateGoalAutoAttempt2 extends LinearOpMode {
 
     private enum Zone {

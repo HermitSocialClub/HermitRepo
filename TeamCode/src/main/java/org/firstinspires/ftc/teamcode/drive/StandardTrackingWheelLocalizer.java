@@ -44,14 +44,14 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static MotorConfigurationType neverRest20GearMotor = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = 17.3; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = -15.3857258; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = 0; // in; offset of the lateral wheel
 
     private PersistantTelemetry telemetry;
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    public static double X_MULTIPLIER = 71.25/60.07878281971142;//69/56.42137206749;
+    public static double X_MULTIPLIER = 71.25/60.07878281971142 * (61.25/59.866903109526284);//69/56.42137206749;
     public static double Y_MULTIPLIER = (99.25/100)*(98.625/100)*77/59.94436059903564 *(42.125/88.68691433432166)*(53.75/26.662470262090235);//37/28.990683875252298;
 
 
@@ -85,7 +85,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 */
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         leftEncoder.setDirection(Encoder.Direction.REVERSE);
-        frontEncoder.setDirection(Encoder.Direction.REVERSE);
+        //frontEncoder.setDirection(Encoder.Direction.REVERSE);
         rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
         this.telemetry = telemetry;

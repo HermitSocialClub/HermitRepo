@@ -42,9 +42,11 @@ public class UltimateGoalConfiguration {
     public DcMotor left_drive_2 = null;
     public DcMotor right_drive = null;
     public DcMotor right_drive_2 = null;
+    public DcMotorEx wobbleArm;
     public DcMotor[] drive_Motors;
     public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
     public BNO055IMU imu = null;
+    public CRServo wobbleGrab;
 
     public static final double MID_SERVO = 1;
     public static final double ARM_UP_POWER = 0.45;
@@ -68,6 +70,10 @@ public class UltimateGoalConfiguration {
         right_drive = hwMap.get(DcMotor.class, "right_drive");
         left_drive_2 = hwMap.get(DcMotor.class, "left_drive_2");
         right_drive_2 = hwMap.get(DcMotor.class, "right_drive_2");
+
+        wobbleArm = hwMap.get(DcMotorEx.class,"wobbleArm");
+        wobbleGrab = hwMap.get(CRServo.class,"wobbleGrab");
+
         imu = hwMap.get(BNO055IMU.class, "imu");
         leftEncoder = hwMap.get(DcMotorEx.class, "right_drive_2");
         rightEncoder = hwMap.get(DcMotorEx.class, "left_drive_2");
@@ -79,12 +85,16 @@ public class UltimateGoalConfiguration {
         left_drive_2.setDirection(DcMotor.Direction.FORWARD);  // Set to REVERSE if using AndyMark motors
         right_drive_2.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
 
+
         // Set all motors to zero power
         left_drive.setPower(0);
         right_drive.setPower(0);
         left_drive_2.setPower(0);
         right_drive_2.setPower(0);
         drive_Motors = new DcMotor[]{left_drive, right_drive, left_drive_2, right_drive_2};
+
+        wobbleArm.setPower(0);
+        wobbleGrab.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -96,6 +106,9 @@ public class UltimateGoalConfiguration {
         right_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Define and initialize Rev Color sensor
 
