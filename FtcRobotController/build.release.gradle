@@ -8,6 +8,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:6.1.1'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation ('com.acmerobotics.dashboard:dashboard:0.3.10')
-    // implementation (name: 'PsydraFTC-debug', ext: 'aar')
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
+    //noinspection GradleDynamicVersion
+    implementation 'org.hermitsocialclub.psydra:psydraFTC:0.1.0+build.1'
 }
