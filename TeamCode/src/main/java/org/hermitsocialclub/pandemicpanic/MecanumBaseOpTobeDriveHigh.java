@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
+import java.lang.reflect.Method;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TobeDriveHigh", group = "Hermit")
 
 public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
@@ -37,7 +39,7 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
 
 
     //private DistanceSensor sonicHedgehogSensor;
-    private DcMotorEx tobeFlywheel;
+    private DcMotorEx intake;
     private DcMotorEx outtake;
 
     private CRServo kicker;
@@ -47,7 +49,7 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        tobeFlywheel = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
+        intake = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
         kicker = hardwareMap.get(CRServo.class,"kicker");
         outtake = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
         robot.init(hardwareMap);
@@ -100,25 +102,40 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
             double[] powers = MoveUtils.theAlgorithm(r, robotAngle, -gamepad1.right_stick_x, precisionModifier * invertedControls);
             MoveUtils.setEachMotor(new DcMotor[]{robot.left_drive, robot.right_drive, robot.left_drive_2, robot.right_drive_2}, powers);
             if(gamepad1.left_bumper){
-                tobeFlywheel.setPower(0);
+                intake.setPower(0);
             }
-            else if (gamepad1.x) {
+            else if (gamepad1.right_bumper) {
                 outtake.setPower(0);
             }
-            else if (gamepad1.dpad_up){
-                tobeFlywheel.setPower(1);
+            else if (gamepad1.dpad_down){
+                intake.setPower(0.8);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeMaxEncoder / ticksPerRevolution, AngleUnit.RADIANS);
-            }else if (gamepad1.dpad_down){
+            }else if (gamepad1.dpad_up){
                 outtake.setPower(-0.9);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedOneEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_left){
-                outtake.setPower(-1);
+                robot.wobbleArm.setPower( -gamepad2.left_trigger);
+             //   outtake.setPower(-0.9);
                // tobeFlywheel.setPower(.62);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedTwoEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }else if (gamepad1.dpad_right){
-                tobeFlywheel.setPower(.75);
+                robot.wobbleArm.setPower(gamepad2.right_trigger);
+            //    intake.setPower(.75);
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedThreeEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }
+
+            if (gamepad1.x){
+                robot.wobbleGrab.setPower(1);
+            } else if (gamepad1.y){
+                robot.wobbleGrab.setPower(-1);
+            } else robot.wobbleGrab.setPower(0);
+
+            if (gamepad1.left_trigger > 0.5 && gamepad1.right_trigger > 0.5){
+                kickerTime(500, 1);
+                kicker.setPower(0);
+                kickerTime(500, -1);
+            }
+
             //if (gamepad2.x){
                 //tobeFlywheel.setPower(-tobePowerRatio);
            // }
@@ -146,7 +163,13 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
         }
 
     }
-
+public void kickerTime (long time, double power){
+    long beginning = System.currentTimeMillis();
+    long end = beginning + time;
+    while ( end > System.currentTimeMillis()){
+        kicker.setPower(power);
+    }
+    }
 
 
 }
