@@ -20,6 +20,7 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
     private PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     UltimateGoalConfiguration robot = new UltimateGoalConfiguration();
     ElapsedTime runtime = new ElapsedTime();
+    ElapsedTime kickTime = new ElapsedTime();
     private boolean lastAMash = false;
     private boolean lastBMash = false;
     public boolean precisionMode = false;
@@ -34,9 +35,15 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
     private double tobeDistanceRatio = 0.0625; //based off observed distance of ring at max rpm
     private double tobePowerRatio;
 
+    private boolean kickFinished = true;
+    private long kickInterval = 200;
+    private int kickDirection = 1;
+    private int kicks = 0;
+
     private final double WOBBLE_GRAB_INCREMENT = .02;
 
-
+private boolean wobbleGrabLock = false;
+private boolean lastXMash = false;
 
     //private DistanceSensor sonicHedgehogSensor;
     private DcMotorEx intake;
@@ -95,11 +102,20 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
                 }
             }
             lastBMash = gamepad1.b;
+            if (!lastXMash && gamepad1.x){
+                if(!wobbleGrabLock){
+                    wobbleGrabLock = true;
+                    pt.setData("Wobble Grabber","LOCKED");
+                }else {
+                    wobbleGrabLock = false;
+                    pt.setData("Wobble Grabber","UNLOCKED");
+                }
+            }
 
-            double r = MoveUtils.joystickXYToRadius(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double r = MoveUtils.joystickXYToRadius(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            double robotAngle = MoveUtils.joystickXYToAngle(-gamepad1.left_stick_x, gamepad1.left_stick_y);
 
-            double[] powers = MoveUtils.theAlgorithm(r, robotAngle, -gamepad1.right_stick_x, precisionModifier * invertedControls);
+            double[] powers = MoveUtils.theAlgorithm(r, robotAngle, gamepad1.right_stick_x, precisionModifier * invertedControls);
             MoveUtils.setEachMotor(new DcMotor[]{robot.left_drive, robot.right_drive, robot.left_drive_2, robot.right_drive_2}, powers);
             if(gamepad1.left_bumper){
                 intake.setPower(0);
@@ -124,16 +140,26 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedThreeEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }
 
-            if (gamepad1.x){
-                robot.wobbleGrab.setPower(1);
-            } else if (gamepad1.y){
-                robot.wobbleGrab.setPower(-1);
-            } else robot.wobbleGrab.setPower(0);
-
             if (gamepad1.left_trigger > 0.5 && gamepad1.right_trigger > 0.5){
-                kickerTime(500, 1);
-                kicker.setPower(0);
-                kickerTime(500, -1);
+                kickTime.reset();
+                kickFinished = false;
+                kicker.setPower(1);
+            }
+
+            if(!kickFinished){
+                if(kicks >= 3 && kickTime.milliseconds() >= kickInterval){
+                    kicker.setPower(0);
+                    kickFinished = true;
+                }
+                if(kickTime.milliseconds() >= kickInterval&& !(gamepad1.left_trigger > .3)){
+                    kickDirection *= -1;
+                    kicker.setPower(kickDirection);
+                    kickTime.reset();
+                }
+                if(kickDirection == -1){
+                    kicks++;
+                }
+
             }
 
             //if (gamepad2.x){
@@ -156,7 +182,7 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
                 robot.wobbleGrab.setPower(1);
             } else if(gamepad2.left_bumper){
                 robot.wobbleGrab.setPower(-1);
-            }else robot.wobbleGrab.setPower(0);
+            }else if(!wobbleGrabLock) robot.wobbleGrab.setPower(0);
 
             //pt.setData("raw ultrasonic", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
             //pt.setData("cm", "%.2f cm", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
