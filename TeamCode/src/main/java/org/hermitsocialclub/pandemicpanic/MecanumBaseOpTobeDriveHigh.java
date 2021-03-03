@@ -1,6 +1,7 @@
 package org.hermitsocialclub.pandemicpanic;
 
 import com.qualcomm.hardware.motors.GoBILDA5201Series;
+import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -40,6 +41,9 @@ public class MecanumBaseOpTobeDriveHigh extends LinearOpMode {
     private int kickDirection = 1;
     private int kicks = 0;
 
+    MotorConfigurationType goBildaOuttake =  MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
+    private double outTake75Speed;
+
     private final double WOBBLE_GRAB_INCREMENT = .02;
 
 private boolean wobbleGrabLock = false;
@@ -60,6 +64,10 @@ private boolean lastXMash = false;
         kicker = hardwareMap.get(CRServo.class,"kicker");
         outtake = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
         robot.init(hardwareMap);
+
+        outTake75Speed = ((-.9 * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction())/60);
+
+
         //sonicHedgehogSensor = hardwareMap.get(DistanceSensor.class,"Sonic the Hedgehog");
         //tobePowerRatio = Math.max(sonicHedgehogSensor.getDistance(DistanceUnit.CM) * tobeDistanceRatio,1);
 

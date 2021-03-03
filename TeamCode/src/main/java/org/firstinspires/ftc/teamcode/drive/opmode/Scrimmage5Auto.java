@@ -19,10 +19,13 @@ public class Scrimmage5Auto extends LinearOpMode {
 
 
     MotorConfigurationType goBildaOuttake =  MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
+    double outTake75Speed;
 
     @Override
     public void runOpMode() throws InterruptedException {
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,telemetry);
+
+        outTake75Speed = ((.75 * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction())/60);
 
         //drive.wobbleGrab.setPower(1);
 
@@ -34,39 +37,49 @@ public class Scrimmage5Auto extends LinearOpMode {
         Trajectory strafeRight = drive.trajectoryBuilder(drive.getPoseEstimate())
                 .strafeRight(10)
                 .build();
+        Trajectory noRingsSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
+                .splineToConstantHeading(new Vector2d(0,-36),-60)
+                .build();
+
+        telemetry.setDebug("Achievable RPM Fraction",goBildaOuttake.getAchieveableMaxRPMFraction());
+        telemetry.setDebug("Achievable Ticks Per Second",goBildaOuttake.getAchieveableMaxTicksPerSecond());
+        telemetry.setDebug("hub velocity params",goBildaOuttake.getHubVelocityParams());
+        telemetry.setDebug("velocity params",goBildaOuttake.hasExpansionHubVelocityParams());
+
 
         waitForStart();
 
-
-        drive.followTrajectory(noRings);
+/*
+        drive.followTrajectory(noRingsSpline);
 
         while(drive.isBusy()){
             telemetry.setDebug("Pose",drive.getPoseEstimate().toString());
         }
-
+*/
         /*drive.followTrajectory(strafeRight);
 
         while(drive.isBusy()){
             telemetry.setDebug("Pose",drive.getPoseEstimate().toString());
         }*/
 
-        drive.outtake.setVelocity(.75 * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction(), AngleUnit.RADIANS);
+        drive.outtake.setVelocity(outTake75Speed, AngleUnit.RADIANS);
 
-        while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-(.75 * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction())) > Math.pow(10,-4)){
-            telemetry.setDebug("Outtake Velocity",drive.outtake.getVelocity());
+        while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed) > Math.pow(10,-4)){
+            telemetry.setDebug("Outtake Velocity",drive.outtake.getVelocity(AngleUnit.RADIANS));
+
         }
 
         int ringsFired = 0;
 
-        while (ringsFired <= 4) {
+        while (opModeIsActive() && ringsFired <= 4) {
             telemetry.setDebug("ringsFired",ringsFired);
             drive.kicker.setPower(1);
             sleep(200);
             drive.kicker.setPower(-1);
             sleep(200);
             drive.kicker.setPower(0);
-            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-(.75 * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction())) > Math.pow(10,-4)){
-                telemetry.setDebug("Outtake Velocity",drive.outtake.getVelocity());
+            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed) > Math.pow(10,-3)){
+                telemetry.setDebug("Outtake Velocity",drive.outtake.getVelocity(AngleUnit.RADIANS));
             }
             ringsFired++;
         }

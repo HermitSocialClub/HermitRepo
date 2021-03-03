@@ -21,7 +21,7 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         /**
          * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
          */
-        var normUpper = 1000.0
+        var normUpper = 550.0
 
         /**
          * "Lower" HSV color to look for.
@@ -36,7 +36,7 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         /**
          * Pixel regions with an area smaller than this are discarded by the algorithm.
          */
-        var minStackArea = 1024
+        var minStackArea = 512
 
         /**
          * Pixel regions with a ratio greater than this are discarded by the algorithm.
