@@ -25,7 +25,7 @@ public class Scrimmage5Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,telemetry);
 
-        outTake75Speed = ((.75 * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction())/60);
+        outTake75Speed = ((.585 * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction())/60);
 
         //drive.wobbleGrab.setPower(1);
 
@@ -45,17 +45,18 @@ public class Scrimmage5Auto extends LinearOpMode {
         telemetry.setDebug("Achievable Ticks Per Second",goBildaOuttake.getAchieveableMaxTicksPerSecond());
         telemetry.setDebug("hub velocity params",goBildaOuttake.getHubVelocityParams());
         telemetry.setDebug("velocity params",goBildaOuttake.hasExpansionHubVelocityParams());
+        telemetry.setDebug("outtakeVelocity",outTake75Speed);
 
 
         waitForStart();
 
-/*
-        drive.followTrajectory(noRingsSpline);
+
+        drive.followTrajectory(noRings);
 
         while(drive.isBusy()){
             telemetry.setDebug("Pose",drive.getPoseEstimate().toString());
         }
-*/
+
         /*drive.followTrajectory(strafeRight);
 
         while(drive.isBusy()){
@@ -64,8 +65,10 @@ public class Scrimmage5Auto extends LinearOpMode {
 
         drive.outtake.setVelocity(outTake75Speed, AngleUnit.RADIANS);
 
-        while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed) > Math.pow(10,-4)){
+        while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed) > Math.pow(10,-1)){
             telemetry.setDebug("Outtake Velocity",drive.outtake.getVelocity(AngleUnit.RADIANS));
+            telemetry.setDebug("Ticks Outtake Velocity",drive.outtake.getVelocity(AngleUnit.DEGREES));
+            telemetry.setDebug("Ticks Outtake Position",drive.outtake.getCurrentPosition());
 
         }
 
@@ -78,7 +81,7 @@ public class Scrimmage5Auto extends LinearOpMode {
             drive.kicker.setPower(-1);
             sleep(200);
             drive.kicker.setPower(0);
-            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed) > Math.pow(10,-3)){
+            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed) > Math.pow(10,-1)){
                 telemetry.setDebug("Outtake Velocity",drive.outtake.getVelocity(AngleUnit.RADIANS));
             }
             ringsFired++;
