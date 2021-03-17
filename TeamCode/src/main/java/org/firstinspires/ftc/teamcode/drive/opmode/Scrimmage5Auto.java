@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,7 +25,7 @@ public class Scrimmage5Auto extends LinearOpMode {
 
     MotorConfigurationType goBildaOuttake =  MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
     double outTake75Speed;
-    public static double SPEED_PERCENT = .605;
+    public static double SPEED_PERCENT = .625;
     public int ringStack = 0;
     private StaccDetecc stackDetector;
     private VisionSemaphore semaphore;
@@ -45,16 +46,14 @@ public class Scrimmage5Auto extends LinearOpMode {
         semaphore = new VisionSemaphore();
         visionPipeline = new VisionPipeline(hardwareMap, telemetry, stackDetector, semaphore);
         time.reset();
-        while (time.seconds() < 4){
+        while (time.seconds() < 4 && !isStarted()  && !isStopRequested()){
             ringStack = getZoneFromOpenCV();
             telemetry.setDebug("detected", ringStack);
         }
         telemetry.setDebug("done","viewing");
+        telemetry.setDebug("final position",ringStack);
 
-        Trajectory noRings = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .addDisplacementMarker(() -> {drive.wobbleGrab.setPower(1);})
-                .forward(57)
-                .build();
+
         Trajectory strafeRight = drive.trajectoryBuilder(drive.getPoseEstimate())
                 .strafeRight(10)
                 .build();
@@ -71,7 +70,10 @@ public class Scrimmage5Auto extends LinearOpMode {
         Trajectory fourBack = drive.trajectoryBuilder(fourSpline.end())
                 .back(30)
                 .build();
-
+        Trajectory noRings = drive.trajectoryBuilder(launchSpline.end().plus(new Pose2d(0,0,Math.toRadians(-180))))
+                .splineToConstantHeading(new Vector2d(-36.50,-46.50),180)
+                .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                .build();
 
         telemetry.setDebug("Achievable RPM Fraction",goBildaOuttake.getAchieveableMaxRPMFraction());
         telemetry.setDebug("Achievable Ticks Per Second",goBildaOuttake.getAchieveableMaxTicksPerSecond());
@@ -133,15 +135,22 @@ public class Scrimmage5Auto extends LinearOpMode {
         } else if(ringStack == 4){
             drive.followTrajectory(fourSpline);
         }
-        drive.wobbleArm.setPower(-.75);
-        sleep(700);
-        drive.wobbleArm.setPower(0);
+        drive.liftWobble(-90,.45,AngleUnit.DEGREES,1500);
         drive.wobbleGrab.setPower(-1);
         sleep(300);
         drive.wobbleGrab.setPower(0);
         sleep(200);
         if(ringStack == 4){
             drive.followTrajectory(fourBack);
+        } else if(ringStack == 0){
+            drive.turn(Math.toRadians(-120));
+            while (drive.isBusy()){}
+            drive.liftWobble(-35,.15,AngleUnit.RADIANS,1500);
+            drive.liftWobble(40,.35,AngleUnit.RADIANS,1500);
+            drive.followTrajectory(noRings);
+            while (drive.isBusy()){}
+            sleep(300);
+            drive.liftWobble(30,.45,AngleUnit.DEGREES,1500);
         }
     }
     private int getZoneFromOpenCV() {

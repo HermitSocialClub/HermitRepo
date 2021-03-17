@@ -21,12 +21,12 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         /**
          * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
          */
-        var normUpper = 500.0
+        var normUpper = 400.0
 
         /**
          * "Lower" HSV color to look for.
          */
-        var lowerYellow = Scalar(0.0, 100.0, 100.0)
+        var lowerYellow = Scalar(0.0, 150.0, 150.0)
 
         /**
          * "Upper" HSV color to look for.
@@ -53,7 +53,7 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
          * Stacks with a ratio less than this are considered one-ring stacks.
          * Stacks with a ratio greater than this are considered four-ring stacks.
          */
-        var oneStackRatio = 0.7
+        var oneStackRatio = 0.4
     }
 
     /**

@@ -34,7 +34,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
@@ -171,6 +173,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -437,5 +440,28 @@ public class BaselineMecanumDrive extends MecanumDrive {
         // flat on a surface
 
         return (double) imu.getAngularVelocity().zRotationRate;
+    }
+    public void liftWobble(double position, double power, AngleUnit unit, double timeout){
+        ElapsedTime time = new ElapsedTime();
+        double finPos = 0;
+        double originalPosition = wobbleArm.getCurrentPosition();
+        switch (unit){
+            case DEGREES: finPos = wobbleArm.getCurrentPosition() + 90 * position/360; break;
+            case RADIANS: finPos = wobbleArm.getCurrentPosition() + 90 * position/(2*Math.PI); break;
+        }
+        wobbleArm.setTargetPosition((int) finPos);
+        wobbleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        wobbleArm.setPower(power);
+        while (wobbleArm.isBusy() && time.milliseconds() < timeout){
+            telemetry.setDebug("finPos",finPos);
+            telemetry.setDebug("currentPosition",wobbleArm.getCurrentPosition());
+            telemetry.setDebug("targetPosition",wobbleArm.getTargetPosition());
+            telemetry.setDebug("originalPosition",originalPosition);
+            telemetry.setDebug("positionDifference",wobbleArm.getTargetPosition() - originalPosition);
+        }
+
+        wobbleArm.setPower(0);
+        wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.setDebug("posError",finPos - wobbleArm.getCurrentPosition());
     }
 }
