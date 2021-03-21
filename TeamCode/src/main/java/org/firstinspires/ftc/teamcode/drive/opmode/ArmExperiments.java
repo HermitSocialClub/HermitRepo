@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,8 +15,8 @@ import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-@Autonomous (name = "Scrimmage5Auto")
-public class Scrimmage5Auto extends LinearOpMode {
+@Autonomous (name = "ArmExperiments")
+public class ArmExperiments extends LinearOpMode {
 
     PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
 
@@ -72,17 +70,11 @@ public class Scrimmage5Auto extends LinearOpMode {
                 .build();
 
         Trajectory noSquare = drive.trajectoryBuilder(launchSpline.end().plus(new Pose2d(0,0,Math.toRadians(-60))))
-                .forward(5.5)
+                .forward(4)
                 .build();
-        Trajectory noRingDisengage = drive.trajectoryBuilder(noSquare.end())
-                .back(3)
-                .build();
-        Trajectory noRings = drive.trajectoryBuilder(noRingDisengage.end().plus(new Pose2d(0,0,Math.toRadians(-120))))
+        Trajectory noRings = drive.trajectoryBuilder(noSquare.end().plus(new Pose2d(0,0,Math.toRadians(-120))))
                 .splineToConstantHeading(new Vector2d(-36.50,-46.50),180)
                 .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
-                .build();
-        Trajectory noRingsDrop = drive.trajectoryBuilder(noRings.end(),180)
-                .splineToLinearHeading(new Pose2d(-10.50,-54.50,0),0)
                 .build();
         telemetry.setDebug("Achievable RPM Fraction",goBildaOuttake.getAchieveableMaxRPMFraction());
         telemetry.setDebug("Achievable Ticks Per Second",goBildaOuttake.getAchieveableMaxTicksPerSecond());
@@ -145,14 +137,11 @@ public class Scrimmage5Auto extends LinearOpMode {
         } else if(ringStack == 4){
             drive.followTrajectory(fourSpline);
         }
-        drive.liftWobble(-140,.45,AngleUnit.DEGREES,1500);
+        drive.liftWobble(-110,.45,AngleUnit.DEGREES,1500);
         drive.wobbleGrab.setPower(-1);
         sleep(300);
         drive.wobbleGrab.setPower(0);
         sleep(200);
-        if(ringStack == 0){
-            drive.followTrajectory(noRingDisengage);
-        }
         if(ringStack == 4){
             drive.followTrajectory(fourBack);
         } else if(ringStack == 0){
@@ -162,8 +151,6 @@ public class Scrimmage5Auto extends LinearOpMode {
             while (drive.isBusy()){}
             sleep(300);
             drive.liftWobble(30,.45,AngleUnit.DEGREES,1500);
-            drive.followTrajectory(noRingsDrop);
-            while (drive.isBusy()){}
             PoseStorage.currentPose = drive.getPoseEstimate();
         }
     }
