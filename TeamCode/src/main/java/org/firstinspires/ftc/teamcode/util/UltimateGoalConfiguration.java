@@ -47,7 +47,7 @@ public class UltimateGoalConfiguration {
     public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
     public BNO055IMU imu = null;
     public CRServo wobbleGrab;
-    //public CRServo intakeThirdStage;
+    public CRServo intakeThirdStage;
 
     public static final double MID_SERVO = 1;
     public static final double ARM_UP_POWER = 0.45;
@@ -80,7 +80,7 @@ public class UltimateGoalConfiguration {
         rightEncoder = hwMap.get(DcMotorEx.class, "left_drive_2");
         frontEncoder = hwMap.get(DcMotorEx.class, "left_drive");
 
-        //intakeThirdStage = hwMap.get(CRServo.class,"intakeThirdStage");
+        intakeThirdStage = hwMap.get(CRServo.class,"intakeThirdStage");
 
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors
@@ -99,7 +99,7 @@ public class UltimateGoalConfiguration {
         wobbleArm.setPower(0);
         wobbleGrab.setPower(0);
 
-        //intakeThirdStage.setPower(0);
+        intakeThirdStage.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
