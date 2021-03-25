@@ -66,9 +66,15 @@ public class DriveConstants {
      * acceleration values are required, and the jerk values are optional (setting a jerk of 0.0
      * forces acceleration-limited profiling).
      */
+    public static int MAX_VELO = 30;
+    public static int SLOW_VELO = 20;
+    public static int MAX_ACCEL = 30;
+    public static double MAX_ANG_VELO = 10.5;
+    public static double MAX_ANG_ACCEL = Math.toRadians(180);
+
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
-            30, 30, 0.0,
-            10.5, Math.toRadians(180.0), 0.0
+            MAX_VELO, MAX_ACCEL, 0.0,
+            MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
     );
 
 

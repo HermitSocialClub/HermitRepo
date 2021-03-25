@@ -261,10 +261,12 @@ private boolean alwaysOn = false;
             lastXMash = gamepad2.x;
 
 
-            double r = MoveUtils.joystickXYToRadius(gamepad1.left_stick_x, -gamepad1.left_stick_y * invertedControls);
-            double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.left_stick_x, gamepad1.left_stick_y * invertedControls);
+            double r = MoveUtils.joystickXYToRadius(antiDeadzone(gamepad1.left_stick_x),
+                    -antiDeadzone(gamepad1.left_stick_y) * invertedControls);
+            double robotAngle = MoveUtils.joystickXYToAngle(antiDeadzone(gamepad1.left_stick_x),
+                    antiDeadzone(gamepad1.left_stick_y) * invertedControls);
 
-            double[] powers = MoveUtils.theAlgorithm(r, robotAngle, gamepad1.right_stick_x, precisionModifier);
+            double[] powers = MoveUtils.theAlgorithm(r, robotAngle, antiDeadzone(gamepad1.right_stick_x), precisionModifier);
             MoveUtils.setEachMotor(new DcMotor[]{robot.left_drive, robot.right_drive, robot.left_drive_2, robot.right_drive_2}, powers);
 
             if (gamepad1.right_bumper) {
@@ -273,12 +275,13 @@ private boolean alwaysOn = false;
                 intake.setPower(0);
             }
 
-            if (gamepad1.right_trigger > 0.02) {
+            if (gamepad1.right_trigger > 0.02 && kickFinished) {
                 kickFinished = false;
+                kickTime.reset();
                 outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);
             }
 
-            if (gamepad1.right_trigger > 0.02 && !kickFinished && kickTime.milliseconds() >= 400) {
+            if (gamepad1.right_trigger > 0.02 && !kickFinished && kickTime.milliseconds() >= 500) {
                 kickStarting = true;
             }
 
@@ -371,8 +374,11 @@ private boolean alwaysOn = false;
             pt.setDebug("error threshhold", Math.pow(10, -1) * 3);
             pt.setDebug("error difference", Math.pow(10, -1) - Math.abs(outtake.getVelocity(AngleUnit.RADIANS) - outTake75Speed));
         }
-    }
 
+    }
+    public double antiDeadzone (double input){
+        return (input/Math.abs(input)) * (Math.abs(input) - .2) * (1.0/.8);
+    }
 
 
 }
