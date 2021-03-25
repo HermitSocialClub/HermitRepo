@@ -263,7 +263,7 @@ private boolean alwaysOn = false;
 
             double r = MoveUtils.joystickXYToRadius(antiDeadzone(gamepad1.left_stick_x),
                     -antiDeadzone(gamepad1.left_stick_y) * invertedControls);
-            double robotAngle = MoveUtils.joystickXYToAngle(antiDeadzone(gamepad1.left_stick_x),
+            double robotAngle = MoveUtils.joystickXYToAngle(antiDeadzone(gamepad1.left_stick_x) * invertedControls,
                     antiDeadzone(gamepad1.left_stick_y) * invertedControls);
 
             double[] powers = MoveUtils.theAlgorithm(r, robotAngle, antiDeadzone(gamepad1.right_stick_x), precisionModifier);
@@ -377,7 +377,7 @@ private boolean alwaysOn = false;
 
     }
     public double antiDeadzone (double input){
-        return (input/Math.abs(input)) * (Math.abs(input) - .2) * (1.0/.8);
+        return (Math.copySign(Math.max(Math.abs(input) * (1.0/.8) - .2,0),input));
     }
 
 
