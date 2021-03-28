@@ -25,7 +25,7 @@ import org.opencv.core.Mat;
 @Autonomous(name = "Scrimmage5Auto")
 public class Scrimmage5Auto extends LinearOpMode {
 
-    private static final double POWER_SHOT_PERCENT = 0.595;
+    private static final double POWER_SHOT_PERCENT = 0.575;
     private static final double SPEED_PERCENT = 0.665;
     private static final double COLLECT_LAUNCH_PERCENT = 0.645;
     private static final double COLLECT_LATE_LAUNCH_PERCENT = .665;
@@ -267,12 +267,21 @@ public class Scrimmage5Auto extends LinearOpMode {
                 .addDisplacementMarker(()->drive.wobbleGrab.setPower(1))
                 .forward(62.5)
                 .build();
+
+        Trajectory failureZero0 = drive.trajectoryBuilder(failure1.end())
+                .forward(5)
+                .build();
+        Trajectory failureZero = drive.trajectoryBuilder(failureZero0.end().plus(new Pose2d(0,0,Math.toRadians(120))))
+                .forward(4)
+                .build();
         Trajectory failureOne = drive.trajectoryBuilder(failure1.end())
                 .forward(18)
-                .addDisplacementMarker(()->drive.liftWobble(-125,.35,AngleUnit.DEGREES,1500))
                 .build();
         Trajectory failureFour = drive.trajectoryBuilder(failure1.end())
                 .forward(48)
+                .build();
+        Trajectory failureFourBack = drive.trajectoryBuilder(failureFour.end().plus(new Pose2d(0,0,Math.toRadians(180))))
+                .forward(36)
                 .build();
         telemetry.setDebug("Achievable RPM Fraction", goBildaOutTake.getAchieveableMaxRPMFraction());
         telemetry.setDebug("Achievable Ticks Per Second", goBildaOutTake.getAchieveableMaxTicksPerSecond());
@@ -288,22 +297,26 @@ public class Scrimmage5Auto extends LinearOpMode {
                 launchRing(3,launchLineSpeed);
                 if(ringStack == 1) {
                     drive.followTrajectory(failureOne);
+                    drive.turn(Math.toRadians(180));
                     waitForDrive();
                     drive.wobbleGrab.setPower(-1);
                     sleep(600);
                 }else if(ringStack == 0){
-                    drive.turn(Math.toRadians(-60));
+                    drive.followTrajectory(failureZero0);
+                    drive.turn(Math.toRadians(120));
                     waitForDrive();
-                    drive.liftWobble(-125,.35,AngleUnit.DEGREES,1500);
                     drive.wobbleGrab.setPower(-1);
                     sleep(600);
+                    drive.followTrajectory(failureZero);
                 }else if (ringStack == 4){
                     drive.followTrajectory(failureFour);
-                    drive.turn(Math.toRadians(-60));
+                    drive.turn(Math.toRadians(120));
                     waitForDrive();
                     drive.liftWobble(-125,.35,AngleUnit.DEGREES,1500);
                     drive.wobbleGrab.setPower(-1);
                     sleep(600);
+                    drive.turn(Math.toRadians(60));
+                    drive.followTrajectory(failureFourBack);
                 }
                 break;
             }

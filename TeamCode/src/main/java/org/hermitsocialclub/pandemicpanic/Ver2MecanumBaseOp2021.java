@@ -231,6 +231,7 @@ private boolean alwaysOn = false;
                     precisionModifier = 1.2;
                     pt.setData("Precision Mode", "DEACTIVATED!");
 
+
                 } else {
                     precisionMode = true;
                     precisionModifier = 0.5;
@@ -292,24 +293,28 @@ private boolean alwaysOn = false;
             if (gamepad1.right_trigger > 0.02 && kickFinished) {
                 kickFinished = false;
                 kickTime.reset();
-                outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);
+                if(runtime.seconds() > 90){outtake.setVelocity(-powerShotSpeed,AngleUnit.RADIANS);}
+                else{
+                outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);}
             }
 
             if (gamepad1.right_trigger > 0.02 && !kickFinished && kickTime.milliseconds() >= 200) {
                 if (runtime.seconds() > 90) {
                     maxKicks = 2;
+                }else {
+                    maxKicks = 5;
                 }
                 kickStarting = true;
             }
 
             if (kickStarting && !kickFinished &&
-                    Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + outTake75Speed) < Math.pow(10, -1)
+                    Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < Math.pow(10, -1)
                     /*&& drive.getPoseVelocity().getX() < 0.005  && drive.getPoseVelocity().getY() < 0.005
                     && drive.getPoseVelocity().getHeading() < 0.005*/) {
 
                 if (kicks >= maxKicks && kickTime.milliseconds() >= kickInterval
-                        && Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + outTake75Speed) < Math.pow(10, -1)) {
-                    kicker.setPosition(.3);
+                        && Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < Math.pow(10, -1)) {
+                    kicker.setPosition(.1);
                     if(!alwaysOn  && runtime.seconds() > 90) {
                         outtake.setVelocity(0);
                     }
@@ -321,10 +326,10 @@ private boolean alwaysOn = false;
                 if (kickTime.milliseconds() >= kickInterval) {
                     if(kickDirection){
                         kickDirection = false;
-                        kicker.setPosition(.7);
+                        kicker.setPosition(.9);
                     }else {
                         kickDirection = true;
-                        kicker.setPosition(.3);
+                        kicker.setPosition(.1);
                     }
                     kickTime.reset();
                     if (!kickDirection) {
