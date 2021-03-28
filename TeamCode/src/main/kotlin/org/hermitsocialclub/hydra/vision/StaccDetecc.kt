@@ -21,12 +21,12 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         /**
          * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
          */
-        var normUpper = 550.0
+        var normUpper = 350.0
 
         /**
          * "Lower" HSV color to look for.
          */
-        var lowerYellow = Scalar(0.0, 150.0, 180.0)
+        var lowerYellow = Scalar(0.0, 135.0, 180.0)
 
         /**
          * "Upper" HSV color to look for.

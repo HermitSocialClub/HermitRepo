@@ -32,6 +32,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -97,7 +98,10 @@ public class BaselineMecanumDrive extends MecanumDrive {
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
 
-    public CRServo wobbleGrab, kicker;
+    public CRServo wobbleGrab;
+    public Servo kicker;
+    public CRServo intakeThirdStage;
+
 
     private VoltageSensor batteryVoltageSensor;
 
@@ -155,7 +159,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotorEx.class,"tobeFlywheel");
 
         outtake = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
-        kicker = hardwareMap.get(CRServo.class,"kicker");
+        kicker = hardwareMap.get(Servo.class,"kicker");
+        intakeThirdStage = hardwareMap.get(CRServo.class,"intakeThirdStage");
+        intakeThirdStage.setPower(0);
+
+
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -446,12 +454,13 @@ public class BaselineMecanumDrive extends MecanumDrive {
         double finPos = 0;
         double originalPosition = wobbleArm.getCurrentPosition();
         switch (unit){
-            case DEGREES: finPos = wobbleArm.getCurrentPosition() + 90 * position/360; break;
-            case RADIANS: finPos = wobbleArm.getCurrentPosition() + 90 * position/(2*Math.PI); break;
+            case DEGREES: finPos = originalPosition + 90 * position/360; break;
+            case RADIANS: finPos = originalPosition + 90 * position/(2*Math.PI); break;
         }
         wobbleArm.setTargetPosition((int) finPos);
         wobbleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleArm.setPower(power);
+        time.reset();
         while (wobbleArm.isBusy() && time.milliseconds() < timeout){
             telemetry.setDebug("finPos",finPos);
             telemetry.setDebug("currentPosition",wobbleArm.getCurrentPosition());

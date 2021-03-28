@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+/*package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -29,7 +29,7 @@ public class ArmExperiments extends LinearOpMode {
     private VisionSemaphore semaphore;
     private VisionPipeline visionPipeline;
     private ElapsedTime time = new ElapsedTime();
-
+*//*
     @Override
     public void runOpMode() throws InterruptedException {
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,telemetry);
@@ -96,7 +96,7 @@ public class ArmExperiments extends LinearOpMode {
 
         while(drive.isBusy()){
             telemetry.setDebug("Pose",drive.getPoseEstimate().toString());
-        }*/
+        }
 
         drive.outtake.setVelocity(outTake75Speed, AngleUnit.RADIANS);
 
@@ -154,9 +154,9 @@ public class ArmExperiments extends LinearOpMode {
             PoseStorage.currentPose = drive.getPoseEstimate();
         }
     }
-    private int getZoneFromOpenCV() {
+   /* private int getZoneFromOpenCV() {
         semaphore.waitForFrame();
         return stackDetector.getLastStackHeight();
 
     }
-}
+}*/

@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryConstraints;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -19,26 +20,31 @@ import org.hermitsocialclub.hydra.vision.StaccDetecc;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.opencv.core.Mat;
 
 @Autonomous(name = "Scrimmage5Auto")
 public class Scrimmage5Auto extends LinearOpMode {
 
-    private static final double SPEED_PERCENT = 0.625;
-    private static final double COLLECT_LAUNCH_PERCENT = 0.675;
+    private static final double POWER_SHOT_PERCENT = 0.595;
+    private static final double SPEED_PERCENT = 0.665;
+    private static final double COLLECT_LAUNCH_PERCENT = 0.645;
+    private static final double COLLECT_LATE_LAUNCH_PERCENT = .665;
     private PersistantTelemetry telemetry;
     private MotorConfigurationType goBildaOutTake;
     private BaselineMecanumDrive drive;
     private double launchLineSpeed;
     private double collectLaunchSpeed;
+    private double collectLateLaunchSpeed;
+    private double powerShotSpeed;
     private int ringStack = 0;
     private StaccDetecc stackDetector;
     private VisionSemaphore semaphore;
     private VisionPipeline visionPipeline;
     private ElapsedTime time;
     private enum Ambition{
-        BASE_MODE, POWERSHOT_MODE,TURN_POWER_SHOT
+        BASE_MODE, POWERSHOT_MODE,TURN_POWER_SHOT,CONSTANT_POWER_SHOT, BROKEN
     }
-    private Ambition ambition = Ambition.BASE_MODE;
+    private Ambition ambition = Ambition.BROKEN;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,6 +55,10 @@ public class Scrimmage5Auto extends LinearOpMode {
                 goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
         this.collectLaunchSpeed = ((COLLECT_LAUNCH_PERCENT * 2 * Math.PI * goBildaOutTake.getMaxRPM() *
                 goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
+        this.collectLateLaunchSpeed = ((COLLECT_LAUNCH_PERCENT * 2 * Math.PI * goBildaOutTake.getMaxRPM() *
+                goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
+        this.powerShotSpeed = ((POWER_SHOT_PERCENT * 2 * Math.PI * goBildaOutTake.getMaxRPM() *
+                goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
         this.drive = new BaselineMecanumDrive(hardwareMap, telemetry);
         this.drive.setPoseEstimate(new Pose2d(-63, -15.5, 0));
 
@@ -58,6 +68,9 @@ public class Scrimmage5Auto extends LinearOpMode {
         this.time = new ElapsedTime();
         this.time.reset();
 
+        drive.wobbleGrab.setPower(1);
+        drive.wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         // Find which Zone the ring stack is in
         while (time.seconds() < 4 && !isStarted() && !isStopRequested()) {
             ringStack = getZoneFromOpenCV();
@@ -65,9 +78,20 @@ public class Scrimmage5Auto extends LinearOpMode {
         }
         telemetry.setDebug("done", "viewing");
         telemetry.setDebug("final position", ringStack);
+        drive.wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Build trajectories
 
+
+        Trajectory constantLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
+                .splineToConstantHeading(new Vector2d(-14,12.50),0)
+                .build();
+        Trajectory constantLaunchSpline2 = drive.trajectoryBuilder(constantLaunchSpline.end())
+                .splineToConstantHeading(new Vector2d(-3,-24.50),0)
+                .addSpatialMarker(new Vector2d(0,-2.50), () -> launchRing(1,powerShotSpeed))
+                .addSpatialMarker(new Vector2d(0,-14.50), () -> launchRing(1,powerShotSpeed))
+                .addSpatialMarker(new Vector2d(0,-20.50), () -> launchRing(1,powerShotSpeed))
+                .build();
         Trajectory turnLaunchSpline = drive
                 .trajectoryBuilder(drive.getPoseEstimate())
                 .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
@@ -82,11 +106,9 @@ public class Scrimmage5Auto extends LinearOpMode {
                     int ringsFired = 0;
                     while (opModeIsActive() && ringsFired < 1) {
                         telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPower(1);
+                        drive.kicker.setPosition(.7);
                         sleep(200);
-                        drive.kicker.setPower(-1);
-                        sleep(200);
-                        drive.kicker.setPower(0);
+                        drive.kicker.setPosition(.3);
                         while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
                         }
@@ -106,11 +128,9 @@ public class Scrimmage5Auto extends LinearOpMode {
                     int ringsFired = 0;
                     while (opModeIsActive() && ringsFired < 1) {
                         telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPower(1);
+                        drive.kicker.setPosition(.7);
                         sleep(200);
-                        drive.kicker.setPower(-1);
-                        sleep(200);
-                        drive.kicker.setPower(0);
+                        drive.kicker.setPosition(.3);
                         while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
                         }
@@ -129,11 +149,9 @@ public class Scrimmage5Auto extends LinearOpMode {
                     int ringsFired = 0;
                     while (opModeIsActive() && ringsFired < 1) {
                         telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPower(1);
+                        drive.kicker.setPosition(.7);
                         sleep(200);
-                        drive.kicker.setPower(-1);
-                        sleep(200);
-                        drive.kicker.setPower(0);
+                        drive.kicker.setPosition(.3);
                         while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
                         }
@@ -152,11 +170,9 @@ public class Scrimmage5Auto extends LinearOpMode {
                     int ringsFired = 0;
                     while (opModeIsActive() && ringsFired < 1) {
                         telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPower(1);
+                        drive.kicker.setPosition(.7);
                         sleep(200);
-                        drive.kicker.setPower(-1);
-                        sleep(200);
-                        drive.kicker.setPower(0);
+                        drive.kicker.setPosition(.3);
                         while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
                         }
@@ -167,62 +183,97 @@ public class Scrimmage5Auto extends LinearOpMode {
         Trajectory fourSplinePower = drive.trajectoryBuilder(thirdPowerShot.end())
                 .splineToLinearHeading(new Pose2d(50,-36,270),0)
                 .build();
-        Trajectory strafeRight = drive
-                .trajectoryBuilder(drive.getPoseEstimate())
-                .strafeRight(10)
-                .build();
         Trajectory launchSpline = drive
                 .trajectoryBuilder(drive.getPoseEstimate())
                 .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
-                .splineToConstantHeading(new Vector2d(-3, -42), Math.toRadians(-80))
+                .splineToConstantHeading(new Vector2d(-3, -41), Math.toRadians(-80))
                 .build();
         Trajectory oneSpline = drive
                 .trajectoryBuilder(launchSpline.end())
                 .forward(12)
                 .build();
         Trajectory fourCollect = drive.trajectoryBuilder(launchSpline.end())
-                .back(15)
-                .addDisplacementMarker(() -> {
-                    drive.intake.setPower(.9);
-                })
-                .back(9, new MecanumConstraints(
-                        new DriveConstraints(15.0, DriveConstants.MAX_ACCEL,0.0,
+                .addDisplacementMarker(()->{drive.intake.setPower(-.7);})
+                .back(16)
+                .build();
+        Trajectory fourCollect2 = drive.trajectoryBuilder(fourCollect.end())
+                .addDisplacementMarker(()-> drive.intake.setPower(.9))
+                .back(4,new MecanumConstraints(
+                        new DriveConstraints(5, DriveConstants.MAX_ACCEL,0.0,
                                 DriveConstants.MAX_ANG_VELO,DriveConstants.MAX_ANG_ACCEL,0.0),
                         DriveConstants.TRACK_WIDTH))
-                .addDisplacementMarker(()->{
-                    ElapsedTime time = new ElapsedTime();
-                    while (time.milliseconds() < 300){}
-                    launchRing(3,collectLaunchSpeed);
-                    drive.intake.setPower(0);}
+                .addDisplacementMarker(()-> launchRing(3,collectLaunchSpeed)
                     )
+                .back(5,new MecanumConstraints(
+                        new DriveConstraints(6.5, DriveConstants.MAX_ACCEL,0.0,
+                                DriveConstants.MAX_ANG_VELO,DriveConstants.MAX_ANG_ACCEL,0.0),
+                        DriveConstants.TRACK_WIDTH))
+                .addDisplacementMarker(()->
+                        launchRing(3,collectLaunchSpeed)
+                )
                 .build();
         Trajectory fourSpline = drive
-                .trajectoryBuilder(fourCollect.end())
-                .splineToConstantHeading(new Vector2d(33, -68), 0)
+                .trajectoryBuilder(launchSpline.end())
+                .splineToConstantHeading(new Vector2d(38, -58), 0)
                 .build();
-        Trajectory fourBack = drive
-                .trajectoryBuilder(fourSpline.end())
-                .back(30)
-                .build();
+
         Trajectory noSquare = drive
                 .trajectoryBuilder(launchSpline.end().plus(new Pose2d(0, 0, Math.toRadians(-60))))
                 .forward(5.5)
                 .build();
         Trajectory noRingDisengage = drive
                 .trajectoryBuilder(noSquare.end())
-                .back(3)
+                .back(9)
                 .build();
+
         Trajectory noRings = drive
-                .trajectoryBuilder((ringStack == 0) ? noRingDisengage.end().plus(new Pose2d(0, 0, Math.toRadians(-120)))
-                        : (ringStack == 1)? oneSpline.end() : fourSpline.end())
-                .splineToConstantHeading(new Vector2d(-36.50, -46.50), 180)
+                .trajectoryBuilder(noRingDisengage.end(),Math.toRadians(120))
+                .splineToLinearHeading(new Pose2d(-30.50, -42.50,Math.toRadians(180)), Math.toRadians(180))
                 .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
                 .build();
         Trajectory noRingsDrop = drive
-                .trajectoryBuilder(noRings.end(), 180)
+                .trajectoryBuilder(noRings.end(), Math.toRadians(180))
                 .splineToLinearHeading(new Pose2d(8.50, -56.50, Math.toRadians(-30)), 0)
                 .build();
+        Trajectory oneRingDisengage = drive.trajectoryBuilder(oneSpline.end())
+                .back(9)
+                .build();
+        Trajectory oneRingPickUp = drive.trajectoryBuilder(oneRingDisengage.end())
+                .splineToLinearHeading(new Pose2d(-36.50,-46.50,Math.toRadians(180)),Math.toRadians(180))
+                .build();
+        Trajectory oneRingSecondDrop = drive.trajectoryBuilder(noRings.end())
+                .splineToLinearHeading(new Pose2d(12,-36.50,0),0)
+                .build();
+        Trajectory fourRingSecondDrop = drive.trajectoryBuilder(noRings.end())
+                .splineToLinearHeading(new Pose2d(36.50,-58,0),0)
+                .addDisplacementMarker(() -> drive.wobbleGrab.setPower(-1))
+                .build();
+        Trajectory fourBack = drive
+                .trajectoryBuilder(fourSpline.end())
+                .back(9)
+                .build();
+        Trajectory fourBack2 = drive
+                .trajectoryBuilder(fourRingSecondDrop.end())
+                .back(20)
+                .build();
+        Trajectory oneRingDisengage2 = drive.trajectoryBuilder(oneRingSecondDrop.end())
+                .back(20)
+                .build();
+        Trajectory fourRingPickUp = drive.trajectoryBuilder(fourBack.end(),Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-36.50,-46.50,Math.toRadians(180)),Math.toRadians(180))
+                .build();
 
+        Trajectory failure1 = drive.trajectoryBuilder(drive.getPoseEstimate())
+                .addDisplacementMarker(()->drive.wobbleGrab.setPower(1))
+                .forward(62.5)
+                .build();
+        Trajectory failureOne = drive.trajectoryBuilder(failure1.end())
+                .forward(18)
+                .addDisplacementMarker(()->drive.liftWobble(-125,.35,AngleUnit.DEGREES,1500))
+                .build();
+        Trajectory failureFour = drive.trajectoryBuilder(failure1.end())
+                .forward(48)
+                .build();
         telemetry.setDebug("Achievable RPM Fraction", goBildaOutTake.getAchieveableMaxRPMFraction());
         telemetry.setDebug("Achievable Ticks Per Second", goBildaOutTake.getAchieveableMaxTicksPerSecond());
         telemetry.setDebug("hub velocity params", goBildaOutTake.getHubVelocityParams());
@@ -232,6 +283,41 @@ public class Scrimmage5Auto extends LinearOpMode {
         waitForStart();
 
         switch (ambition){
+            case BROKEN:{
+                drive.followTrajectory(failure1);
+                launchRing(3,launchLineSpeed);
+                if(ringStack == 1) {
+                    drive.followTrajectory(failureOne);
+                    waitForDrive();
+                    drive.wobbleGrab.setPower(-1);
+                    sleep(600);
+                }else if(ringStack == 0){
+                    drive.turn(Math.toRadians(-60));
+                    waitForDrive();
+                    drive.liftWobble(-125,.35,AngleUnit.DEGREES,1500);
+                    drive.wobbleGrab.setPower(-1);
+                    sleep(600);
+                }else if (ringStack == 4){
+                    drive.followTrajectory(failureFour);
+                    drive.turn(Math.toRadians(-60));
+                    waitForDrive();
+                    drive.liftWobble(-125,.35,AngleUnit.DEGREES,1500);
+                    drive.wobbleGrab.setPower(-1);
+                    sleep(600);
+                }
+                break;
+            }
+            case CONSTANT_POWER_SHOT:{
+                drive.followTrajectory(constantLaunchSpline);
+                drive.outtake.setVelocity(powerShotSpeed);
+                while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - powerShotSpeed) > Math.pow(10, -1)) {
+                    telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                    telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
+                    telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
+                }
+                drive.followTrajectory(constantLaunchSpline2);
+                break;
+            }
 
             case TURN_POWER_SHOT:{
                 drive.followTrajectory(turnLaunchSpline);
@@ -258,7 +344,7 @@ public class Scrimmage5Auto extends LinearOpMode {
                 while (drive.isBusy()){}
                 drive.turn(Math.toRadians(-90));
                 while (drive.isBusy()){}
-                drive.liftWobble(-140, 0.45, AngleUnit.DEGREES, 1500);
+                drive.liftWobble(-130, 0.45, AngleUnit.DEGREES, 1500);
                 drive.wobbleGrab.setPower(-1);
                 sleep(300);
                 drive.wobbleGrab.setPower(0);
@@ -286,11 +372,10 @@ public class Scrimmage5Auto extends LinearOpMode {
         int ringsFired = 0;
         while (opModeIsActive() && ringsFired <= 5) {
             telemetry.setDebug("ringsFired", ringsFired);
-            drive.kicker.setPower(1);
+            drive.kicker.setPosition(.7);
             sleep(200);
-            drive.kicker.setPower(-1);
+            drive.kicker.setPosition(.3);
             sleep(200);
-            drive.kicker.setPower(0);
             while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                 telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
             }
@@ -312,28 +397,52 @@ public class Scrimmage5Auto extends LinearOpMode {
         } else if (ringStack == 1) {
             drive.followTrajectory(oneSpline);
         } else if (ringStack == 4) {
-            drive.followTrajectory(fourCollect);
+            //drive.followTrajectory(fourCollect);
+            //drive.followTrajectory(fourCollect2);
             drive.followTrajectory(fourSpline);
         }
-        drive.liftWobble(-150, 0.45, AngleUnit.DEGREES, 1500);
+        drive.liftWobble(-125, 0.35, AngleUnit.DEGREES, 1500);
         drive.wobbleGrab.setPower(-1);
         sleep(400);
         drive.wobbleGrab.setPower(0);
         sleep(200);
+        drive.liftWobble(-20,.35,AngleUnit.DEGREES,1500);
         if (ringStack == 0) {
             drive.followTrajectory(noRingDisengage);
-        }
-        if (ringStack == 4) {
+        }else if(ringStack == 1){
+            drive.followTrajectory(oneRingDisengage);
+        }else if(ringStack == 4){
             drive.followTrajectory(fourBack);
-        } else if (ringStack == 0) {
-            drive.turn(Math.toRadians(-120));
-            waitForDrive();
-            drive.followTrajectory(noRings);
+        }
+        /*if (ringStack == 4) {
+            drive.followTrajectory(fourBack);
+        } else*/
+            if(ringStack == 0) {
+                drive.followTrajectory(noRings);
+            }else if (ringStack == 1){
+                drive.followTrajectory(oneRingPickUp);
+            }else if(ringStack == 4){
+                drive.followTrajectory(fourRingPickUp);
+            }
             sleep(300);
             drive.liftWobble(30, 0.45, AngleUnit.DEGREES, 1500);
-            drive.followTrajectory(noRingsDrop);
-            waitForDrive();
-        }
+                if (ringStack == 0) {
+                    drive.followTrajectory(noRingsDrop);
+                    waitForDrive();
+                }else if(ringStack == 1){
+                    drive.followTrajectory(oneRingSecondDrop);
+                    waitForDrive();
+                    drive.wobbleGrab.setPower(-1);
+                    sleep(300);
+
+                }else if(ringStack == 4){
+                    drive.followTrajectory(fourRingSecondDrop);
+                    drive.wobbleGrab.setPower(-1);
+                    sleep(300);
+                    drive.followTrajectory(fourBack2);
+                }
+
+
         PoseStorage.currentPose = drive.getPoseEstimate();
         break;}
         }
@@ -359,11 +468,10 @@ public class Scrimmage5Auto extends LinearOpMode {
             int ringsFired = 0;
             while (opModeIsActive() && ringsFired < ringsToFire) {
                 telemetry.setDebug("ringsFired", ringsFired);
-                drive.kicker.setPower(1);
+                drive.kicker.setPosition(.7);
                 sleep(200);
-                drive.kicker.setPower(-1);
+                drive.kicker.setPosition(.3);
                 sleep(200);
-                drive.kicker.setPower(0);
                 while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - speed ) > Math.pow(10, -1)) {
                     telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
                 }
