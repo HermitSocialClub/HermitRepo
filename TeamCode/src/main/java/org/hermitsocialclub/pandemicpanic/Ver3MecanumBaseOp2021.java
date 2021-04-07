@@ -214,47 +214,49 @@ private boolean alwaysOn = false;
                 boolean bestDistFound = false;
                 int rowIndex = 2;
                 int colIndex = 0;
-                while (!bestDistFound){
-                    int tempRow = rowIndex;
-                    int tempCol = colIndex;
-                    if(rowIndex - 1 > -1){
-                        double checkDist = (x - traj[rowIndex-1][colIndex].end().getX()) * (x - traj[rowIndex-1][colIndex].end().getX())
-                                + (y - traj[rowIndex-1][colIndex].end().getY()) * (y - traj[rowIndex-1][colIndex].end().getY());
-                        if(dist > checkDist){
-                            dist = checkDist;
-                            tempRow = rowIndex -1;
+                if(dist > POWER_THRESHHOLD) {
+                    while (!bestDistFound) {
+                        int tempRow = rowIndex;
+                        int tempCol = colIndex;
+                        if (rowIndex - 1 > -1) {
+                            double checkDist = (x - traj[rowIndex - 1][colIndex].end().getX()) * (x - traj[rowIndex - 1][colIndex].end().getX())
+                                    + (y - traj[rowIndex - 1][colIndex].end().getY()) * (y - traj[rowIndex - 1][colIndex].end().getY());
+                            if (dist > checkDist) {
+                                dist = checkDist;
+                                tempRow = rowIndex - 1;
+                            }
                         }
-                    }
-                    if(rowIndex + 1 < 5){
-                        double checkDist = (x - traj[rowIndex+1][colIndex].end().getX()) * (x - traj[rowIndex+1][colIndex].end().getX())
-                                + (y - traj[rowIndex+1][colIndex].end().getY()) * (y - traj[rowIndex+1][colIndex].end().getY());
-                        if(dist > checkDist){
-                            dist = checkDist;
-                            tempRow = rowIndex + 1;
+                        if (rowIndex + 1 < 5) {
+                            double checkDist = (x - traj[rowIndex + 1][colIndex].end().getX()) * (x - traj[rowIndex + 1][colIndex].end().getX())
+                                    + (y - traj[rowIndex + 1][colIndex].end().getY()) * (y - traj[rowIndex + 1][colIndex].end().getY());
+                            if (dist > checkDist) {
+                                dist = checkDist;
+                                tempRow = rowIndex + 1;
+                            }
                         }
-                    }
-                    if(colIndex - 1 > -1){
-                        double checkDist = (x - traj[rowIndex][colIndex-1].end().getX()) * (x - traj[rowIndex][colIndex-1].end().getX())
-                                + (y - traj[rowIndex][colIndex-1].end().getY()) * (y - traj[rowIndex][colIndex-1].end().getY());
-                        if(dist > checkDist){
-                            dist = checkDist;
-                            tempRow = rowIndex;
-                            tempCol = colIndex - 1;
+                        if (colIndex - 1 > -1) {
+                            double checkDist = (x - traj[rowIndex][colIndex - 1].end().getX()) * (x - traj[rowIndex][colIndex - 1].end().getX())
+                                    + (y - traj[rowIndex][colIndex - 1].end().getY()) * (y - traj[rowIndex][colIndex - 1].end().getY());
+                            if (dist > checkDist) {
+                                dist = checkDist;
+                                tempRow = rowIndex;
+                                tempCol = colIndex - 1;
+                            }
                         }
-                    }
-                    if(colIndex + 1 < 5){
-                        double checkDist = (x - traj[rowIndex][colIndex+1].end().getX()) * (x - traj[rowIndex][colIndex+1].end().getX())
-                                + (y - traj[rowIndex][colIndex+1].end().getY()) * (y - traj[rowIndex][colIndex+1].end().getY());
-                        if(dist > checkDist){
-                            dist = checkDist;
-                            tempRow = rowIndex;
-                            tempCol = colIndex + 1;
+                        if (colIndex + 1 < 5) {
+                            double checkDist = (x - traj[rowIndex][colIndex + 1].end().getX()) * (x - traj[rowIndex][colIndex + 1].end().getX())
+                                    + (y - traj[rowIndex][colIndex + 1].end().getY()) * (y - traj[rowIndex][colIndex + 1].end().getY());
+                            if (dist > checkDist) {
+                                dist = checkDist;
+                                tempRow = rowIndex;
+                                tempCol = colIndex + 1;
+                            }
                         }
+                        if (rowIndex != tempRow || colIndex != tempCol) {
+                            rowIndex = tempRow;
+                            colIndex = tempCol;
+                        } else bestDistFound = true;
                     }
-                    if(rowIndex != tempRow && colIndex != tempCol){
-                        rowIndex = tempRow;
-                        colIndex = tempCol;
-                    }else bestDistFound = true;
                 }
                 drive.followTrajectory(traj[rowIndex][colIndex]);
 
