@@ -26,6 +26,9 @@ import org.firstinspires.ftc.teamcode.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.openftc.revextensions2.RevBulkData;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @TeleOp(name = "Version 3 2021 Mecanum Base Op", group = "Hermit")
 public class Ver3MecanumBaseOp2021 extends LinearOpMode {
 
@@ -47,6 +50,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     public static double SPEED_PERCENT = 0.675;
     private double powerShotSpeed;
     public static double POWER_PERCENT = 0.595;
+    public static double POWER_THRESHHOLD = Math.pow(10, -2) * 3;
     private final double ticksPerRevolution = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getTicksPerRev();
     private final double tobeMaxEncoder = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getAchieveableMaxTicksPerSecond();
     private Vector2d powerLaunchVector = new Vector2d(-14,12.50);
@@ -115,82 +119,52 @@ private boolean alwaysOn = false;
                 .addSpatialMarker(new Vector2d(0,-14.50), () -> launchRing(1,powerShotSpeed))
                 .addSpatialMarker(new Vector2d(0,-20.50), () -> launchRing(1,powerShotSpeed))
                 .build();
-        Trajectory[] trajectories = {
-                drive.trajectoryBuilder(new Pose2d(48, 48, 0), 0)// 0
+        Trajectory[][] traj = {{
+                drive.trajectoryBuilder(new Pose2d(48, 0, 0), 0)//0 (0,0)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(48, 24, 0), 0)//1
+                drive.trajectoryBuilder(new Pose2d(48, -24, 0), 0)//1 (0,1)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(48, 0, 0), 0)//2
+                drive.trajectoryBuilder(new Pose2d(48, -48, 0), 0)//2 (0,2)
+                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .build()},
+                {drive.trajectoryBuilder(new Pose2d(24, 0, 0), 0)//3 (1,0)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(48, -24, 0), 0)//3
+                drive.trajectoryBuilder(new Pose2d(24, -24, 0), 0)//4 (1,1)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(48, -48, 0), 0)//4
+                drive.trajectoryBuilder(new Pose2d(24, -48, 0), 0)//5 (1,2)
+                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .build()},
+                {drive.trajectoryBuilder(new Pose2d(0, 0, 0), 0)//6 (2,0)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(24, 48, 0), 0)//5
+                drive.trajectoryBuilder(new Pose2d(0, -24, 0), 0)//7 (2,1)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(24, 24, 0), 0)//6
+                drive.trajectoryBuilder(new Pose2d(0, -48, 0), 0)//8 (2,2)
+                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .build()},
+                {drive.trajectoryBuilder(new Pose2d(-24, 0, 0), 0)//9 (3,0)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(24, 0, 0), 0)//7
+                drive.trajectoryBuilder(new Pose2d(-24, -24, 0), 0)//10 (3,1)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(24, -24, 0), 0)//8
+                drive.trajectoryBuilder(new Pose2d(-24, -48, 0), 0)//11 (3,2)
+                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .build()},
+                {drive.trajectoryBuilder(new Pose2d(-48, 0, 0), 0)//12 (4,0)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(24, -48, 0), 0)//9
+                drive.trajectoryBuilder(new Pose2d(-48, -24, 0), 0)//13 (4,1)
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build(),
-                drive.trajectoryBuilder(new Pose2d(0, 48, 0), 0)//10
+                drive.trajectoryBuilder(new Pose2d(-48, -48, 0), 0)//14 (4,2)
                         .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(0, 24, 0), 0)//11
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(0, 0, 0), 0)//12
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(0, -24, 0), 0)//16
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(0, -48, 0), 0)//17
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-24, 48, 0), 0)//18
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-24, 24, 0), 0)//19
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-24, 0, 0), 0)//20
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-24, -24, 0), 0)//21
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-24, -48, 0), 0)//22
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-48, 48, 0), 0)//23
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-48, 24, 0), 0)//24
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-48, 0, 0), 0)//25
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-48, -24, 0), 0)//26
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
-                drive.trajectoryBuilder(new Pose2d(-48, -48, 0), 0)//27
-                        .lineToConstantHeading(new Vector2d(-3, -36))
-                        .build(),
+                        .build()}
         };
 
         pt.setDebug("paths", "done");
@@ -218,7 +192,7 @@ private boolean alwaysOn = false;
 
             // Retrieve **our** pose
             Pose2d ourPose = drive.getPoseEstimate();
-            if (gamepad1.right_stick_button) {
+            /*if (gamepad1.right_stick_button) {
                 double minDist = Math.sqrt(Math.pow((ourPose.getX() - trajectories[0].start().getX()), 2)
                         + Math.pow((ourPose.getY() - trajectories[0].start().getY()), 2));
                 int closest = 0;
@@ -231,6 +205,59 @@ private boolean alwaysOn = false;
                     }
                 }
                 drive.followTrajectory(trajectories[closest]);
+            }*/
+            //Buzzwords: Context-Optimized Greedy Nearest Neighbor Search Algorithm
+            if(gamepad1.right_stick_button){
+                double x = ourPose.getX();
+                double y = ourPose.getY();
+                double dist = (x - traj[2][0].end().getX()) * (x - traj[2][0].end().getX()) + (y - traj[2][0].end().getY()) * (y - traj[2][0].end().getY());
+                boolean bestDistFound = false;
+                int rowIndex = 2;
+                int colIndex = 0;
+                while (!bestDistFound){
+                    int tempRow = rowIndex;
+                    int tempCol = colIndex;
+                    if(rowIndex - 1 > -1){
+                        double checkDist = (x - traj[rowIndex-1][colIndex].end().getX()) * (x - traj[rowIndex-1][colIndex].end().getX())
+                                + (y - traj[rowIndex-1][colIndex].end().getY()) * (y - traj[rowIndex-1][colIndex].end().getY());
+                        if(dist > checkDist){
+                            dist = checkDist;
+                            tempRow = rowIndex -1;
+                        }
+                    }
+                    if(rowIndex + 1 < 5){
+                        double checkDist = (x - traj[rowIndex+1][colIndex].end().getX()) * (x - traj[rowIndex+1][colIndex].end().getX())
+                                + (y - traj[rowIndex+1][colIndex].end().getY()) * (y - traj[rowIndex+1][colIndex].end().getY());
+                        if(dist > checkDist){
+                            dist = checkDist;
+                            tempRow = rowIndex + 1;
+                        }
+                    }
+                    if(colIndex - 1 > -1){
+                        double checkDist = (x - traj[rowIndex][colIndex-1].end().getX()) * (x - traj[rowIndex][colIndex-1].end().getX())
+                                + (y - traj[rowIndex][colIndex-1].end().getY()) * (y - traj[rowIndex][colIndex-1].end().getY());
+                        if(dist > checkDist){
+                            dist = checkDist;
+                            tempRow = rowIndex;
+                            tempCol = colIndex - 1;
+                        }
+                    }
+                    if(colIndex + 1 < 5){
+                        double checkDist = (x - traj[rowIndex][colIndex+1].end().getX()) * (x - traj[rowIndex][colIndex+1].end().getX())
+                                + (y - traj[rowIndex][colIndex+1].end().getY()) * (y - traj[rowIndex][colIndex+1].end().getY());
+                        if(dist > checkDist){
+                            dist = checkDist;
+                            tempRow = rowIndex;
+                            tempCol = colIndex + 1;
+                        }
+                    }
+                    if(rowIndex != tempRow && colIndex != tempCol){
+                        rowIndex = tempRow;
+                        colIndex = tempCol;
+                    }else bestDistFound = true;
+                }
+                drive.followTrajectory(traj[rowIndex][colIndex]);
+
             }
             pt.setDebug("x", ourPose.getX());
             pt.setDebug("y", ourPose.getY());
@@ -401,12 +428,12 @@ private boolean alwaysOn = false;
             }
 
             if (kickStarting && !kickFinished &&
-                    Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < Math.pow(10, -1)
+                    Math.abs(drive.ticksToRadians(bulkData.getMotorVelocity(robot.outTakeBulk),goBildaOuttake,1) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < POWER_THRESHHOLD
                     /*&& drive.getPoseVelocity().getX() < 0.005  && drive.getPoseVelocity().getY() < 0.005
                     && drive.getPoseVelocity().getHeading() < 0.005*/) {
 
                 if (kicks >= maxKicks && kickTime.milliseconds() >= kickInterval
-                        && Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < Math.pow(10, -1)) {
+                        && Math.abs(drive.ticksToRadians(bulkData.getMotorVelocity(robot.outTakeBulk),goBildaOuttake,1) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < POWER_THRESHHOLD) {
                     kicker.setPosition(.1);
                     if(!alwaysOn  && runtime.seconds() > 90) {
                         outtake.setVelocity(0);

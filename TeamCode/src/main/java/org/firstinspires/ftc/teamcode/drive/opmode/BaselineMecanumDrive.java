@@ -473,4 +473,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         telemetry.setDebug("posError",finPos - wobbleArm.getCurrentPosition());
     }
+    public double ticksToRadians(double ticks, MotorConfigurationType motor, int GEAR_RATIO){
+        return 2 * Math.PI * GEAR_RATIO * ticks / motor.getTicksPerRev();
+    }
 }
