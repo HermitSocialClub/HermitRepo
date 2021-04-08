@@ -103,7 +103,7 @@ private boolean alwaysOn = false;
         this.outtake = hardwareMap.get(DcMotorEx.class, "takeruFlyOut");
         this.outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.robot.init(hardwareMap);
-        this.drive = new BaselineMecanumDrive(hardwareMap, pt);
+        this.drive = new BaselineMecanumDrive(hardwareMap, pt,false);
         this.drive.setPoseEstimate(PoseStorage.currentPose);
         this.pt.setDebug("Pose", drive.getPoseEstimate());
         this.pt.setDebug("intendedPose", PoseStorage.currentPose);
@@ -119,6 +119,7 @@ private boolean alwaysOn = false;
                 .addSpatialMarker(new Vector2d(0,-14.50), () -> launchRing(1,powerShotSpeed))
                 .addSpatialMarker(new Vector2d(0,-20.50), () -> launchRing(1,powerShotSpeed))
                 .build();
+        //takes about 3.76 seconds to generate, about a quarter second each
         Trajectory[][] traj = {{
                 drive.trajectoryBuilder(new Pose2d(48, 0, 0), 0)//0 (0,0)
                         .lineToConstantHeading(new Vector2d(-3, -36))
@@ -166,6 +167,7 @@ private boolean alwaysOn = false;
                         .lineToConstantHeading(new Vector2d(-3, -36))
                         .build()}
         };
+        Trajectory[][] hiRes = {{}};
 
         pt.setDebug("paths", "done");
         pt.setData("Inverse Controls", "DEACTIVATED");
@@ -258,7 +260,9 @@ private boolean alwaysOn = false;
                         } else bestDistFound = true;
                     }
                 }
-                drive.followTrajectory(traj[rowIndex][colIndex]);
+                pt.setDebug("closest X: ", traj[rowIndex][colIndex].end().getX());
+                pt.setDebug("closest Y: ", traj[rowIndex][colIndex].end().getY());
+                //drive.followTrajectory(traj[rowIndex][colIndex]);
 
             }
             pt.setDebug("x", ourPose.getX());

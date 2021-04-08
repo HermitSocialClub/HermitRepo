@@ -93,10 +93,10 @@ public class UltimateGoalConfiguration {
 
         expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
         controlHub = hwMap.get(ExpansionHubEx.class,"Control Hub");
-        motor0 = (ExpansionHubMotor) hwMap.dcMotor.get("left_drive");
-        motor1 = (ExpansionHubMotor) hwMap.dcMotor.get("right_drive");
-        motor2 = (ExpansionHubMotor) hwMap.dcMotor.get("left_drive_2");
-        motor3 = (ExpansionHubMotor) hwMap.dcMotor.get("right_drive_2");
+        motor0 = (ExpansionHubMotor) left_drive;
+        motor1 = (ExpansionHubMotor) right_drive;
+        motor2 = (ExpansionHubMotor) left_drive_2;
+        motor3 = (ExpansionHubMotor) right_drive_2;
         outTakeBulk = (ExpansionHubMotor) hwMap.dcMotor.get("takeruFlyOut");
 
 
