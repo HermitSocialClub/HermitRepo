@@ -456,9 +456,10 @@ public class Scrimmage5Auto extends LinearOpMode {
                 }
 
 
-        PoseStorage.currentPose = drive.getPoseEstimate();
         break;}
         }
+        PoseStorage.currentPose = drive.getPoseEstimate();
+
     }
 
     private void waitForDrive() {

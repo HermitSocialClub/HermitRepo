@@ -75,7 +75,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     }
 
     private Mode mode = Mode.ALIGN_TO_POINT;
-    private PIDFController headingController = new PIDFController(BaselineMecanumDrive.HEADING_PID);
+    private final PIDFController headingController = new PIDFController(BaselineMecanumDrive.HEADING_PID);
 
 private boolean wobbleGrabLock = false;
 private  boolean lastXMash = false;
@@ -90,7 +90,9 @@ private boolean alwaysOn = false;
 
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
-    private Vector2d targetPosition = new Vector2d(0, 0);
+    private final Vector2d targetPosition = new Vector2d(0, 0);
+    private final Vector2d shootingPosition = new Vector2d(-3,-18);
+    private final double shootingHeading = Math.toRadians(-30);
 
     private RevBulkData bulkData;
 
@@ -120,100 +122,100 @@ private boolean alwaysOn = false;
                 .addSpatialMarker(new Vector2d(0,-20.50), () -> launchRing(1,powerShotSpeed))
                 .build();
         Trajectory t00 = drive.trajectoryBuilder(new Pose2d(48, 0, 0), 0)//0 (0,0)
-                .lineToConstantHeading(new Vector2d(-3, -36))
+                .lineToConstantHeading(shootingPosition)
                 .build();
         Trajectory t01 = drive.trajectoryBuilder(new Pose2d(48, -24, 0), 0)//1 (0,1)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build();
         Trajectory t10 = drive.trajectoryBuilder(new Pose2d(24, 0, 0), 0)//3 (1,0)
-                .lineToConstantHeading(new Vector2d(-3, -36))
+                .lineToConstantHeading(shootingPosition)
                 .build();
         Trajectory t11 = drive.trajectoryBuilder(new Pose2d(24, -24, 0), 0)//4 (1,1)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build();
         Trajectory t20 = drive.trajectoryBuilder(new Pose2d(0, 0, 0), 0)//6 (2,0)
-                .lineToConstantHeading(new Vector2d(-3, -36))
+                .lineToConstantHeading(shootingPosition)
                 .build();
         Trajectory t21 = drive.trajectoryBuilder(new Pose2d(0, -24, 0), 0)//7 (2,1)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build();
         //takes about 3.76 seconds to generate, about a quarter second each
         Trajectory[][] traj = {{
                 t00,
                 t01,
                 drive.trajectoryBuilder(new Pose2d(48, -48, 0), 0)//2 (0,2)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build()},
                 {t10,
                 t11,
                 drive.trajectoryBuilder(new Pose2d(24, -48, 0), 0)//5 (1,2)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build()},
                 {t20,
                 t21,
                 drive.trajectoryBuilder(new Pose2d(0, -48, 0), 0)//8 (2,2)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build()},
                 {drive.trajectoryBuilder(new Pose2d(-24, 0, 0), 0)//9 (3,0)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build(),
                 drive.trajectoryBuilder(new Pose2d(-24, -24, 0), 0)//10 (3,1)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build(),
                 drive.trajectoryBuilder(new Pose2d(-24, -48, 0), 0)//11 (3,2)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build()},
                 {drive.trajectoryBuilder(new Pose2d(-48, 0, 0), 0)//12 (4,0)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build(),
                 drive.trajectoryBuilder(new Pose2d(-48, -24, 0), 0)//13 (4,1)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build(),
                 drive.trajectoryBuilder(new Pose2d(-48, -48, 0), 0)//14 (4,2)
-                        .lineToConstantHeading(new Vector2d(-3, -36))
+                        .lineToConstantHeading(shootingPosition)
                         .build()}
         };
         Trajectory[][] hiRes = {
                 {
                         t00,  //00
                         drive.trajectoryBuilder(new Pose2d(48, -12, 0), 0)//0 01
-                                    .lineToConstantHeading(new Vector2d(-3, -36))
+                                    .lineToConstantHeading(shootingPosition)
                                     .build(),
                         t01 //02
                 },
                 {
                         drive.trajectoryBuilder(new Pose2d(36, 0, 0), 0)//3 10
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build(),
                         drive.trajectoryBuilder(new Pose2d(36, -12, 0), 0)//4 11
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build(),
                         drive.trajectoryBuilder(new Pose2d(36, -24, 0), 0)//5 12
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build()
                 },
                 {
                         t10,//20
                         drive.trajectoryBuilder(new Pose2d(24, -12, 0), 0)//6 21
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build(),
                         t11//22
                 },
                 {
                         drive.trajectoryBuilder(new Pose2d(12, 0, 0), 0)//7 30
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build(),
                         drive.trajectoryBuilder(new Pose2d(12, -12, 0), 0)//8 31
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build(),
                         drive.trajectoryBuilder(new Pose2d(12, -12, 0), 0)//9  32
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build()
                 },
                 {
                         t20, // 40
                         drive.trajectoryBuilder(new Pose2d(0, -12, 0), 0)//10 41
-                                .lineToConstantHeading(new Vector2d(-3, -36))
+                                .lineToConstantHeading(shootingPosition)
                                 .build(),
                         t21//42
                 }
@@ -260,65 +262,75 @@ private boolean alwaysOn = false;
             }*/
             //Buzzwords: Context-Optimized Greedy Nearest Neighbor Search Algorithm
             if(gamepad1.right_stick_button){
-                double x = ourPose.getX();
-                double y = ourPose.getY();
-                double dist = (x - traj[2][0].end().getX()) * (x - traj[2][0].end().getX()) + (y - traj[2][0].end().getY()) * (y - traj[2][0].end().getY());
-                boolean bestDistFound = false;
-                Trajectory trajectory[][];
-                int rowIndex = 2;
-                int colIndex = 0;
-                if((x < 60 && x > -12) && (y < -12 && y > -36)){ trajectory = hiRes;
-                rowIndex = 4;
-                }else trajectory = traj;
+                if(runtime.seconds() < 90) {
+                    drive.turn(shootingHeading - ourPose.getHeading());
+                    double x = ourPose.getX();
+                    double y = ourPose.getY();
+                    double dist = (x - traj[2][0].end().getX()) * (x - traj[2][0].end().getX()) + (y - traj[2][0].end().getY()) * (y - traj[2][0].end().getY());
+                    boolean bestDistFound = false;
+                    Trajectory trajectory[][];
+                    int rowIndex = 2;
+                    int colIndex = 0;
+                    if ((x < 60 && x > -12) && (y < -12 && y > -36)) {
+                        trajectory = hiRes;
+                        rowIndex = 4;
+                    } else trajectory = traj;
 
-                if(dist > POWER_THRESHHOLD) {
-                    while (!bestDistFound) {
-                        int tempRow = rowIndex;
-                        int tempCol = colIndex;
-                        if (rowIndex - 1 > -1) {
-                            double checkDist = (x - trajectory[rowIndex - 1][colIndex].end().getX()) * (x - trajectory[rowIndex - 1][colIndex].end().getX())
-                                    + (y - trajectory[rowIndex - 1][colIndex].end().getY()) * (y - trajectory[rowIndex - 1][colIndex].end().getY());
-                            if (dist > checkDist) {
-                                dist = checkDist;
-                                tempRow = rowIndex - 1;
+                    if (dist > POWER_THRESHHOLD) {
+                        while (!bestDistFound) {
+                            int tempRow = rowIndex;
+                            int tempCol = colIndex;
+                            if (rowIndex - 1 > -1) {
+                                double checkDist = (x - trajectory[rowIndex - 1][colIndex].end().getX()) * (x - trajectory[rowIndex - 1][colIndex].end().getX())
+                                        + (y - trajectory[rowIndex - 1][colIndex].end().getY()) * (y - trajectory[rowIndex - 1][colIndex].end().getY());
+                                if (dist > checkDist) {
+                                    dist = checkDist;
+                                    tempRow = rowIndex - 1;
+                                }
                             }
-                        }
-                        if (rowIndex + 1 < trajectory.length) {
-                            double checkDist = (x - trajectory[rowIndex + 1][colIndex].end().getX()) * (x - trajectory[rowIndex + 1][colIndex].end().getX())
-                                    + (y - trajectory[rowIndex + 1][colIndex].end().getY()) * (y - trajectory[rowIndex + 1][colIndex].end().getY());
-                            if (dist > checkDist) {
-                                dist = checkDist;
-                                tempRow = rowIndex + 1;
+                            if (rowIndex + 1 < trajectory.length) {
+                                double checkDist = (x - trajectory[rowIndex + 1][colIndex].end().getX()) * (x - trajectory[rowIndex + 1][colIndex].end().getX())
+                                        + (y - trajectory[rowIndex + 1][colIndex].end().getY()) * (y - trajectory[rowIndex + 1][colIndex].end().getY());
+                                if (dist > checkDist) {
+                                    dist = checkDist;
+                                    tempRow = rowIndex + 1;
+                                }
                             }
-                        }
-                        if (colIndex - 1 > -1) {
-                            double checkDist = (x - trajectory[rowIndex][colIndex - 1].end().getX()) * (x - trajectory[rowIndex][colIndex - 1].end().getX())
-                                    + (y - trajectory[rowIndex][colIndex - 1].end().getY()) * (y - trajectory[rowIndex][colIndex - 1].end().getY());
-                            if (dist > checkDist) {
-                                dist = checkDist;
-                                tempRow = rowIndex;
-                                tempCol = colIndex - 1;
+                            if (colIndex - 1 > -1) {
+                                double checkDist = (x - trajectory[rowIndex][colIndex - 1].end().getX()) * (x - trajectory[rowIndex][colIndex - 1].end().getX())
+                                        + (y - trajectory[rowIndex][colIndex - 1].end().getY()) * (y - trajectory[rowIndex][colIndex - 1].end().getY());
+                                if (dist > checkDist) {
+                                    dist = checkDist;
+                                    tempRow = rowIndex;
+                                    tempCol = colIndex - 1;
+                                }
                             }
-                        }
-                        if (colIndex + 1 < trajectory[rowIndex].length) {
-                            double checkDist = (x - trajectory[rowIndex][colIndex + 1].end().getX()) * (x - trajectory[rowIndex][colIndex + 1].end().getX())
-                                    + (y - trajectory[rowIndex][colIndex + 1].end().getY()) * (y - trajectory[rowIndex][colIndex + 1].end().getY());
-                            if (dist > checkDist) {
-                                dist = checkDist;
-                                tempRow = rowIndex;
-                                tempCol = colIndex + 1;
+                            if (colIndex + 1 < trajectory[rowIndex].length) {
+                                double checkDist = (x - trajectory[rowIndex][colIndex + 1].end().getX()) * (x - trajectory[rowIndex][colIndex + 1].end().getX())
+                                        + (y - trajectory[rowIndex][colIndex + 1].end().getY()) * (y - trajectory[rowIndex][colIndex + 1].end().getY());
+                                if (dist > checkDist) {
+                                    dist = checkDist;
+                                    tempRow = rowIndex;
+                                    tempCol = colIndex + 1;
+                                }
                             }
+                            if (rowIndex != tempRow || colIndex != tempCol) {
+                                rowIndex = tempRow;
+                                colIndex = tempCol;
+                            } else bestDistFound = true;
                         }
-                        if (rowIndex != tempRow || colIndex != tempCol) {
-                            rowIndex = tempRow;
-                            colIndex = tempCol;
-                        } else bestDistFound = true;
                     }
+                    pt.setDebug("closest X: ", trajectory[rowIndex][colIndex].end().getX());
+                    pt.setDebug("closest Y: ", trajectory[rowIndex][colIndex].end().getY());
+                    drive.followTrajectory(trajectory[rowIndex][colIndex]);
+                    launchRing(3,outTake75Speed);
+                }else {
+                    Trajectory toLaunch = drive.trajectoryBuilder(drive.getPoseEstimate())
+                            .splineToLinearHeading(constantLaunchSpline2.start(),0)
+                            .build();
+                    drive.followTrajectory(toLaunch);
+                    drive.followTrajectory(constantLaunchSpline2);
                 }
-                pt.setDebug("closest X: ", trajectory[rowIndex][colIndex].end().getX());
-                pt.setDebug("closest Y: ", trajectory[rowIndex][colIndex].end().getY());
-                drive.followTrajectory(trajectory[rowIndex][colIndex]);
-
             }
             pt.setDebug("x", ourPose.getX());
             pt.setDebug("y", ourPose.getY());
