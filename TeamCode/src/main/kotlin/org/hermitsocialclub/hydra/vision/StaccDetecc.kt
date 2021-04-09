@@ -15,9 +15,14 @@ import kotlin.math.max
  *
  * @author Arc'blroth
  */
-class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfig()) : IVisionPipelineComponent {
+class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfig()) : IVisionPipelineComponent {
 
     class StaccConfig {
+        /**
+         * Subregion of the image to look at for stacks.
+         */
+        var submat: Rect? = null
+
         /**
          * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
          */
@@ -63,22 +68,28 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         private set
 
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
+        val subImage = if (config.submat != null) {
+            Mat(image, config.submat)
+        } else {
+            image
+        }
+
         // Filter image for a certain color
-        val hsvImg = zero(image)
-        cvtColor(image, hsvImg, COLOR_RGB2HSV)
+        val hsvImg = zero(subImage)
+        cvtColor(subImage, hsvImg, COLOR_RGB2HSV)
         normalize(hsvImg, hsvImg, 0.0, config.normUpper, NORM_MINMAX)
         val colorFilter = zero(hsvImg)
         inRange(hsvImg, config.lowerYellow, config.upperYellow, colorFilter)
 
         // Find largest square area in image
         try {
-            val fsout = findStacc(image, colorFilter)
+            val fsout = findStacc(colorFilter)
             if (fsout != null) {
                 val ratio = fsout.height.toDouble() / fsout.width.toDouble()
                 this.lastStackHeight = if (ratio < config.oneStackRatio) 1 else 4
                 pipeline.telemetry.setData("Stacc ratio", ratio)
                 pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
-                rectangle(image, fsout, Scalar(0.0, 255.0, 0.0), 3)
+                rectangle(subImage, fsout, Scalar(0.0, 255.0, 0.0), 3)
             } else {
                 this.lastStackHeight = 0
                 pipeline.telemetry.removeData("Stacc ratio")
@@ -93,7 +104,7 @@ class StaccDetecc @JvmOverloads constructor(val config: StaccConfig = StaccConfi
         return image
     }
 
-    private fun findStacc(image: Mat, filter: Mat): Rect? {
+    private fun findStacc(filter: Mat): Rect? {
         filter.convertTo(filter, CvType.CV_8U)
         val labels = Mat()
         val stats = Mat()

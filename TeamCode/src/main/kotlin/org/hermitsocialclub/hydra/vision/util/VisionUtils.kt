@@ -1,11 +1,12 @@
 package org.hermitsocialclub.hydra.vision.util
 
 import org.hermitsocialclub.hydra.vision.VisionPipeline
-import org.opencv.core.Mat
-import org.opencv.core.MatOfByte
-import org.opencv.core.MatOfPoint
-import org.opencv.core.MatOfPoint2f
+import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.*
 
 object VisionUtils {
 
@@ -31,6 +32,34 @@ object VisionUtils {
 
     inline fun loadImageGrayscale(pipeline: VisionPipeline, name: String): Mat {
         return loadImage(pipeline, name, IMREAD_GRAYSCALE)
+    }
+
+    @JvmStatic
+    fun loadRectFromFile(file: File): Rect {
+        val properties = Properties()
+        if(!file.exists()) file.createNewFile()
+        FileInputStream(file).use {
+            properties.load(it)
+        }
+        return Rect(
+            Integer.valueOf(properties.getProperty("x", "0")),
+            Integer.valueOf(properties.getProperty("y", "0")),
+            Integer.valueOf(properties.getProperty("width", "100")),
+            Integer.valueOf(properties.getProperty("height", "100")),
+        )
+    }
+
+    @JvmStatic
+    fun saveRectToFile(rect: Rect, file: File) {
+        val properties = Properties()
+        properties.setProperty("x", rect.x.toString())
+        properties.setProperty("y", rect.y.toString())
+        properties.setProperty("width", rect.width.toString())
+        properties.setProperty("height", rect.height.toString())
+        if(!file.exists()) file.createNewFile()
+        FileOutputStream(file).use {
+            properties.store(it, null)
+        }
     }
 
 }

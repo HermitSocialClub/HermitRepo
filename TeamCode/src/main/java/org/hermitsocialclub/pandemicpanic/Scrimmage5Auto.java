@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
 import org.hermitsocialclub.hydra.vision.StaccDetecc;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.VisionSemaphore;
+import org.hermitsocialclub.hydra.vision.util.VisionUtils;
+import org.hermitsocialclub.opmodes.SubmatSetupOp;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.opencv.core.Mat;
 
@@ -44,7 +46,7 @@ public class Scrimmage5Auto extends LinearOpMode {
     private enum Ambition{
         BASE_MODE, POWERSHOT_MODE,TURN_POWER_SHOT,CONSTANT_POWER_SHOT, BROKEN
     }
-    private Ambition ambition = Ambition.BROKEN;
+    private final Ambition ambition = Ambition.BROKEN;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -63,6 +65,7 @@ public class Scrimmage5Auto extends LinearOpMode {
         this.drive.setPoseEstimate(new Pose2d(-63, -15.5, 0));
 
         this.stackDetector = new StaccDetecc();
+        this.stackDetector.getConfig().setSubmat(VisionUtils.loadRectFromFile(SubmatSetupOp.SUBMAT_CONFIG));
         this.semaphore = new VisionSemaphore();
         this.visionPipeline = new VisionPipeline(hardwareMap, telemetry, stackDetector, semaphore);
         this.time = new ElapsedTime();

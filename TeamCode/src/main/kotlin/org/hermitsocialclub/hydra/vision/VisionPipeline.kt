@@ -47,7 +47,6 @@ class VisionPipeline(
         camera.setPipeline(this)
         start()
     }
-
     override fun processFrame(input: Mat): Mat {
         var mat = input
         pipeline.forEach { mat = it.apply(mat, this) }
