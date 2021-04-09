@@ -35,8 +35,6 @@ class SubmatSetupOp : AbstractVisionTestOp() {
     override fun runLoop(telemetry: PersistantTelemetry, camera: OpenCvCamera, pipeline: VisionPipeline) {
         telemetry.setData("FPS", "%.2f", camera.fps)
         telemetry.setData("", "Use left stick to configure position and right stick to configure size. Press A to save.")
-        telemetry.setData("Position", "%d %d", submat.x, submat.y)
-        telemetry.setData("Size", "%d %d", submat.width, submat.height)
 
         if(abs(gamepad1.left_stick_x) >= 0.1) {
             submat.x += floor(gamepad1.left_stick_x * 10.0).toInt()
