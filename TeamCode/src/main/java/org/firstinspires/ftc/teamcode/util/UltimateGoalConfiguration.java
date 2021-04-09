@@ -35,6 +35,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.teamcode.util.Encoder;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.RevBulkData;
 
 public class UltimateGoalConfiguration {
 
@@ -48,6 +51,12 @@ public class UltimateGoalConfiguration {
     public BNO055IMU imu = null;
     public CRServo wobbleGrab;
     public CRServo intakeThirdStage;
+
+    RevBulkData bulkData;
+    public AnalogInput a0, a1, a2, a3;
+    public DigitalChannel d0, d1, d2, d3, d4, d5, d6, d7;
+    public ExpansionHubMotor motor0, motor1, motor2, motor3, outTakeBulk;
+    public ExpansionHubEx expansionHub, controlHub;
 
     public static final double MID_SERVO = 1;
     public static final double ARM_UP_POWER = 0.45;
@@ -81,6 +90,15 @@ public class UltimateGoalConfiguration {
         frontEncoder = hwMap.get(DcMotorEx.class, "left_drive");
 
         intakeThirdStage = hwMap.get(CRServo.class,"intakeThirdStage");
+
+        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        controlHub = hwMap.get(ExpansionHubEx.class,"Control Hub");
+        motor0 = (ExpansionHubMotor) left_drive;
+        motor1 = (ExpansionHubMotor) right_drive;
+        motor2 = (ExpansionHubMotor) left_drive_2;
+        motor3 = (ExpansionHubMotor) right_drive_2;
+        outTakeBulk = (ExpansionHubMotor) hwMap.dcMotor.get("takeruFlyOut");
+
 
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors
