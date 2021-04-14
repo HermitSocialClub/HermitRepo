@@ -26,6 +26,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -63,8 +64,8 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class BaselineMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.1/*8.3*/, 0, 1/*0.4*/);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8/*17*/, 0, 1/*0.5*/);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.1, 0, 1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 1);
 
     public static double LATERAL_MULTIPLIER = 60/45.75;
 
@@ -100,6 +101,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     public CRServo wobbleGrab;
     public Servo kicker;
+    public RevColorSensorV3 color;
+    public Servo hopperLift;
     public CRServo intakeThirdStage;
 
 
@@ -163,6 +166,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
         intakeThirdStage = hardwareMap.get(CRServo.class,"intakeThirdStage");
         intakeThirdStage.setPower(0);
 
+        hopperLift = hardwareMap.get(Servo.class,"hopperLift");
+        color = hardwareMap.get(RevColorSensorV3.class,"color");
+
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -195,96 +201,6 @@ public class BaselineMecanumDrive extends MecanumDrive {
         wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // TODO: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap,this,pt));
-    }
-
-    public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt, boolean initHardware) {
-        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
-        this.telemetry = pt;
-
-        dashboard = FtcDashboard.getInstance();
-        dashboard.setTelemetryTransmissionInterval(25);
-
-        clock = NanoClock.system();
-
-        mode = Mode.IDLE;
-
-        turnController = new PIDFController(HEADING_PID);
-        turnController.setInputBounds(0, 2 * Math.PI);
-
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
-
-        poseHistory = new LinkedList<>();
-
-        LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
-
-        batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-
-        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
-        // upward (normal to the floor) using a command like the following:
-        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
-    if(initHardware) {
-        leftFront = hardwareMap.get(DcMotorEx.class, "left_drive");
-        leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
-        rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
-        rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
-
-        wobbleArm = hardwareMap.get(DcMotorEx.class, "wobbleArm");
-        wobbleGrab = hardwareMap.get(CRServo.class, "wobbleGrab");
-
-        intake = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
-
-        outtake = hardwareMap.get(DcMotorEx.class, "takeruFlyOut");
-        kicker = hardwareMap.get(Servo.class, "kicker");
-        intakeThirdStage = hardwareMap.get(CRServo.class, "intakeThirdStage");
-        intakeThirdStage.setPower(0);
-
-
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
-
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
-
-        if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtake.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(50, 0, 5, 13.1));
-
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
-
-        // TODO: reverse any motors using DcMotor.setDirection()
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
-        outtake.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap,this,pt));

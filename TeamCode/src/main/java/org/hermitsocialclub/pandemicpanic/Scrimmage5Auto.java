@@ -86,211 +86,224 @@ public class Scrimmage5Auto extends LinearOpMode {
         // Build trajectories
 
 
-        Trajectory constantLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .splineToConstantHeading(new Vector2d(-14,12.50),0)
-                .build();
-        Trajectory constantLaunchSpline2 = drive.trajectoryBuilder(constantLaunchSpline.end())
-                .splineToConstantHeading(new Vector2d(-3,-24.50),0)
-                .addSpatialMarker(new Vector2d(0,-2.50), () -> launchRing(1,powerShotSpeed))
-                .addSpatialMarker(new Vector2d(0,-14.50), () -> launchRing(1,powerShotSpeed))
-                .addSpatialMarker(new Vector2d(0,-20.50), () -> launchRing(1,powerShotSpeed))
-                .build();
-        Trajectory turnLaunchSpline = drive
-                .trajectoryBuilder(drive.getPoseEstimate())
-                .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
-                .splineToLinearHeading(new Pose2d(-3, -42,Math.toRadians(12.5)), 60)
-                .addDisplacementMarker(() -> {
-                    drive.outtake.setVelocity(launchLineSpeed, AngleUnit.RADIANS);
-                    while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
-                        telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
-                        telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
-                        telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
-                    }
-                    int ringsFired = 0;
-                    while (opModeIsActive() && ringsFired < 1) {
-                        telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPosition(.7);
-                        sleep(200);
-                        drive.kicker.setPosition(.3);
-                        while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+        Trajectory constantLaunchSpline;
+        Trajectory constantLaunchSpline2;
+        //Constant Power Shot
+        {
+            constantLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    .splineToConstantHeading(new Vector2d(-14, 12.50), 0)
+                    .build();
+            constantLaunchSpline2 = drive.trajectoryBuilder(constantLaunchSpline.end())
+                    .splineToConstantHeading(new Vector2d(-3, -24.50), 0)
+                    .addSpatialMarker(new Vector2d(0, -2.50), () -> launchRing(1, powerShotSpeed))
+                    .addSpatialMarker(new Vector2d(0, -14.50), () -> launchRing(1, powerShotSpeed))
+                    .addSpatialMarker(new Vector2d(0, -20.50), () -> launchRing(1, powerShotSpeed))
+                    .build();
+        }
+        Trajectory turnLaunchSpline;
+        //Turn PowerShot
+        {
+            turnLaunchSpline = drive
+                    .trajectoryBuilder(drive.getPoseEstimate())
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .splineToLinearHeading(new Pose2d(-3, -42, Math.toRadians(12.5)), 60)
+                    .addDisplacementMarker(() -> {
+                        drive.outtake.setVelocity(launchLineSpeed, AngleUnit.RADIANS);
+                        while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
+                            telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
                         }
-                        ringsFired++;
-                    }
-                })
-                .build();
-        Trajectory powerLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .splineToLinearHeading(new Pose2d(-34,-2,0),0)
-                .addDisplacementMarker(() -> {
-                    drive.outtake.setVelocity(launchLineSpeed, AngleUnit.RADIANS);
-                    while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
-                        telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
-                        telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
-                        telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
-                    }
-                    int ringsFired = 0;
-                    while (opModeIsActive() && ringsFired < 1) {
-                        telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPosition(.7);
-                        sleep(200);
-                        drive.kicker.setPosition(.3);
-                        while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+                        int ringsFired = 0;
+                        while (opModeIsActive() && ringsFired < 1) {
+                            telemetry.setDebug("ringsFired", ringsFired);
+                            drive.kicker.setPosition(.7);
+                            sleep(200);
+                            drive.kicker.setPosition(.3);
+                            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+                                telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            }
+                            ringsFired++;
+                        }
+                    })
+                    .build();
+        }
+        Trajectory powerLaunchSpline;
+        Trajectory secondPowerShot;
+        Trajectory thirdPowerShot;
+        Trajectory fourSplinePower;
+        //Standard Powershot
+        {
+            powerLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    .splineToLinearHeading(new Pose2d(-34, -2, 0), 0)
+                    .addDisplacementMarker(() -> {
+                        drive.outtake.setVelocity(launchLineSpeed, AngleUnit.RADIANS);
+                        while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
+                            telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
                         }
-                        ringsFired++;
-                    }
-                })
-                .build();
-        Trajectory secondPowerShot = drive.trajectoryBuilder(powerLaunchSpline.end())
-                .lineToConstantHeading(new Vector2d(-34,-14.50))
-                .addDisplacementMarker(() -> {
-                    while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
-                        telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
-                        telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
-                        telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
-                    }
-                    int ringsFired = 0;
-                    while (opModeIsActive() && ringsFired < 1) {
-                        telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPosition(.7);
-                        sleep(200);
-                        drive.kicker.setPosition(.3);
-                        while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+                        int ringsFired = 0;
+                        while (opModeIsActive() && ringsFired < 1) {
+                            telemetry.setDebug("ringsFired", ringsFired);
+                            drive.kicker.setPosition(.7);
+                            sleep(200);
+                            drive.kicker.setPosition(.3);
+                            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+                                telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            }
+                            ringsFired++;
+                        }
+                    })
+                    .build();
+            secondPowerShot = drive.trajectoryBuilder(powerLaunchSpline.end())
+                    .lineToConstantHeading(new Vector2d(-34, -14.50))
+                    .addDisplacementMarker(() -> {
+                        while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
+                            telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
                         }
-                        ringsFired++;
-                    }
-                })
-                .build();
-        Trajectory thirdPowerShot = drive.trajectoryBuilder(secondPowerShot.end())
-                .lineToConstantHeading(new Vector2d(-34,-20.50))
-                .addDisplacementMarker(() -> {
-                    while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
-                        telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
-                        telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
-                        telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
-                    }
-                    int ringsFired = 0;
-                    while (opModeIsActive() && ringsFired < 1) {
-                        telemetry.setDebug("ringsFired", ringsFired);
-                        drive.kicker.setPosition(.7);
-                        sleep(200);
-                        drive.kicker.setPosition(.3);
-                        while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+                        int ringsFired = 0;
+                        while (opModeIsActive() && ringsFired < 1) {
+                            telemetry.setDebug("ringsFired", ringsFired);
+                            drive.kicker.setPosition(.7);
+                            sleep(200);
+                            drive.kicker.setPosition(.3);
+                            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+                                telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            }
+                            ringsFired++;
+                        }
+                    })
+                    .build();
+            thirdPowerShot = drive.trajectoryBuilder(secondPowerShot.end())
+                    .lineToConstantHeading(new Vector2d(-34, -20.50))
+                    .addDisplacementMarker(() -> {
+                        while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
                             telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
+                            telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
                         }
-                        ringsFired++;
-                    }
-                })
-                .build();
-        Trajectory fourSplinePower = drive.trajectoryBuilder(thirdPowerShot.end())
-                .splineToLinearHeading(new Pose2d(50,-36,270),0)
-                .build();
-        Trajectory launchSpline = drive
-                .trajectoryBuilder(drive.getPoseEstimate())
-                .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
-                .splineToConstantHeading(new Vector2d(-3, -41), Math.toRadians(-80))
-                .build();
-        Trajectory oneSpline = drive
-                .trajectoryBuilder(launchSpline.end())
-                .forward(12)
-                .build();
-        Trajectory fourCollect = drive.trajectoryBuilder(launchSpline.end())
-                .addDisplacementMarker(()->{drive.intake.setPower(-.7);})
-                .back(16)
-                .build();
-        Trajectory fourCollect2 = drive.trajectoryBuilder(fourCollect.end())
-                .addDisplacementMarker(()-> drive.intake.setPower(.9))
-                .back(4,new MecanumConstraints(
-                        new DriveConstraints(5, DriveConstants.MAX_ACCEL,0.0,
-                                DriveConstants.MAX_ANG_VELO,DriveConstants.MAX_ANG_ACCEL,0.0),
-                        DriveConstants.TRACK_WIDTH))
-                .addDisplacementMarker(()-> launchRing(3,collectLaunchSpeed)
-                    )
-                .back(5,new MecanumConstraints(
-                        new DriveConstraints(6.5, DriveConstants.MAX_ACCEL,0.0,
-                                DriveConstants.MAX_ANG_VELO,DriveConstants.MAX_ANG_ACCEL,0.0),
-                        DriveConstants.TRACK_WIDTH))
-                .addDisplacementMarker(()->
-                        launchRing(3,collectLaunchSpeed)
-                )
-                .build();
-        Trajectory fourSpline = drive
-                .trajectoryBuilder(launchSpline.end())
-                .splineToConstantHeading(new Vector2d(38, -58), 0)
-                .build();
+                        int ringsFired = 0;
+                        while (opModeIsActive() && ringsFired < 1) {
+                            telemetry.setDebug("ringsFired", ringsFired);
+                            drive.kicker.setPosition(.7);
+                            sleep(200);
+                            drive.kicker.setPosition(.3);
+                            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - launchLineSpeed) > Math.pow(10, -1)) {
+                                telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
+                            }
+                            ringsFired++;
+                        }
+                    })
+                    .build();
+            fourSplinePower = drive.trajectoryBuilder(thirdPowerShot.end())
+                    .splineToLinearHeading(new Pose2d(50, -36, 270), 0)
+                    .build();
+        }
+        Trajectory launchSpline;
+        Trajectory oneSpline;
+        Trajectory fourSpline;
+        Trajectory noSquare;
+        Trajectory noRingDisengage;
+        Trajectory noRings;
+        Trajectory noRingsDrop;
+        Trajectory oneRingDisengage;
+        Trajectory oneRingPickUp;
+        Trajectory oneRingSecondDrop;
+        Trajectory fourRingSecondDrop;
+        Trajectory fourBack;
+        Trajectory fourBack2;
+        Trajectory fourRingPickUp;
+        //Standard High Goal
+        {
+            launchSpline = drive
+                    .trajectoryBuilder(drive.getPoseEstimate())
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .splineToConstantHeading(new Vector2d(-3, -41), Math.toRadians(-80))
+                    .build();
+            oneSpline = drive
+                    .trajectoryBuilder(launchSpline.end())
+                    .forward(12)
+                    .build();
+            fourSpline = drive
+                    .trajectoryBuilder(launchSpline.end())
+                    .splineToConstantHeading(new Vector2d(38, -58), 0)
+                    .build();
 
-        Trajectory noSquare = drive
-                .trajectoryBuilder(launchSpline.end().plus(new Pose2d(0, 0, Math.toRadians(-60))))
-                .forward(5.5)
-                .build();
-        Trajectory noRingDisengage = drive
-                .trajectoryBuilder(noSquare.end())
-                .back(9)
-                .build();
+            noSquare = drive
+                    .trajectoryBuilder(launchSpline.end().plus(new Pose2d(0, 0, Math.toRadians(-60))))
+                    .forward(5.5)
+                    .build();
+            noRingDisengage = drive
+                    .trajectoryBuilder(noSquare.end())
+                    .back(9)
+                    .build();
 
-        Trajectory noRings = drive
-                .trajectoryBuilder(noRingDisengage.end(),Math.toRadians(120))
-                .splineToLinearHeading(new Pose2d(-30.50, -42.50,Math.toRadians(180)), Math.toRadians(180))
-                .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
-                .build();
-        Trajectory noRingsDrop = drive
-                .trajectoryBuilder(noRings.end(), Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(8.50, -56.50, Math.toRadians(-30)), 0)
-                .build();
-        Trajectory oneRingDisengage = drive.trajectoryBuilder(oneSpline.end())
-                .back(9)
-                .build();
-        Trajectory oneRingPickUp = drive.trajectoryBuilder(oneRingDisengage.end())
-                .splineToLinearHeading(new Pose2d(-36.50,-46.50,Math.toRadians(180)),Math.toRadians(180))
-                .build();
-        Trajectory oneRingSecondDrop = drive.trajectoryBuilder(noRings.end())
-                .splineToLinearHeading(new Pose2d(12,-36.50,0),0)
-                .build();
-        Trajectory fourRingSecondDrop = drive.trajectoryBuilder(noRings.end())
-                .splineToLinearHeading(new Pose2d(36.50,-58,0),0)
-                .addDisplacementMarker(() -> drive.wobbleGrab.setPower(-1))
-                .build();
-        Trajectory fourBack = drive
-                .trajectoryBuilder(fourSpline.end())
-                .back(9)
-                .build();
-        Trajectory fourBack2 = drive
-                .trajectoryBuilder(fourRingSecondDrop.end())
-                .back(20)
-                .build();
-        Trajectory oneRingDisengage2 = drive.trajectoryBuilder(oneRingSecondDrop.end())
-                .back(20)
-                .build();
-        Trajectory fourRingPickUp = drive.trajectoryBuilder(fourBack.end(),Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-36.50,-46.50,Math.toRadians(180)),Math.toRadians(180))
-                .build();
+            noRings = drive
+                    .trajectoryBuilder(noRingDisengage.end(), Math.toRadians(120))
+                    .splineToLinearHeading(new Pose2d(-30.50, -42.50, Math.toRadians(180)), Math.toRadians(180))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .build();
+            noRingsDrop = drive
+                    .trajectoryBuilder(noRings.end(), Math.toRadians(180))
+                    .splineToLinearHeading(new Pose2d(8.50, -56.50, Math.toRadians(-30)), 0)
+                    .build();
+            oneRingDisengage = drive.trajectoryBuilder(oneSpline.end())
+                    .back(9)
+                    .build();
+            oneRingPickUp = drive.trajectoryBuilder(oneRingDisengage.end())
+                    .splineToLinearHeading(new Pose2d(-36.50, -46.50, Math.toRadians(180)), Math.toRadians(180))
+                    .build();
+            oneRingSecondDrop = drive.trajectoryBuilder(noRings.end())
+                    .splineToLinearHeading(new Pose2d(12, -36.50, 0), 0)
+                    .build();
+            fourRingSecondDrop = drive.trajectoryBuilder(noRings.end())
+                    .splineToLinearHeading(new Pose2d(36.50, -58, 0), 0)
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(-1))
+                    .build();
+            fourBack = drive
+                    .trajectoryBuilder(fourSpline.end())
+                    .back(9)
+                    .build();
+            fourBack2 = drive
+                    .trajectoryBuilder(fourRingSecondDrop.end())
+                    .back(20)
+                    .build();
+            fourRingPickUp = drive.trajectoryBuilder(fourBack.end(), Math.toRadians(180))
+                    .splineToLinearHeading(new Pose2d(-36.50, -46.50, Math.toRadians(180)), Math.toRadians(180))
+                    .build();
+    }
+        Trajectory failure1;
+        Trajectory failureZero0;
+        Trajectory failureZero;
+        Trajectory failureOne;
+        Trajectory failureFour;
+        Trajectory failureFourBack;
+        //failure
+        {
+            failure1 = drive.trajectoryBuilder(drive.getPoseEstimate())
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .forward(62.5)
+                    .build();
 
-        Trajectory failure1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                .addDisplacementMarker(()->drive.wobbleGrab.setPower(1))
-                .forward(62.5)
-                .build();
-
-        Trajectory failureZero0 = drive.trajectoryBuilder(failure1.end())
-                .forward(5)
-                .build();
-        Trajectory failureZero = drive.trajectoryBuilder(failureZero0.end().plus(new Pose2d(0,0,Math.toRadians(120))))
-                .forward(4)
-                .build();
-        Trajectory failureOne = drive.trajectoryBuilder(failure1.end())
-                .forward(18)
-                .build();
-        Trajectory failureFour = drive.trajectoryBuilder(failure1.end())
-                .forward(48)
-                .build();
-        Trajectory failureFourBack = drive.trajectoryBuilder(failureFour.end().plus(new Pose2d(0,0,Math.toRadians(180))))
-                .forward(36)
-                .build();
-        telemetry.setDebug("Achievable RPM Fraction", goBildaOutTake.getAchieveableMaxRPMFraction());
-        telemetry.setDebug("Achievable Ticks Per Second", goBildaOutTake.getAchieveableMaxTicksPerSecond());
-        telemetry.setDebug("hub velocity params", goBildaOutTake.getHubVelocityParams());
-        telemetry.setDebug("velocity params", goBildaOutTake.hasExpansionHubVelocityParams());
-        telemetry.setDebug("outtakeVelocity", launchLineSpeed);
+            failureZero0 = drive.trajectoryBuilder(failure1.end())
+                    .forward(5)
+                    .build();
+            failureZero = drive.trajectoryBuilder(failureZero0.end().plus(new Pose2d(0, 0, Math.toRadians(120))))
+                    .forward(4)
+                    .build();
+            failureOne = drive.trajectoryBuilder(failure1.end())
+                    .forward(18)
+                    .build();
+            failureFour = drive.trajectoryBuilder(failure1.end())
+                    .forward(48)
+                    .build();
+            failureFourBack = drive.trajectoryBuilder(failureFour.end().plus(new Pose2d(0, 0, Math.toRadians(180))))
+                    .forward(36)
+                    .build();
+        }
 
         waitForStart();
 

@@ -37,16 +37,21 @@ class SubmatSetupOp : AbstractVisionTestOp() {
         telemetry.setData("", "Use left stick to configure position and right stick to configure size. Press A to save.")
 
         if(abs(gamepad1.left_stick_x) >= 0.1) {
-            submat.x += floor(gamepad1.left_stick_x * 10.0).toInt()
+            if((submat.x<320-submat.width-5&&gamepad1.left_stick_x>0)||(submat.x>=0&&gamepad1.left_stick_x<0)){
+            submat.x += floor(gamepad1.left_stick_x * 5.0).toInt()
+            }
         }
         if(abs(gamepad1.left_stick_y) >= 0.1) {
-            submat.y += floor(gamepad1.left_stick_y * 10.0).toInt()
+            if((submat.y<240-submat.height-5&&gamepad1.left_stick_y>0)||(submat.y>=0&&gamepad1.left_stick_y<0)){
+            submat.y += floor(gamepad1.left_stick_y * 5.0).toInt()}
         }
         if(abs(gamepad1.right_stick_x) >= 0.1) {
-            submat.width += floor(gamepad1.right_stick_x * 10.0).toInt()
+            if (submat.width < 320-submat.width - 5){
+            submat.width += floor(gamepad1.right_stick_x * 5.0).toInt()}
         }
         if(abs(gamepad1.right_stick_y) >= 0.1) {
-            submat.height += floor(gamepad1.right_stick_y * 10.0).toInt()
+            if (submat.height < 240-submat.height - 5){
+            submat.height += floor(gamepad1.right_stick_y * 5.0).toInt()}
         }
         staccDetecc.config.submat = submat
         submatRenderer.submat = submat
