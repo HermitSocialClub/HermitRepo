@@ -1,11 +1,12 @@
 package org.hermitsocialclub.hydra.vision
 
+import org.hermitsocialclub.hydra.vision.util.CameraConfig
 import org.hermitsocialclub.hydra.vision.util.VisionUtils.zero
+import org.hermitsocialclub.telecat.PersistantTelemetry
+import org.opencv.calib3d.Calib3d.projectPoints
+import org.opencv.calib3d.Calib3d.solvePnP
+import org.opencv.core.*
 import org.opencv.core.Core.*
-import org.opencv.core.CvType
-import org.opencv.core.Mat
-import org.opencv.core.Rect
-import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc.*
 import kotlin.math.max
 
@@ -15,7 +16,7 @@ import kotlin.math.max
  *
  * @author Arc'blroth
  */
-class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfig()) : IVisionPipelineComponent {
+class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfig(), val cameraConfig: CameraConfig? = null) : IVisionPipelineComponent {
 
     class StaccConfig {
         /**
@@ -90,6 +91,8 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 pipeline.telemetry.setData("Stacc ratio", ratio)
                 pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
                 rectangle(subImage, fsout, Scalar(0.0, 255.0, 0.0), 3)
+
+                findStaccPose(image, fsout, pipeline.telemetry)
             } else {
                 this.lastStackHeight = 0
                 pipeline.telemetry.removeData("Stacc ratio")
@@ -148,6 +151,68 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 heightBuffer[0],
             )
         }
+    }
+
+    private fun findStaccPose(image: Mat, staccArea: Rect, telemetry: PersistantTelemetry) {
+        if (cameraConfig == null) {
+            return
+        }
+
+        val objectPoints = MatOfPoint3f(
+            Point3(0.0, 0.0, 0.0),
+            Point3(1.0, 0.0, 0.0),
+            Point3(0.0, 0.0, 1.0),
+            Point3(1.0, 0.0, 1.0),
+        )
+
+        val left = staccArea.x.toDouble()
+        val right = (staccArea.x + staccArea.width).toDouble()
+        val top = staccArea.y.toDouble()
+        val bottom = (staccArea.y + staccArea.height).toDouble()
+        val corners = MatOfPoint2f(
+            Point(left, bottom),
+            Point(right, bottom),
+            Point(left, top),
+            Point(right, top),
+        )
+
+        // Find pose
+        val rvec = Mat()
+        val tvec = Mat()
+        solvePnP(
+            objectPoints,
+            corners,
+            cameraConfig.cameraMatrix,
+            cameraConfig.distortionCoefficients,
+            rvec,
+            tvec,
+            false,
+        )
+
+        telemetry.setData("tvec", tvec.dump())
+
+        // Draw pose
+        val imgpts = MatOfPoint2f()
+        val jac = Mat()
+        projectPoints(
+            MatOfPoint3f(
+                Point3(5.0,  0.0,  0.0),
+                Point3(0.0, -5.0,  0.0),
+                Point3(0.0,  0.0, -5.0),
+            ),
+            rvec,
+            tvec,
+            cameraConfig.cameraMatrix,
+            cameraConfig.distortionCoefficients,
+            imgpts,
+            jac,
+        )
+
+        val corner = Point(left, bottom)
+        val imgptsArray = imgpts.toArray()
+        line(image, corner, imgptsArray[0], Scalar(255.0, 0.0, 0.0), 10)
+        line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 10)
+        line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 10)
     }
 
 }
