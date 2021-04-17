@@ -12,7 +12,7 @@ import kotlin.math.max
 
 /**
  * # StaccDetecc
- * Based on the python implementation [here](https://gist.github.com/Arc-blroth/96627615698cb7800bc63228ad1c7837)
+ * Based on the python implementation [here](https://gist.github.com/Arc-blroth/b091121c41543cbdb5d92043cbeca6d2)
  *
  * @author Arc'blroth
  */
@@ -38,11 +38,6 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
          * "Upper" HSV color to look for.
          */
         var upperYellow = Scalar(255.0, 255.0, 510.0)
-
-        /**
-         * Threshold value to separate the top of the ring from the bottom.
-         */
-        var topThreshold = 127.0
 
         /**
          * Pixel regions with an area smaller than this are discarded by the algorithm.
@@ -97,7 +92,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
                 rectangle(subImage, fsout, Scalar(0.0, 255.0, 0.0), 3)
 
-                findStaccPose(image, colorFilter, fsout, pipeline.telemetry)
+                findStaccPose(image, fsout, pipeline.telemetry)
             } else {
                 this.lastStackHeight = 0
                 pipeline.telemetry.removeData("Stacc ratio")
@@ -158,91 +153,28 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         }
     }
 
-    private fun findStaccPose(image: Mat, colorFilter: Mat, staccArea: Rect, telemetry: PersistantTelemetry) {
+    private fun findStaccPose(image: Mat, staccArea: Rect, telemetry: PersistantTelemetry) {
         if (cameraConfig == null) {
             return
         }
 
-        // Find the top of the ring
-        val topImage = run {
-            val ring = Mat()
-            val topFilter = Mat(colorFilter, staccArea)
-            val topFilterInv = Mat()
-            val top = Mat()
-            val topGray = Mat()
-            val topGrayMasked = Mat()
-            Mat(image, staccArea).copyTo(ring)
-            bitwise_not(topFilter, topFilterInv)
-            cvtColor(ring, top, COLOR_BGR2GRAY)
-            threshold(top, topGray, config.topThreshold, 255.0, THRESH_BINARY)
-            bitwise_and(topGray, topGray, topGrayMasked, topFilterInv)
-            topGrayMasked
-        }
-        val topArea = run {
-            val labels = Mat()
-            val stats = Mat()
-            val centroids = Mat()
-            val nbComponents = connectedComponentsWithStats(topImage, labels, stats, centroids, 4)
-
-            var maxLabel: Int = -1
-            var maxSize = 0
-            val areaBuffer = intArrayOf(1)
-            val widthBuffer = intArrayOf(1)
-            val heightBuffer = intArrayOf(1)
-            for (i in 1..nbComponents) {
-                stats[i, CC_STAT_AREA, areaBuffer]
-                if (areaBuffer[0] > maxSize) {
-                    stats[i, CC_STAT_WIDTH, widthBuffer]
-                    stats[i, CC_STAT_HEIGHT, heightBuffer]
-                    if (max(widthBuffer[0] / heightBuffer[0], heightBuffer[0] / widthBuffer[0]) < config.maxStackRatio) {
-                        maxLabel = i
-                        maxSize = areaBuffer[0]
-                    }
-                }
-            }
-
-            val leftBuffer = intArrayOf(1)
-            val topBuffer = intArrayOf(1)
-            stats[maxLabel, CC_STAT_LEFT, leftBuffer]
-            stats[maxLabel, CC_STAT_TOP, topBuffer]
-            stats[maxLabel, CC_STAT_WIDTH, widthBuffer]
-            stats[maxLabel, CC_STAT_HEIGHT, heightBuffer]
-
-            Rect(
-                leftBuffer[0],
-                topBuffer[0],
-                widthBuffer[0],
-                heightBuffer[0],
-            )
-        }
-
         val objectPoints = MatOfPoint3f(
             Point3(0.0, 0.0, 0.0),
-            Point3(5.0, 0.0, 0.0),
-            Point3(0.0, 0.0, 5.0),
-            Point3(5.0, 0.0, 5.0),
-            Point3(0.0, 5.0, 5.0),
-            Point3(5.0, 5.0, 5.0),
+            Point3(1.0, 0.0, 0.0),
+            Point3(0.0, 0.0, 1.0),
+            Point3(1.0, 0.0, 1.0),
         )
 
-        val (corner, corners) = run {
-            val left = staccArea.x.toDouble()
-            val right = (staccArea.x + staccArea.width).toDouble()
-            val top = staccArea.y.toDouble()
-            val bottom = (staccArea.y + staccArea.height).toDouble()
-            val topBottom = (topArea.y + topArea.height).toDouble()
-            Pair(
-                Point(left, bottom),
-                MatOfPoint2f(
-                    Point(left, bottom),
-                    Point(right, bottom),
-                    Point(left, topBottom),
-                    Point(right, topBottom),
-                    Point(left, top),
-                    Point(right, top),
-                )
-            )
-        }
+        val left = staccArea.x.toDouble()
+        val right = (staccArea.x + staccArea.width).toDouble()
+        val top = staccArea.y.toDouble()
+        val bottom = (staccArea.y + staccArea.height).toDouble()
+        val corners = MatOfPoint2f(
+            Point(left, bottom),
+            Point(right, bottom),
+            Point(left, top),
+            Point(right, top),
+        )
 
         // Find pose
         val rvec = Mat()
@@ -264,9 +196,9 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         val jac = Mat()
         projectPoints(
             MatOfPoint3f(
-                Point3(5.0, 0.0, 0.0),
-                Point3(0.0, 5.0, 0.0),
-                Point3(0.0, 0.0, 5.0),
+                Point3(5.0,  0.0,  0.0),
+                Point3(0.0, -5.0,  0.0),
+                Point3(0.0,  0.0, -5.0),
             ),
             rvec,
             tvec,
@@ -276,6 +208,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
             jac,
         )
 
+        val corner = Point(left, bottom)
         val imgptsArray = imgpts.toArray()
         line(image, corner, imgptsArray[0], Scalar(255.0, 0.0, 0.0), 10)
         line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 10)
