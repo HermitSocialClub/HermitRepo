@@ -27,7 +27,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         /**
          * 300 for extremely bright light conditions and 1000 for extremely dark light conditions.
          */
-        var normUpper = 100.0
+        var normUpper = 450.0
 
         /**
          * "Lower" HSV color to look for.

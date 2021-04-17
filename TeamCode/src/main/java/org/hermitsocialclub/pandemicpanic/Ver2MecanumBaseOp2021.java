@@ -60,6 +60,7 @@ public class Ver2MecanumBaseOp2021 extends LinearOpMode {
 
     private final MotorConfigurationType goBildaOuttake = MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
     private BaselineMecanumDrive drive;
+    private boolean hopperMash = false;
 
 
     enum Mode {
@@ -285,10 +286,18 @@ private boolean alwaysOn = false;
             MoveUtils.setEachMotor(new DcMotor[]{robot.left_drive, robot.right_drive, robot.left_drive_2, robot.right_drive_2}, powers);
 
             if (gamepad1.right_bumper) {
-                intake.setPower(0.8);
+                intake.setPower(-0.8);
             } else if (gamepad1.left_bumper) {
                 intake.setPower(0);
             }
+            if(!hopperMash && gamepad1.left_stick_button){
+                if(Math.abs(robot.hopperLift.getPosition() - .7) < .01) {
+                    robot.hopperLift.setPosition(0);
+                }else if(Math.abs(robot.hopperLift.getPosition()) <.01 ){
+                    robot.hopperLift.setPosition(.7);
+                }
+            }
+            hopperMash = gamepad1.left_stick_button;
 
             if (gamepad1.right_trigger > 0.02 && kickFinished) {
                 kickFinished = false;
@@ -395,7 +404,7 @@ private boolean alwaysOn = false;
             } else if (gamepad2.left_bumper) {
                 robot.wobbleGrab.setPower(-1);
             }
-            if(gamepad1.left_stick_button && runtime.seconds() >= 90){
+           /* if(gamepad1.left_stick_button && runtime.seconds() >= 90){
                 Trajectory constantLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
                         .splineToLinearHeading(new Pose2d(powerLaunchVector,0),0)
                         .build();
@@ -408,7 +417,7 @@ private boolean alwaysOn = false;
                     pt.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
                 }
                 drive.followTrajectory(constantLaunchSpline2);
-            }
+            }*/
 
             //telemetry.setData("raw ultrasonic", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
             //telemetry.setData("cm", "%.2f cm", sonicHedgehogSensor.getDistance(DistanceUnit.CM));

@@ -16,6 +16,10 @@ abstract class AbstractVisionTestOp : LinearOpMode() {
         try {
             val pipeline = buildPipeline(telemetry)
 
+            while(!isStarted){
+                runLoop(telemetry,pipeline.camera,pipeline)
+            }
+
             waitForStart()
 
             while (opModeIsActive()) {

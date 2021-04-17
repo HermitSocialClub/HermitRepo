@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
@@ -51,6 +52,8 @@ public class UltimateGoalConfiguration {
     public BNO055IMU imu = null;
     public CRServo wobbleGrab;
     public CRServo intakeThirdStage;
+    public RevColorSensorV3 color;
+    public Servo hopperLift;
 
     RevBulkData bulkData;
     public AnalogInput a0, a1, a2, a3;
@@ -88,6 +91,9 @@ public class UltimateGoalConfiguration {
         leftEncoder = hwMap.get(DcMotorEx.class, "right_drive_2");
         rightEncoder = hwMap.get(DcMotorEx.class, "left_drive_2");
         frontEncoder = hwMap.get(DcMotorEx.class, "left_drive");
+
+        hopperLift = hwMap.get(Servo.class,"hopperLift");
+        color = hwMap.get(RevColorSensorV3.class,"color");
 
         intakeThirdStage = hwMap.get(CRServo.class,"intakeThirdStage");
 
