@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.motors.GoBILDA5201Series;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -22,6 +23,7 @@ import org.firstinspires.ftc.teamcode.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.opencv.core.Mat;
 
+@Disabled
 @TeleOp(name = "Version 2 2021 Mecanum Base Op", group = "Hermit")
 public class Ver2MecanumBaseOp2021 extends LinearOpMode {
 
@@ -31,6 +33,7 @@ public class Ver2MecanumBaseOp2021 extends LinearOpMode {
     private final ElapsedTime runtime = new ElapsedTime();
     private final ElapsedTime kickTime = new ElapsedTime();
     private static final double WOBBLE_GRAB_INCREMENT = 0.02;
+    private static double HOPPER_POSITION = 0;
 
     private boolean lastAMash = false;
     private boolean lastBMash = false;
@@ -291,10 +294,10 @@ private boolean alwaysOn = false;
                 intake.setPower(0);
             }
             if(!hopperMash && gamepad1.left_stick_button){
-                if(Math.abs(robot.hopperLift.getPosition() - .7) < .01) {
+                if(Math.abs(robot.hopperLift.getPosition() - .25) < .01) {
                     robot.hopperLift.setPosition(0);
                 }else if(Math.abs(robot.hopperLift.getPosition()) <.01 ){
-                    robot.hopperLift.setPosition(.7);
+                    robot.hopperLift.setPosition(.25);
                 }
             }
             hopperMash = gamepad1.left_stick_button;
@@ -390,10 +393,13 @@ private boolean alwaysOn = false;
             //}
 
             if (gamepad2.right_trigger > 0.02) {
-                robot.wobbleArm.setPower(gamepad2.right_trigger * .75);
+                HOPPER_POSITION += WOBBLE_GRAB_INCREMENT;
+                robot.hopperLift.setPosition(HOPPER_POSITION);
             } else if (gamepad2.left_trigger > 0.02) {
-                robot.wobbleArm.setPower(-gamepad2.left_trigger * .75);
-            } else robot.wobbleArm.setPower(0);
+                HOPPER_POSITION -= WOBBLE_GRAB_INCREMENT;
+                robot.hopperLift.setPosition(HOPPER_POSITION);
+            }
+            pt.setDebug("Hopper Position",HOPPER_POSITION);
             if(Math.abs(gamepad2.left_stick_y) > .02){
                 robot.wobbleArm.setPower(antiDeadzone(gamepad2.left_stick_y) * .35);
             }else if(Math.abs(gamepad2.left_stick_y) < -.02){

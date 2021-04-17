@@ -1,5 +1,6 @@
 package org.hermitsocialclub.opmodes
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import android.os.Environment
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.hermitsocialclub.hydra.vision.StaccDetecc
@@ -9,6 +10,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.openftc.easyopencv.OpenCvCamera
 import java.io.File
 
+@Disabled
 @TeleOp(name = "StaccDeteccTestOp")
 class StaccDeteccTestOp : AbstractVisionTestOp() {
 

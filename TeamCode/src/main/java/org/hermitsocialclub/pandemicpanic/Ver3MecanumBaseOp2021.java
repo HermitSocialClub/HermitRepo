@@ -28,9 +28,10 @@ import org.openftc.revextensions2.RevBulkData;
 @TeleOp(name = "Version 3 2021 Mecanum Base Op", group = "Hermit")
 public class Ver3MecanumBaseOp2021 extends LinearOpMode {
 
+    private static final double WOBBLE_GRAB_INCREMENT = .02;
     public static double DRAWING_TARGET_RADIUS = 2;
-    public static double SPEED_PERCENT = 0.675;
-    public static double POWER_PERCENT = 0.595;
+    public static double SPEED_PERCENT = 0.8;
+    public static double POWER_PERCENT = 0.8;
     public static double POWER_THRESHHOLD = Math.pow(10, -2) * 3;
     private final PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     private final ElapsedTime runtime = new ElapsedTime();
@@ -44,7 +45,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     // Can be any x/y coordinate of your choosing
     private final Vector2d targetPosition = new Vector2d(0, 0);
     private final Vector2d shootingPosition = new Vector2d(-3, -18);
-    private final double shootingHeading = Math.toRadians(-30);
+    private final double shootingHeading = Math.toRadians(15);
     public boolean precisionMode = false;
     public double precisionModifier = 1.25;
     public double invertedControls = 1;
@@ -65,6 +66,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     private boolean alwaysOn = false;
     private boolean hopperMash = false;
     private boolean ringDetected = false;
+    private double HOPPER_POSITION = 1;
+    private boolean last2BMash = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -192,6 +195,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
         pt.setData("Outtake", "Turns Off");
 
         waitForStart();
+        drive.intakeThirdStage.setPower(-1);
+        drive.hopperLift.setPosition(1);
 
         while (opModeIsActive()) {
             // Make sure to call drive.update() on *every* loop
@@ -293,13 +298,14 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             if (ringTime.milliseconds() >= ringInterval && ringDetected) {
                 ringDetected = false;
                 kickFinished = false;
+                drive.hopperLift.setPosition(.38);
                 kickTime.reset();
                 if (runtime.seconds() > 90) {
                     drive.outtake.setVelocity(-powerShotSpeed, AngleUnit.RADIANS);
                 } else {
                     drive.outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);
                 }
-                drive.hopperLift.setPosition(.7);
+
             }
 
             if (!lastAMash && gamepad1.cross) {
@@ -395,17 +401,6 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                             robotFrameInput,
                             headingInput
                     );
-
-                    // Draw the target on the field
-                    fieldOverlay.setStroke("#dd2c00");
-                    fieldOverlay.strokeCircle(targetPosition.getX(), targetPosition.getY(), DRAWING_TARGET_RADIUS);
-
-                    // Draw lines to target
-                    fieldOverlay.setStroke("#b89eff");
-                    fieldOverlay.strokeLine(targetPosition.getX(), targetPosition.getY(), ourPose.getX(), ourPose.getY());
-                    fieldOverlay.setStroke("#ffce7a");
-                    fieldOverlay.strokeLine(targetPosition.getX(), targetPosition.getY(), targetPosition.getX(), ourPose.getY());
-                    fieldOverlay.strokeLine(targetPosition.getX(), ourPose.getY(), ourPose.getX(), ourPose.getY());
                     break;
                 }
 
@@ -416,13 +411,13 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                     // Create a vector from the gamepad x/y inputs
                     // Then, rotate that vector by the inverse of that heading
                     Vector2d input = new Vector2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x
-                    ).rotated(-poseEstimate.getHeading());
+                            -antiDeadzone(gamepad1.left_stick_y),
+                            -antiDeadzone(gamepad1.left_stick_x)
+                    );
                     driveDirection = new Pose2d(
                             input.getX() * precisionModifier * invertedControls,
                             input.getY() * precisionModifier * invertedControls,
-                            -gamepad1.right_stick_x * precisionModifier * invertedControls
+                            -antiDeadzone(gamepad1.right_stick_x) * precisionModifier * invertedControls
                     );
                     break;
                 }
@@ -434,14 +429,11 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             // Update the heading controller with our current heading
             headingController.update(ourPose.getHeading());
 
-            // Update the localizer
-            drive.getLocalizer().update();
-
             // Send telemetry packet off to dashboard
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
 
             if (gamepad1.right_bumper) {
-                drive.intake.setPower(0.8);
+                drive.intake.setPower(-0.775);
             } else if (gamepad1.left_bumper) {
                 drive.intake.setPower(0);
             }
@@ -449,6 +441,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             if (gamepad1.right_trigger > 0.02 && kickFinished) {
                 kickFinished = false;
                 kickTime.reset();
+                drive.hopperLift.setPosition(.38);
                 if (runtime.seconds() > 90) {
                     drive.outtake.setVelocity(-powerShotSpeed, AngleUnit.RADIANS);
                 } else {
@@ -474,7 +467,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 if (kicks >= maxKicks && kickTime.milliseconds() >= kickInterval
                         && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed : outTake75Speed)) < POWER_THRESHHOLD) {
                     drive.kicker.setPosition(.1);
-                    drive.hopperLift.setPosition(0);
+                    drive.hopperLift.setPosition(1);
                     if (!alwaysOn && runtime.seconds() > 90) {
                         drive.outtake.setVelocity(0);
                     }
@@ -531,19 +524,22 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 if (drive.intake.getPower() != 0) {
                     drive.intake.setPower(0);
                 } else if (drive.intake.getPower() == 0) {
-                    drive.intake.setPower(-.8);
+                    drive.intake.setPower(.775);
                 }
             }
             lastLeftMash = gamepad1.dpad_left;
 
             if (gamepad2.right_trigger > 0.02) {
-                drive.wobbleArm.setPower(gamepad2.right_trigger * .75);
+                HOPPER_POSITION += WOBBLE_GRAB_INCREMENT;
+                drive.hopperLift.setPosition(HOPPER_POSITION);
             } else if (gamepad2.left_trigger > 0.02) {
-                drive.wobbleArm.setPower(-gamepad2.left_trigger * .75);
-            } else drive.wobbleArm.setPower(0);
+                HOPPER_POSITION -= WOBBLE_GRAB_INCREMENT;
+                drive.hopperLift.setPosition(HOPPER_POSITION);
+            }
+            pt.setDebug("Hopper Position",drive.hopperLift.getPosition());
             if (Math.abs(gamepad2.left_stick_y) > .02) {
                 drive.wobbleArm.setPower(antiDeadzone(gamepad2.left_stick_y) * .35);
-            } else if (Math.abs(gamepad2.left_stick_y) < -.02) {
+            } else if (Math.abs(gamepad2.left_stick_y) < .05) {
                 drive.wobbleArm.setPower(0);
             }
             if (gamepad2.right_bumper) {
@@ -551,16 +547,36 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             } else if (gamepad2.left_bumper) {
                 drive.wobbleGrab.setPower(-1);
             }
+            if(gamepad2.b && !last2BMash){
+                if(drive.intakeThirdStage.getPower() > 0.02){
+                    drive.intakeThirdStage.setPower(0);
+                }else if(drive.intakeThirdStage.getPower() < 0.02){
+                    drive.intakeThirdStage.setPower(1);
+                }
+            }
+            last2BMash = gamepad2.b;
             if (!hopperMash && gamepad1.left_stick_button) {
                 if (Math.abs(drive.hopperLift.getPosition() - .7) < .01) {
-                    drive.hopperLift.setPosition(0);
+                    drive.hopperLift.setPosition(0.38);
                 } else if (Math.abs(drive.hopperLift.getPosition()) < .01) {
-                    drive.hopperLift.setPosition(.7);
+                    drive.hopperLift.setPosition(1);
                 }
             }
             hopperMash = gamepad1.left_stick_button;
 
             pt.setDebug("Color Sensor Light Detected", drive.color.getLightDetected());
+            //TODO: Remove Telemetry when done figuring out problem with kicker
+            pt.setDebug("Outtake Actual Speed", drive.outtake.getVelocity(AngleUnit.RADIANS));
+            pt.setDebug("Outtake Intended Speed", outTake75Speed);
+            pt.setDebug("Kick Speed", drive.kicker.getPosition());
+            pt.setDebug("Kicks Completed", kicks);
+            pt.setDebug("Kicking?", !kickFinished);
+            pt.setDebug("kick interval", kickInterval);
+            pt.setDebug("kickTime", kickTime);
+            pt.setDebug("outtake error", Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) + outTake75Speed));
+            pt.setDebug("error threshhold", POWER_THRESHHOLD);
+            pt.setDebug("error difference", POWER_THRESHHOLD - Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) + outTake75Speed));
+
         }
 
     }

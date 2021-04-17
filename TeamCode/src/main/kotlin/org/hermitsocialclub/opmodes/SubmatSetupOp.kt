@@ -1,6 +1,7 @@
 package org.hermitsocialclub.opmodes
 
 import android.os.Environment
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.hermitsocialclub.hydra.vision.StaccDetecc
@@ -14,6 +15,7 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.floor
 
+@Disabled
 @TeleOp(name = "SubmatSetupOp")
 class SubmatSetupOp : AbstractVisionTestOp() {
 
