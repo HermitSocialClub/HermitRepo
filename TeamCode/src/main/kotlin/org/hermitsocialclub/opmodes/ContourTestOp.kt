@@ -1,11 +1,12 @@
 package org.hermitsocialclub.opmodes
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.hermitsocialclub.hydra.vision.DistanceToObjectDetector
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.openftc.easyopencv.OpenCvCamera
-
+@Disabled
 @TeleOp(name = "Contour Test")
 class ContourTestOp : AbstractVisionTestOp() {
 

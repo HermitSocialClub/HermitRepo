@@ -1,12 +1,13 @@
 package org.hermitsocialclub.pandemicpanic;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum Base Op Basic", group = "Hermit")
 
 public class MecanumBaseOpBasic extends LinearOpMode {

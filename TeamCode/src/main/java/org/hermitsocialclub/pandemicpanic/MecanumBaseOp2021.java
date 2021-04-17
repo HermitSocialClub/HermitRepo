@@ -2,6 +2,7 @@ package org.hermitsocialclub.pandemicpanic;
 
 import com.qualcomm.hardware.motors.GoBILDA5201Series;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +16,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.opencv.core.Mat;
 
 import java.lang.reflect.Method;
-
+@Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "2021 Mecanum Base Op", group = "Hermit")
 
 public class MecanumBaseOp2021 extends LinearOpMode {
