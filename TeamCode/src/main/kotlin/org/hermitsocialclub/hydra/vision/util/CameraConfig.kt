@@ -51,7 +51,9 @@ data class CameraConfig(var cameraMatrix: Mat, var distortionCoefficients: MatOf
                     }
                     tag("distortion_coefficients") {
                         tag("rows") {
-                            distortionCoefficients = MatOfDouble(Mat.zeros(parser.text.toInt(), 1, CV_64F))
+                            whenParsed {
+                                distortionCoefficients = MatOfDouble(Mat.zeros(parser.text.toInt(), 1, CV_64F))
+                            }
                         }
                         tag("data") {
                             whenParsed {
