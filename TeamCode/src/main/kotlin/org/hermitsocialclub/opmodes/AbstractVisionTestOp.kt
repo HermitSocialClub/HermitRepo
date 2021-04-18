@@ -26,9 +26,10 @@ abstract class AbstractVisionTestOp : LinearOpMode() {
                 runLoop(telemetry, pipeline.camera, pipeline)
             }
         } catch (t: Throwable) {
-            val writer = StringWriter()
-            t.printStackTrace(PrintWriter(writer, true))
-            Jukebox.setTelemetryWarning(writer.toString())
+            // val writer = StringWriter()
+            // t.printStackTrace(PrintWriter(writer, true))
+            // Jukebox.setTelemetryWarning(writer.toString())
+            throw RuntimeException(t)
         }
     }
 
