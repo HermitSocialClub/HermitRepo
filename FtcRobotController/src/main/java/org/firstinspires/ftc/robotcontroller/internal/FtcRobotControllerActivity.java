@@ -98,8 +98,6 @@ import org.firstinspires.ftc.robotserver.internal.programmingmode.ProgrammingMod
 import org.firstinspires.inspection.RcInspectionActivity;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -262,10 +260,19 @@ public class FtcRobotControllerActivity extends Activity {
 
         // -- HERMIT SOCIAL CLUB DEBUGGING --
         try {
-          Files.walk(getFilesDir().toPath(), Integer.MAX_VALUE)
-                  .forEach(p -> RobotLog.ii("HermitSocialClub-Debug", p.toString()));
-        } catch (IOException e) {
-          e.printStackTrace();
+          File root = new File(getFilesDir(), "/extra/");
+          if(root.exists() && root.isDirectory()) {
+            String[] files = root.list();
+            if(files != null) {
+              for (String s : files) {
+                RobotLog.ii("HermitSocialClub-Debug", s);
+              }
+            }
+          } else {
+            RobotLog.i("HermitSocialClub-Debug", "extra folder does not exist");
+          }
+        } catch (Throwable t) {
+          RobotLog.ee("HermitSocialClub-Debug", t, "oh no");
         }
         // -- HERMIT SOCIAL CLUB DEBUGGING --
 
@@ -305,7 +312,7 @@ public class FtcRobotControllerActivity extends Activity {
 
         updateMonitorLayout(getResources().getConfiguration());
 
-        BlocksOpMode.setActivityAndWebView(this, findViewById(R.id.webViewBlocksRuntime));
+        BlocksOpMode.setActivityAndWebView(this, (WebView) findViewById(R.id.webViewBlocksRuntime));
 
         /*
          * Paranoia as the ClassManagerFactory requires EXTERNAL_STORAGE permissions
