@@ -23,7 +23,6 @@ android {
 
 repositories {
     maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
-    maven { url = "https://raw.githubusercontent.com/HermitSocialClub/maven/master/" }
 
     flatDir {
         dirs '../libs'

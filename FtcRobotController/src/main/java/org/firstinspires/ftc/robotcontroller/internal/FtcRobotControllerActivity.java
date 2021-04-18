@@ -96,7 +96,6 @@ import org.firstinspires.ftc.robotcore.internal.ui.UILocation;
 import org.firstinspires.ftc.robotcore.internal.webserver.RobotControllerWebInfo;
 import org.firstinspires.ftc.robotserver.internal.programmingmode.ProgrammingModeManager;
 import org.firstinspires.inspection.RcInspectionActivity;
-import org.hermitsocialclub.psydra.ftc.PsydraFtc;
 
 import java.util.List;
 import java.util.Queue;
@@ -151,8 +150,6 @@ public class FtcRobotControllerActivity extends Activity {
   private static boolean permissionsValidated = false;
 
   private WifiDirectChannelChanger wifiDirectChannelChanger;
-
-  public final PsydraFtc psydraFtc = new PsydraFtc();
 
   protected class RobotRestarter implements Restarter {
 
@@ -372,7 +369,9 @@ public class FtcRobotControllerActivity extends Activity {
   }
 
   protected UpdateUI.Callback createUICallback(UpdateUI updateUI) {
-    return psydraFtc.buildUpdateUICallback(updateUI, true);
+    UpdateUI.Callback result = updateUI.new Callback();
+    result.setStateMonitor(new SoundPlayingRobotMonitor());
+    return result;
   }
 
   @Override
@@ -686,7 +685,7 @@ public class FtcRobotControllerActivity extends Activity {
     }
 
     OpModeRegister userOpModeRegister = createOpModeRegister();
-    eventLoop = psydraFtc.buildCustomEventLoop(controllerService, hardwareFactory, userOpModeRegister, callback, this);
+    eventLoop = new FtcEventLoop(hardwareFactory, userOpModeRegister, callback, this);
     FtcEventLoopIdle idleLoop = new FtcEventLoopIdle(hardwareFactory, userOpModeRegister, callback, this);
 
     controllerService.setCallback(callback);
