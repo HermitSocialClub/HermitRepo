@@ -98,6 +98,7 @@ import org.firstinspires.ftc.robotserver.internal.programmingmode.ProgrammingMod
 import org.firstinspires.inspection.RcInspectionActivity;
 import org.hermitsocialclub.psydra.ftc.PsydraFtc;
 
+import java.io.File;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -259,6 +260,24 @@ public class FtcRobotControllerActivity extends Activity {
             // Double-sure check that we can talk to the DB over the serial TTY
             AndroidBoard.getInstance().getAndroidBoardIsPresentPin().setState(true);
         }
+
+        // -- HERMIT SOCIAL CLUB DEBUGGING --
+        try {
+          File root = new File(getFilesDir(), "/extra/");
+          if(root.exists() && root.isDirectory()) {
+            String[] files = root.list();
+            if(files != null) {
+              for (String s : files) {
+                RobotLog.ii("HermitSocialClub-Debug", s);
+              }
+            }
+          } else {
+            RobotLog.i("HermitSocialClub-Debug", "extra folder does not exist");
+          }
+        } catch (Throwable t) {
+          RobotLog.ee("HermitSocialClub-Debug", t, "oh no");
+        }
+        // -- HERMIT SOCIAL CLUB DEBUGGING --
 
         context = this;
         utility = new Utility(this);
