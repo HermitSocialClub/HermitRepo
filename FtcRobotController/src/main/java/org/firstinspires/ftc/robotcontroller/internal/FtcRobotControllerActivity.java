@@ -98,9 +98,6 @@ import org.firstinspires.ftc.robotserver.internal.programmingmode.ProgrammingMod
 import org.firstinspires.inspection.RcInspectionActivity;
 import org.hermitsocialclub.psydra.ftc.PsydraFtc;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -263,15 +260,6 @@ public class FtcRobotControllerActivity extends Activity {
             AndroidBoard.getInstance().getAndroidBoardIsPresentPin().setState(true);
         }
 
-        // -- HERMIT SOCIAL CLUB DEBUGGING --
-        try {
-          Files.walk(getFilesDir().toPath(), Integer.MAX_VALUE)
-                  .forEach(p -> RobotLog.ii("HermitSocialClub-Debug", p.toString()));
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        // -- HERMIT SOCIAL CLUB DEBUGGING --
-
         context = this;
         utility = new Utility(this);
 
@@ -308,7 +296,7 @@ public class FtcRobotControllerActivity extends Activity {
 
         updateMonitorLayout(getResources().getConfiguration());
 
-        BlocksOpMode.setActivityAndWebView(this, findViewById(R.id.webViewBlocksRuntime));
+        BlocksOpMode.setActivityAndWebView(this, (WebView) findViewById(R.id.webViewBlocksRuntime));
 
         /*
          * Paranoia as the ClassManagerFactory requires EXTERNAL_STORAGE permissions
