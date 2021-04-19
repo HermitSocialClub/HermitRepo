@@ -203,7 +203,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new TwoWheelTrackingLocalizer(hardwareMap,this,pt));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,pt));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
