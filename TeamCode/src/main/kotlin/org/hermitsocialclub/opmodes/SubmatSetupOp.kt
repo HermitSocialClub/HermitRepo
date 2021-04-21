@@ -15,7 +15,6 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.floor
 
-@Disabled
 @TeleOp(name = "SubmatSetupOp")
 class SubmatSetupOp : AbstractVisionTestOp() {
 

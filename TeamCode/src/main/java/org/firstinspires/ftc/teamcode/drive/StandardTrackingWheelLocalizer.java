@@ -44,7 +44,7 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public static MotorConfigurationType neverRest20GearMotor = MotorConfigurationType.getMotorType(NeveRest20Gearmotor.class);
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double LATERAL_DISTANCE = -15;//15.3857258; // in; distance between the left and right wheels
+    public static double LATERAL_DISTANCE = 15.851035725;//15.3857258; // in; distance between the left and right wheels
     public static double FORWARD_OFFSET = -3.875; // in; offset of the lateral wheel
 
     public List<Double> initialPos;
@@ -54,9 +54,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
     private Encoder leftEncoder, rightEncoder, frontEncoder;
 
-    public static double LEFT_X_MULTIPLIER = 1;//1.228778966131907;
-    public static double RIGHT_X_MULTIPLIER = 1;//1.228778966131907;//71.25/60.07878281971142 * (61.25/59.866903109526284);//69/56.42137206749;
-    public static double Y_MULTIPLIER = 1;//1.192406360167337;//(99.25/100)*(98.625/100)*77/59.94436059903564 *(42.125/88.68691433432166)*(53.75/26.662470262090235);//37/28.990683875252298;
+    public static double LEFT_X_MULTIPLIER = 1.1880561390647101148678033918417;//1.228778966131907;
+    public static double RIGHT_X_MULTIPLIER = 1.1880561390647101148678033918417;//1.228778966131907;//71.25/60.07878281971142 * (61.25/59.866903109526284);//69/56.42137206749;
+    public static double Y_MULTIPLIER = 1.2216224960779911031098058493221;//1.192406360167337;//(99.25/100)*(98.625/100)*77/59.94436059903564 *(42.125/88.68691433432166)*(53.75/26.662470262090235);//37/28.990683875252298;
 
 
     public StandardTrackingWheelLocalizer(HardwareMap hardwareMap, PersistantTelemetry telemetry) {
@@ -88,9 +88,9 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
         ultra2 = new AnalogUltrasonic(echo2,trigger2,telemetry,bulkData,expansionHub);
 */
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
-        //leftEncoder.setDirection(Encoder.Direction.REVERSE);
-        //frontEncoder.setDirection(Encoder.Direction.REVERSE);
-        rightEncoder.setDirection(Encoder.Direction.REVERSE);
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
+        //rightEncoder.setDirection(Encoder.Direction.REVERSE);
 
         initialPos = getWheelPositions();
         initialPosTaken = true;
@@ -113,14 +113,14 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
             encoderTicksToInches(rightEncoder.getCurrentPosition() * RIGHT_X_MULTIPLIER),
             encoderTicksToInches(frontEncoder.getCurrentPosition() * Y_MULTIPLIER)
     );
-        if(initialPosTaken) {
+        /*if(initialPosTaken) {
             telemetry.setDebug("leftEncoder", a.get(0) - initialPos.get(0));
             telemetry.setDebug("rightEncoder", a.get(1) - initialPos.get(1));
             telemetry.setDebug("frontEncoder", a.get(2) - initialPos.get(2));
             telemetry.setDebug("left-Right Multiplier", (a.get(1) - initialPos.get(1)) / (a.get(0) - initialPos.get(0)));
             telemetry.setDebug("left-Right Difference", (a.get(1) - initialPos.get(1)) - (a.get(0) - initialPos.get(0)));
 
-        }
+        }*/
         return a;
     }
 

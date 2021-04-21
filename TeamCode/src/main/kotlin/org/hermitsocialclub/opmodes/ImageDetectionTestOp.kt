@@ -7,7 +7,6 @@ import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.openftc.easyopencv.OpenCvCamera
 
-@Disabled
 @TeleOp(name = "ImageDetectionTestOp")
 class ImageDetectionTestOp : AbstractVisionTestOp() {
 

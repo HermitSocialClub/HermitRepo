@@ -71,7 +71,7 @@ public class Scrimmage5Auto extends LinearOpMode {
         this.time = new ElapsedTime();
         this.time.reset();
 
-        drive.wobbleGrab.setPower(1);
+        drive.wobbleGrab.setPosition(1);
         drive.wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Find which Zone the ring stack is in
@@ -105,7 +105,7 @@ public class Scrimmage5Auto extends LinearOpMode {
         {
             turnLaunchSpline = drive
                     .trajectoryBuilder(drive.getPoseEstimate())
-                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPosition(1))
                     .splineToLinearHeading(new Pose2d(-3, -42, Math.toRadians(12.5)), 60)
                     .addDisplacementMarker(() -> {
                         drive.outtake.setVelocity(launchLineSpeed, AngleUnit.RADIANS);
@@ -220,7 +220,7 @@ public class Scrimmage5Auto extends LinearOpMode {
         {
             launchSpline = drive
                     .trajectoryBuilder(drive.getPoseEstimate())
-                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPosition(1))
                     .splineToConstantHeading(new Vector2d(-3, -41), Math.toRadians(-80))
                     .build();
             oneSpline = drive
@@ -244,7 +244,7 @@ public class Scrimmage5Auto extends LinearOpMode {
             noRings = drive
                     .trajectoryBuilder(noRingDisengage.end(), Math.toRadians(120))
                     .splineToLinearHeading(new Pose2d(-30.50, -42.50, Math.toRadians(180)), Math.toRadians(180))
-                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPosition(1))
                     .build();
             noRingsDrop = drive
                     .trajectoryBuilder(noRings.end(), Math.toRadians(180))
@@ -261,7 +261,7 @@ public class Scrimmage5Auto extends LinearOpMode {
                     .build();
             fourRingSecondDrop = drive.trajectoryBuilder(noRings.end())
                     .splineToLinearHeading(new Pose2d(36.50, -58, 0), 0)
-                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(-1))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPosition(-1))
                     .build();
             fourBack = drive
                     .trajectoryBuilder(fourSpline.end())
@@ -284,7 +284,7 @@ public class Scrimmage5Auto extends LinearOpMode {
         //failure
         {
             failure1 = drive.trajectoryBuilder(drive.getPoseEstimate())
-                    .addDisplacementMarker(() -> drive.wobbleGrab.setPower(1))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPosition(1))
                     .forward(62.5)
                     .build();
 
@@ -315,13 +315,13 @@ public class Scrimmage5Auto extends LinearOpMode {
                     drive.followTrajectory(failureOne);
                     drive.turn(Math.toRadians(180));
                     waitForDrive();
-                    drive.wobbleGrab.setPower(-1);
+                    drive.wobbleGrab.setPosition(-1);
                     sleep(600);
                 }else if(ringStack == 0){
                     drive.followTrajectory(failureZero0);
                     drive.turn(Math.toRadians(120));
                     waitForDrive();
-                    drive.wobbleGrab.setPower(-1);
+                    drive.wobbleGrab.setPosition(-1);
                     sleep(600);
                     drive.followTrajectory(failureZero);
                 }else if (ringStack == 4){
@@ -329,7 +329,7 @@ public class Scrimmage5Auto extends LinearOpMode {
                     drive.turn(Math.toRadians(120));
                     waitForDrive();
                     drive.liftWobble(-125,.35,AngleUnit.DEGREES,1500);
-                    drive.wobbleGrab.setPower(-1);
+                    drive.wobbleGrab.setPosition(-1);
                     sleep(600);
                     drive.turn(Math.toRadians(60));
                     drive.followTrajectory(failureFourBack);
@@ -361,7 +361,7 @@ public class Scrimmage5Auto extends LinearOpMode {
             }
 
             case POWERSHOT_MODE: {
-                drive.wobbleGrab.setPower(1);
+                drive.wobbleGrab.setPosition(1);
                 drive.followTrajectory(powerLaunchSpline);
                 while (drive.isBusy()){}
                 drive.followTrajectory(secondPowerShot);
@@ -374,9 +374,9 @@ public class Scrimmage5Auto extends LinearOpMode {
                 drive.turn(Math.toRadians(-90));
                 while (drive.isBusy()){}
                 drive.liftWobble(-130, 0.45, AngleUnit.DEGREES, 1500);
-                drive.wobbleGrab.setPower(-1);
+                drive.wobbleGrab.setPosition(-1);
                 sleep(300);
-                drive.wobbleGrab.setPower(0);
+                drive.wobbleGrab.setPosition(0);
                 sleep(200);
             break;
             }
@@ -431,9 +431,9 @@ public class Scrimmage5Auto extends LinearOpMode {
             drive.followTrajectory(fourSpline);
         }
         drive.liftWobble(-125, 0.35, AngleUnit.DEGREES, 1500);
-        drive.wobbleGrab.setPower(-1);
+        drive.wobbleGrab.setPosition(-1);
         sleep(400);
-        drive.wobbleGrab.setPower(0);
+        drive.wobbleGrab.setPosition(0);
         sleep(200);
         drive.liftWobble(-20,.35,AngleUnit.DEGREES,1500);
         if (ringStack == 0) {
@@ -461,12 +461,12 @@ public class Scrimmage5Auto extends LinearOpMode {
                 }else if(ringStack == 1){
                     drive.followTrajectory(oneRingSecondDrop);
                     waitForDrive();
-                    drive.wobbleGrab.setPower(-1);
+                    drive.wobbleGrab.setPosition(-1);
                     sleep(300);
 
                 }else if(ringStack == 4){
                     drive.followTrajectory(fourRingSecondDrop);
-                    drive.wobbleGrab.setPower(-1);
+                    drive.wobbleGrab.setPosition(-1);
                     sleep(300);
                     drive.followTrajectory(fourBack2);
                 }
