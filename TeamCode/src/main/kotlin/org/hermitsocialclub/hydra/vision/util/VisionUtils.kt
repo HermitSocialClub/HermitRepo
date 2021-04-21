@@ -1,10 +1,8 @@
 package org.hermitsocialclub.hydra.vision.util
 
-import android.util.Xml
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs.*
-import org.xmlpull.v1.XmlPullParser
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -61,55 +59,6 @@ object VisionUtils {
         if(!file.exists()) file.createNewFile()
         FileOutputStream(file).use {
             properties.store(it, null)
-        }
-    }
-
-    class XMLTagDSL(val parser: XmlPullParser) {
-        private val subtags = mutableMapOf<String, XMLTagDSL>()
-        private var action: ((XmlPullParser) -> Unit)? = null
-
-        companion object {
-            fun parseXML(file: File, addTags: XMLTagDSL.() -> Unit) {
-                FileInputStream(file).use { fis ->
-                    val parser: XmlPullParser = Xml.newPullParser()
-                    parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-                    parser.setInput(fis, null)
-                    val dsl = XMLTagDSL(parser)
-                    dsl.addTags()
-                    dsl.parse()
-                }
-            }
-        }
-
-        private fun parse() {
-            while (parser.next() != XmlPullParser.END_TAG) {
-                if (parser.eventType != XmlPullParser.START_TAG) {
-                    continue
-                }
-                if (subtags.containsKey(parser.name)) {
-                    subtags[parser.name]!!.parse()
-                } else {
-                    // skip this tag and all sub-tags
-                    var depth = 1
-                    while (depth != 0) {
-                        when (parser.next()) {
-                            XmlPullParser.END_TAG -> depth--
-                            XmlPullParser.START_TAG -> depth++
-                        }
-                    }
-                }
-                action?.invoke(parser)
-            }
-        }
-
-        fun tag(name: String, addTags: XMLTagDSL.() -> Unit) {
-            val dsl = XMLTagDSL(parser)
-            dsl.addTags()
-            subtags[name] = dsl
-        }
-
-        fun whenParsed(action: (XmlPullParser) -> Unit) {
-            this.action = action
         }
     }
 
