@@ -7,6 +7,9 @@ import org.hermitsocialclub.hydra.vision.StaccDetecc
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.hydra.vision.util.CameraConfig
 import org.hermitsocialclub.telecat.PersistantTelemetry
+import org.opencv.core.CvType
+import org.opencv.core.Mat
+import org.opencv.core.MatOfDouble
 import org.openftc.easyopencv.OpenCvCamera
 import java.io.File
 
@@ -16,14 +19,34 @@ class StaccDeteccTestOp : AbstractVisionTestOp() {
 
     companion object {
         @JvmField
-        val CAMERA_CONFIG = File(
+        val CAMERA_CONFIG_FILE = File(
             Environment.getExternalStorageDirectory().path + File.separator + "camera_info.xml"
         )
+
+        @JvmField
+        val CAMERA_CONFIG: CameraConfig
+
+        init {
+            val cameraMatrixArray = doubleArrayOf(
+                1.3606600164833324e+03, 0.0, 9.5950000000000000e+02, 0.0,
+                1.3606600164833324e+03, 5.3950000000000000e+02, 0.0, 0.0, 1.0
+            )
+            val cameraMatrix = Mat(3, 3, CvType.CV_64F)
+            for(row in 0..3) {
+                for(col in 0..3) {
+                    cameraMatrix.put(intArrayOf(row, col), cameraMatrixArray[row * 3 + col]);
+                }
+            }
+            val distortionMatrix = MatOfDouble(
+                -1.5325995853909627e-02, -7.6109310711621053e-02, 0.0, 0.0,
+                5.4888141489714659e-02
+            )
+            CAMERA_CONFIG = CameraConfig(cameraMatrix, distortionMatrix)
+        }
     }
 
     override fun buildPipeline(telemetry: PersistantTelemetry): VisionPipeline {
-        val cameraConfig = CameraConfig.loadFromFile(CAMERA_CONFIG)
-        return VisionPipeline(hardwareMap, telemetry, StaccDetecc(cameraConfig = cameraConfig))
+        return VisionPipeline(hardwareMap, telemetry, StaccDetecc(cameraConfig = CAMERA_CONFIG))
     }
 
     override fun runLoop(telemetry: PersistantTelemetry, camera: OpenCvCamera, pipeline: VisionPipeline) {

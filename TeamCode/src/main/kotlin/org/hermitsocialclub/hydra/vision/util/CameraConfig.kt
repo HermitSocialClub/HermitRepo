@@ -32,6 +32,7 @@ import java.lang.IllegalArgumentException
  */
 data class CameraConfig(var cameraMatrix: Mat, var distortionCoefficients: MatOfDouble) {
     companion object {
+        @Deprecated("does not work right now")
         @JvmStatic
         fun loadFromFile(file: File): CameraConfig {
             if(!file.exists()) {
