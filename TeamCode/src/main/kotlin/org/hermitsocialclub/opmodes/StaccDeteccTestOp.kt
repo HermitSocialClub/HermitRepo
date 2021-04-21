@@ -10,6 +10,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.openftc.easyopencv.OpenCvCamera
 import java.io.File
 
+@Disabled
 @TeleOp(name = "StaccDeteccTestOp")
 class StaccDeteccTestOp : AbstractVisionTestOp() {
 
