@@ -9,6 +9,7 @@ import org.hermitsocialclub.hydra.vision.SubmatRenderer
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.hydra.vision.util.VisionUtils
 import org.hermitsocialclub.telecat.PersistantTelemetry
+import org.opencv.core.Rect
 import org.openftc.easyopencv.OpenCvCamera
 import java.io.File
 import kotlin.math.abs
