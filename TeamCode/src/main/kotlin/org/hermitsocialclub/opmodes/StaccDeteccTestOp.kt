@@ -27,16 +27,12 @@ class StaccDeteccTestOp : AbstractVisionTestOp() {
         val CAMERA_CONFIG: CameraConfig
 
         init {
-            val cameraMatrixArray = doubleArrayOf(
-                1.3606600164833324e+03, 0.0, 9.5950000000000000e+02, 0.0,
-                1.3606600164833324e+03, 5.3950000000000000e+02, 0.0, 0.0, 1.0
-            )
             val cameraMatrix = Mat(3, 3, CvType.CV_64F)
-            for(row in 0..3) {
-                for(col in 0..3) {
-                    cameraMatrix.put(intArrayOf(row, col), cameraMatrixArray[row * 3 + col]);
-                }
-            }
+            cameraMatrix.put(0, 0,
+                1.3606600164833324e+03, 0.0, 9.5950000000000000e+02,
+                0.0, 1.3606600164833324e+03, 5.3950000000000000e+02,
+                0.0, 0.0, 1.0
+            )
             val distortionMatrix = MatOfDouble(
                 -1.5325995853909627e-02, -7.6109310711621053e-02, 0.0, 0.0,
                 5.4888141489714659e-02
