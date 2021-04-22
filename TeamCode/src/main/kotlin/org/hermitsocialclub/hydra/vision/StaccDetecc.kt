@@ -98,7 +98,12 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
                 pipeline.telemetry.setData("Top of ring", "[${stackTopArea.x}, ${stackTopArea.y}, ${stackTopArea.width}, ${stackTopArea.height}]")
                 // rectangle(subImage, stackArea, Scalar(0.0, 255.0, 0.0), 2)
-                rectangle(subImage, stackTopArea, Scalar(0.0, 127.0, 127.0), 2)
+                rectangle(subImage, Rect(
+                    stackArea.x + stackTopArea.x,
+                    stackArea.y + stackTopArea.y,
+                    stackTopArea.width,
+                    stackTopArea.height,
+                ), Scalar(0.0, 127.0, 127.0), 2)
 
                 findStaccPose(subImage, stackArea, stackTopArea, pipeline.telemetry)
             } else {
@@ -281,9 +286,9 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         )
 
         val imgptsArray = imgpts.toArray()
-        // line(image, corner, imgptsArray[0], Scalar(255.0, 0.0, 0.0), 5)
-        // line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 5)
-        // line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 5)
+        line(image, corner, imgptsArray[0], Scalar(255.0, 0.0, 0.0), 3)
+        line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 3)
+        line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 3)
     }
 
 }
