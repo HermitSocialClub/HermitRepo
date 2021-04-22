@@ -12,7 +12,7 @@ import kotlin.math.max
 
 /**
  * # StaccDetecc
- * Based on the python implementation [here](https://gist.github.com/Arc-blroth/96627615698cb7800bc63228ad1c7837)
+ * Based on the python implementation [here](https://gist.github.com/Arc-blroth/b96b13f152c77a46746cc9638bb5bd2c)
  *
  * @author Arc'blroth
  */
@@ -98,12 +98,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
                 pipeline.telemetry.setData("Top of ring", "[${stackTopArea.x}, ${stackTopArea.y}, ${stackTopArea.width}, ${stackTopArea.height}]")
                 // rectangle(subImage, stackArea, Scalar(0.0, 255.0, 0.0), 2)
-                rectangle(subImage, Rect(
-                    stackArea.x + stackTopArea.x,
-                    stackArea.y + stackTopArea.y,
-                    stackTopArea.width,
-                    stackTopArea.height,
-                ), Scalar(0.0, 127.0, 127.0), 2)
+                rectangle(subImage, stackTopArea, Scalar(0.0, 127.0, 127.0), 2)
 
                 findStaccPose(subImage, stackArea, stackTopArea, pipeline.telemetry)
             } else {
@@ -213,8 +208,8 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         stats[maxLabel, CC_STAT_HEIGHT, heightBuffer]
 
         return Rect(
-            leftBuffer[0],
-            topBuffer[0],
+            staccArea.x + leftBuffer[0],
+            staccArea.y + topBuffer[0],
             widthBuffer[0],
             heightBuffer[0],
         )
@@ -226,12 +221,12 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         }
 
         val objectPoints = MatOfPoint3f(
-            Point3(0.0, 0.0, 0.0),
-            Point3(5.0, 0.0, 0.0),
-            Point3(0.0, 0.0, 5.0),
-            Point3(5.0, 0.0, 5.0),
-            Point3(0.0, 5.0, 5.0),
-            Point3(5.0, 5.0, 5.0),
+            Point3(0.0,  0.0, 0.0),
+            Point3(5.0,  0.0, 0.0),
+            Point3(0.0,  0.0, 5.0),
+            Point3(5.0,  0.0, 5.0),
+            Point3(0.0, 0.75, 5.0),
+            Point3(5.0, 0.75, 5.0),
         )
 
         val (corner, corners) = run {
@@ -275,7 +270,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
             MatOfPoint3f(
                 Point3(5.0, 0.0, 0.0),
                 Point3(0.0, 5.0, 0.0),
-                Point3(0.0, 0.0, 5.0),
+                Point3(0.0, 0.0, 25.0/0.75),
             ),
             rvec,
             tvec,
@@ -287,8 +282,8 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
 
         val imgptsArray = imgpts.toArray()
         line(image, corner, imgptsArray[0], Scalar(255.0, 0.0, 0.0), 3)
-        line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 3)
         line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 3)
+        line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 3)
     }
 
 }
