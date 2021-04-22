@@ -89,15 +89,17 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
 
         // Find largest square area in image
         try {
-            val fsout = findStacc(colorFilter)
-            if (fsout != null) {
-                val ratio = fsout.height.toDouble() / fsout.width.toDouble()
+            val stackArea = findStacc(colorFilter)
+            if (stackArea != null) {
+                val stackTopArea = findStaccTop(image, colorFilter, stackArea)
+                val ratio = (stackArea.height - stackTopArea.height).toDouble() / stackArea.width.toDouble()
                 this.lastStackHeight = if (ratio < config.oneStackRatio) 1 else 4
                 pipeline.telemetry.setData("Stacc ratio", ratio)
                 pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
-                rectangle(subImage, fsout, Scalar(0.0, 255.0, 0.0), 3)
+                rectangle(subImage, stackArea, Scalar(0.0, 255.0, 0.0), 2)
+                rectangle(subImage, stackTopArea, Scalar(0.0, 127.0, 127.0), 2)
 
-                findStaccPose(image, colorFilter, fsout, pipeline.telemetry)
+                findStaccPose(image, stackArea, stackTopArea, pipeline.telemetry)
             } else {
                 this.lastStackHeight = 0
                 pipeline.telemetry.removeData("Stacc ratio")
@@ -158,11 +160,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         }
     }
 
-    private fun findStaccPose(image: Mat, colorFilter: Mat, staccArea: Rect, telemetry: PersistantTelemetry) {
-        if (cameraConfig == null) {
-            return
-        }
-
+    private fun findStaccTop(image: Mat, colorFilter: Mat, staccArea: Rect): Rect {
         // Find the top of the ring
         val topImage = run {
             val ring = Mat()
@@ -178,42 +176,47 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
             bitwise_and(topGray, topGray, topGrayMasked, topFilterInv)
             topGrayMasked
         }
-        val topArea = run {
-            val labels = Mat()
-            val stats = Mat()
-            val centroids = Mat()
-            val nbComponents = connectedComponentsWithStats(topImage, labels, stats, centroids, 4)
 
-            var maxLabel: Int = -1
-            var maxSize = 0
-            val areaBuffer = intArrayOf(1)
-            val widthBuffer = intArrayOf(1)
-            val heightBuffer = intArrayOf(1)
-            for (i in 1..nbComponents) {
-                stats[i, CC_STAT_AREA, areaBuffer]
-                if (areaBuffer[0] > maxSize) {
-                    stats[i, CC_STAT_WIDTH, widthBuffer]
-                    stats[i, CC_STAT_HEIGHT, heightBuffer]
-                    if (max(widthBuffer[0] / heightBuffer[0], heightBuffer[0] / widthBuffer[0]) < config.maxStackRatio) {
-                        maxLabel = i
-                        maxSize = areaBuffer[0]
-                    }
+        val labels = Mat()
+        val stats = Mat()
+        val centroids = Mat()
+        val nbComponents = connectedComponentsWithStats(topImage, labels, stats, centroids, 4)
+
+        var maxLabel: Int = -1
+        var maxSize = 0
+        val areaBuffer = intArrayOf(1)
+        val widthBuffer = intArrayOf(1)
+        val heightBuffer = intArrayOf(1)
+        for (i in 1..nbComponents) {
+            stats[i, CC_STAT_AREA, areaBuffer]
+            if (areaBuffer[0] > maxSize) {
+                stats[i, CC_STAT_WIDTH, widthBuffer]
+                stats[i, CC_STAT_HEIGHT, heightBuffer]
+                if (max(widthBuffer[0] / heightBuffer[0], heightBuffer[0] / widthBuffer[0]) < config.maxStackRatio) {
+                    maxLabel = i
+                    maxSize = areaBuffer[0]
                 }
             }
+        }
 
-            val leftBuffer = intArrayOf(1)
-            val topBuffer = intArrayOf(1)
-            stats[maxLabel, CC_STAT_LEFT, leftBuffer]
-            stats[maxLabel, CC_STAT_TOP, topBuffer]
-            stats[maxLabel, CC_STAT_WIDTH, widthBuffer]
-            stats[maxLabel, CC_STAT_HEIGHT, heightBuffer]
+        val leftBuffer = intArrayOf(1)
+        val topBuffer = intArrayOf(1)
+        stats[maxLabel, CC_STAT_LEFT, leftBuffer]
+        stats[maxLabel, CC_STAT_TOP, topBuffer]
+        stats[maxLabel, CC_STAT_WIDTH, widthBuffer]
+        stats[maxLabel, CC_STAT_HEIGHT, heightBuffer]
 
-            Rect(
-                leftBuffer[0],
-                topBuffer[0],
-                widthBuffer[0],
-                heightBuffer[0],
-            )
+        return Rect(
+            leftBuffer[0],
+            topBuffer[0],
+            widthBuffer[0],
+            heightBuffer[0],
+        )
+    }
+
+    private fun findStaccPose(image: Mat, staccArea: Rect, topArea: Rect, telemetry: PersistantTelemetry) {
+        if (cameraConfig == null) {
+            return
         }
 
         val objectPoints = MatOfPoint3f(
@@ -277,9 +280,9 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         )
 
         val imgptsArray = imgpts.toArray()
-        line(image, corner, imgptsArray[0], Scalar(255.0, 0.0, 0.0), 10)
-        line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 10)
-        line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 10)
+        line(image, corner, imgptsArray[0], Scalar(255.0, 0.0, 0.0), 5)
+        line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 5)
+        line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 5)
     }
 
 }
