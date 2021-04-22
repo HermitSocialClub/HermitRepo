@@ -12,6 +12,8 @@ import org.opencv.core.Mat
 import org.opencv.core.MatOfDouble
 import org.openftc.easyopencv.OpenCvCamera
 import java.io.File
+import kotlin.math.max
+import kotlin.math.min
 
 @Disabled
 @TeleOp(name = "StaccDeteccTestOp")
@@ -41,12 +43,22 @@ class StaccDeteccTestOp : AbstractVisionTestOp() {
         }
     }
 
+    val staccDetecc = StaccDetecc(cameraConfig = CAMERA_CONFIG)
+
     override fun buildPipeline(telemetry: PersistantTelemetry): VisionPipeline {
-        return VisionPipeline(hardwareMap, telemetry, StaccDetecc(cameraConfig = CAMERA_CONFIG))
+        return VisionPipeline(hardwareMap, telemetry, staccDetecc)
     }
 
     override fun runLoop(telemetry: PersistantTelemetry, camera: OpenCvCamera, pipeline: VisionPipeline) {
         telemetry.setData("Frame Count", camera.frameCount)
         telemetry.setData("FPS", "%.2f", camera.fps)
+        telemetry.setData("topThreshold", staccDetecc.config.topThreshold)
+
+        if (gamepad1.dpad_down) {
+            staccDetecc.config.topThreshold -= 1.0
+        } else if (gamepad1.dpad_up) {
+            staccDetecc.config.topThreshold += 1.0
+        }
+        staccDetecc.config.topThreshold = min(max(0.0, staccDetecc.config.topThreshold), 254.0)
     }
 }
