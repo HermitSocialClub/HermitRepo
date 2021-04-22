@@ -91,7 +91,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         try {
             val stackArea = findStacc(colorFilter)
             if (stackArea != null) {
-                val stackTopArea = findStaccTop(image, colorFilter, stackArea)
+                val stackTopArea = findStaccTop(subImage, colorFilter, stackArea)
                 val ratio = (stackArea.height - stackTopArea.height).toDouble() / stackArea.width.toDouble()
                 this.lastStackHeight = if (ratio < config.oneStackRatio) 1 else 4
                 pipeline.telemetry.setData("Stacc ratio", ratio)
@@ -99,7 +99,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 rectangle(subImage, stackArea, Scalar(0.0, 255.0, 0.0), 2)
                 rectangle(subImage, stackTopArea, Scalar(0.0, 127.0, 127.0), 2)
 
-                findStaccPose(image, stackArea, stackTopArea, pipeline.telemetry)
+                findStaccPose(subImage, stackArea, stackTopArea, pipeline.telemetry)
             } else {
                 this.lastStackHeight = 0
                 pipeline.telemetry.removeData("Stacc ratio")
