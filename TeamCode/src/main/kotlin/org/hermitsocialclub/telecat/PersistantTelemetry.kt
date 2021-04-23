@@ -2,14 +2,14 @@ package org.hermitsocialclub.telecat
 
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.LinkedHashMap
 
 
 class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telemetry, val log: Boolean = true) {
 
     private val logUUID: Long = System.currentTimeMillis()
-    private val telemetryData = ConcurrentHashMap<String, String>()
-    private val debugData = ConcurrentHashMap<String, String>()
+    private val telemetryData = Collections.synchronizedMap(LinkedHashMap<String, String>())
+    private val debugData = Collections.synchronizedMap(LinkedHashMap<String, String>())
 
     companion object {
         private const val logSeperator = "=========================="
