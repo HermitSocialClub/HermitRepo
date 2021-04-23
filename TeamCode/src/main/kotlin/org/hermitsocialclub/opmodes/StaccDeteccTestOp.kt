@@ -15,7 +15,6 @@ import java.io.File
 import kotlin.math.max
 import kotlin.math.min
 
-@Disabled
 @TeleOp(name = "StaccDeteccTestOp")
 class StaccDeteccTestOp : AbstractVisionTestOp() {
 

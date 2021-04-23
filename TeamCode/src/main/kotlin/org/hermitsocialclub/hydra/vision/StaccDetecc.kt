@@ -96,6 +96,8 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 this.lastStackHeight = if (ratio < config.oneStackRatio) 1 else 4
                 pipeline.telemetry.setData("Stacc ratio", ratio)
                 pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
+                pipeline.telemetry.setData("Ring Area", "[${stackArea.x}, ${stackArea.y}" +
+                        ", ${stackArea.width}, ${stackArea.height}]")
                 pipeline.telemetry.setData("Top of ring", "[${stackTopArea.x}, ${stackTopArea.y}, ${stackTopArea.width}, ${stackTopArea.height}]")
                 // rectangle(subImage, stackArea, Scalar(0.0, 255.0, 0.0), 2)
                 rectangle(subImage, stackTopArea, Scalar(0.0, 127.0, 127.0), 2)

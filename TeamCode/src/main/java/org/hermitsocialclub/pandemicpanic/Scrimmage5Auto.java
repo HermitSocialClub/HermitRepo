@@ -1,5 +1,6 @@
 package org.hermitsocialclub.pandemicpanic;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -13,6 +14,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.opmode.BaselineMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
@@ -28,9 +30,11 @@ import org.opencv.core.Mat;
 public class Scrimmage5Auto extends LinearOpMode {
 
     private static final double POWER_SHOT_PERCENT = 0.575;
-    private static final double SPEED_PERCENT = 0.665;
+    private static final double SPEED_PERCENT = 0.755;
     private static final double COLLECT_LAUNCH_PERCENT = 0.645;
     private static final double COLLECT_LATE_LAUNCH_PERCENT = .665;
+    private static final double BACK_PERCENT = .72;
+    private static final double INTAKE_PERCENT = .35;
     private PersistantTelemetry telemetry;
     private MotorConfigurationType goBildaOutTake;
     private BaselineMecanumDrive drive;
@@ -38,15 +42,17 @@ public class Scrimmage5Auto extends LinearOpMode {
     private double collectLaunchSpeed;
     private double collectLateLaunchSpeed;
     private double powerShotSpeed;
+    private double intakeSpeed;
+    private double backSpeed;
     private int ringStack = 0;
     private StaccDetecc stackDetector;
     private VisionSemaphore semaphore;
     private VisionPipeline visionPipeline;
     private ElapsedTime time;
     private enum Ambition{
-        BASE_MODE, POWERSHOT_MODE,TURN_POWER_SHOT,CONSTANT_POWER_SHOT, BROKEN
+        BASE_MODE, POWERSHOT_MODE,TURN_POWER_SHOT,CONSTANT_POWER_SHOT, BROKEN , FRONT_HIGH_SHOT
     }
-    private final Ambition ambition = Ambition.BROKEN;
+    private final Ambition ambition = Ambition.FRONT_HIGH_SHOT;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -61,6 +67,10 @@ public class Scrimmage5Auto extends LinearOpMode {
                 goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
         this.powerShotSpeed = ((POWER_SHOT_PERCENT * 2 * Math.PI * goBildaOutTake.getMaxRPM() *
                 goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
+        this.intakeSpeed = ((INTAKE_PERCENT * 2 * Math.PI * goBildaOutTake.getMaxRPM() *
+                goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
+        this.backSpeed = ((BACK_PERCENT * 2 * Math.PI * goBildaOutTake.getMaxRPM() *
+                goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
         this.drive = new BaselineMecanumDrive(hardwareMap, telemetry);
         this.drive.setPoseEstimate(new Pose2d(-63, -15.5, 0));
 
@@ -71,10 +81,12 @@ public class Scrimmage5Auto extends LinearOpMode {
         this.time = new ElapsedTime();
         this.time.reset();
 
-        drive.wobbleGrab.setPosition(1);
+        drive.wobbleGrab.setPosition(0);
         drive.wobbleArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Find which Zone the ring stack is in
+        CameraStreamSource cameraStream = visionPipeline.getCamera();
+        FtcDashboard.getInstance().startCameraStream(cameraStream,0);
         while (time.seconds() < 4 && !isStarted() && !isStopRequested()) {
             ringStack = getZoneFromOpenCV();
             telemetry.setDebug("detected", ringStack);
@@ -85,19 +97,99 @@ public class Scrimmage5Auto extends LinearOpMode {
 
         // Build trajectories
 
+        Trajectory frontInitialShot;
+        Trajectory frontCollect;
+        Trajectory frontSecondShot;
+        Trajectory frontWobbleFourZone1;
+        Trajectory frontWobbleCollect;
+        Trajectory frontWobbleFourZone2;
+        Trajectory frontBack;
+        //Front High Goal
+        {
+            frontInitialShot = drive
+                    .trajectoryBuilder(drive.getPoseEstimate(),Math.toRadians(30))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPosition(0))
+                    .splineToConstantHeading(new Vector2d(0, -41), Math.toRadians(-120))
+                    .build();
+            frontCollect = drive.trajectoryBuilder(frontInitialShot.end(),Math.toRadians(-55))
+                    .addDisplacementMarker(() -> drive.intake.setVelocity(-intakeSpeed,AngleUnit.RADIANS))
+                    .splineToConstantHeading(new Vector2d(-18,-48),0,
+                            new MecanumConstraints(
+                                    new DriveConstraints(30,
+                                            DriveConstants.MAX_ACCEL,
+                                            0,
+                                            DriveConstants.MAX_ANG_VELO,
+                                            DriveConstants.MAX_ANG_ACCEL,
+                                            0),
+                                    DriveConstants.TRACK_WIDTH
+                            ))
+                    .addDisplacementMarker(() -> drive.intake.setVelocity(-intakeSpeed,AngleUnit.RADIANS))
+                    .splineToConstantHeading(new Vector2d(6,-47),0,
+                            new MecanumConstraints(
+                                    new DriveConstraints(30,
+                                            DriveConstants.MAX_ACCEL,
+                                            0,
+                                            DriveConstants.MAX_ANG_VELO,
+                                            DriveConstants.MAX_ANG_ACCEL,
+                                            0),
+                                    DriveConstants.TRACK_WIDTH
+                            ))
+                    .build();
+            frontSecondShot = drive.trajectoryBuilder(frontCollect.end())
+                    .splineToConstantHeading(new Vector2d(-3,-41),0)
+                    .build();
+            frontWobbleFourZone1 = drive.trajectoryBuilder(frontInitialShot.end(),Math.toRadians(0))
+                    .splineToLinearHeading(new Pose2d(55,-62,Math.toRadians(180)),Math.toRadians(-55))
+                    .addDisplacementMarker(()->drive.wobbleGrab.setPosition(1))
+                    .build();
+            frontWobbleCollect = drive.trajectoryBuilder(frontWobbleFourZone1.end(),Math.toRadians(180))
+                    .splineToLinearHeading(new Pose2d(-36,-47,0),Math.toRadians(160))
+                    .addDisplacementMarker(()->drive.wobbleGrab.setPosition(0))
+                    .build();
+            frontWobbleFourZone2 = drive.trajectoryBuilder(frontWobbleCollect.end())
+                .splineToLinearHeading(new Pose2d(55,-53,Math.toRadians(180)),0)
+                .addDisplacementMarker(()->drive.wobbleGrab.setPosition(1))
+                .build();
+            frontBack = drive.trajectoryBuilder(frontWobbleFourZone2.end())
+                    .splineToConstantHeading(new Vector2d(12,-53),Math.toRadians(180))
+                    .build();
+        }
 
         Trajectory constantLaunchSpline;
         Trajectory constantLaunchSpline2;
+        Trajectory constantCollectSetup;
+        Trajectory constantCollect;
+        Trajectory constantFirstFourWobbleDrop;
+        Trajectory constantWobbleCollect;
+        Trajectory constantSecondFourWobbleDrop;
         //Constant Power Shot
         {
             constantLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
                     .splineToConstantHeading(new Vector2d(-14, 12.50), 0)
-                    .build();
-            constantLaunchSpline2 = drive.trajectoryBuilder(constantLaunchSpline.end())
+                    .addDisplacementMarker(()-> {
+                        drive.hopperLift.setPosition(.37);
+                        drive.outtake.setVelocity(powerShotSpeed);
+                    })
                     .splineToConstantHeading(new Vector2d(-3, -24.50), 0)
                     .addSpatialMarker(new Vector2d(0, -2.50), () -> launchRing(1, powerShotSpeed))
                     .addSpatialMarker(new Vector2d(0, -14.50), () -> launchRing(1, powerShotSpeed))
                     .addSpatialMarker(new Vector2d(0, -20.50), () -> launchRing(1, powerShotSpeed))
+                    .splineToConstantHeading(new Vector2d(-3,-16.5),Math.toRadians(90))
+                    //.splineToConstantHeading(new Vector2d(-36,-36.5),Math.toRadians(-50))
+                    //.addDisplacementMarker(()->drive.intake.setVelocity(intakeSpeed,AngleUnit.RADIANS))
+                    //.splineToConstantHeading(new Vector2d(-10,-36.5),0)
+                    .build();
+            constantFirstFourWobbleDrop = drive.trajectoryBuilder(constantLaunchSpline.end())
+                    .splineToLinearHeading(new Pose2d(55,-58,Math.toRadians(180)),Math.toRadians(-55))
+                    .addDisplacementMarker(() -> drive.wobbleGrab.setPosition(0))
+                    .build();
+            constantWobbleCollect = drive.trajectoryBuilder(constantFirstFourWobbleDrop.end(),Math.toRadians(180))
+                    .splineToLinearHeading(new Pose2d(-36,-53,0),Math.toRadians(180))
+                    .addDisplacementMarker(()->drive.wobbleGrab.setPosition(1))
+                    .build();
+            constantSecondFourWobbleDrop = drive.trajectoryBuilder(constantWobbleCollect.end())
+                    .splineToLinearHeading(new Pose2d(55,-53,Math.toRadians(180)),0)
+                    .addDisplacementMarker(()->drive.wobbleGrab.setPosition(0))
                     .build();
         }
         Trajectory turnLaunchSpline;
@@ -304,10 +396,27 @@ public class Scrimmage5Auto extends LinearOpMode {
                     .forward(36)
                     .build();
         }
+        telemetry.setDebug("Trajectories","Done");
 
         waitForStart();
 
         switch (ambition){
+            case FRONT_HIGH_SHOT:{
+                drive.followTrajectory(frontInitialShot);
+                drive.hopperLift.setPosition(.37);
+                launchRing(3,launchLineSpeed);
+                //drive.followTrajectory(frontCollect);
+                //drive.followTrajectory(frontSecondShot);
+                //
+                //drive.intake.setVelocity(0);
+                //sleep(300);
+                drive.followTrajectory(frontWobbleFourZone1);
+                drive.followTrajectory(frontWobbleCollect);
+                drive.followTrajectory(frontWobbleFourZone2);
+                drive.followTrajectory(frontBack);
+
+                break;
+            }
             case BROKEN:{
                 drive.followTrajectory(failure1);
                 launchRing(3,launchLineSpeed);
@@ -338,16 +447,15 @@ public class Scrimmage5Auto extends LinearOpMode {
             }
             case CONSTANT_POWER_SHOT:{
                 drive.followTrajectory(constantLaunchSpline);
-                drive.outtake.setVelocity(powerShotSpeed);
-                while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - powerShotSpeed) > Math.pow(10, -1)) {
+                //drive.outtake.setVelocity(powerShotSpeed);
+                /*while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - powerShotSpeed) > Math.pow(10, -1)) {
                     telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
                     telemetry.setDebug("Ticks Outtake Velocity", drive.outtake.getVelocity(AngleUnit.DEGREES));
                     telemetry.setDebug("Ticks Outtake Position", drive.outtake.getCurrentPosition());
-                }
-                drive.followTrajectory(constantLaunchSpline2);
+                }*/
+                //drive.followTrajectory(constantLaunchSpline2);
                 break;
             }
-
             case TURN_POWER_SHOT:{
                 drive.followTrajectory(turnLaunchSpline);
                 while (drive.isBusy()){}
@@ -359,7 +467,6 @@ public class Scrimmage5Auto extends LinearOpMode {
                 launchRing(1, launchLineSpeed);
                 break;
             }
-
             case POWERSHOT_MODE: {
                 drive.wobbleGrab.setPosition(1);
                 drive.followTrajectory(powerLaunchSpline);
@@ -380,7 +487,6 @@ public class Scrimmage5Auto extends LinearOpMode {
                 sleep(200);
             break;
             }
-
             case BASE_MODE: {
         // Have the robot drive out
         drive.followTrajectory(launchSpline);
@@ -498,11 +604,11 @@ public class Scrimmage5Auto extends LinearOpMode {
             int ringsFired = 0;
             while (opModeIsActive() && ringsFired < ringsToFire) {
                 telemetry.setDebug("ringsFired", ringsFired);
-                drive.kicker.setPosition(.7);
-                sleep(200);
-                drive.kicker.setPosition(.3);
-                sleep(200);
-                while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - speed ) > Math.pow(10, -1)) {
+                drive.kicker.setPosition(1);
+                sleep(500);
+                drive.kicker.setPosition(0);
+                sleep(500);
+                while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - speed ) > Math.pow(10, -2)*5) {
                     telemetry.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
                 }
                 ringsFired++;

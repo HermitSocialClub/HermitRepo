@@ -65,7 +65,7 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class BaselineMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.3, 0, 1.1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 0, 1.1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10.4, 0, 1.5);
 
     public static double LATERAL_MULTIPLIER = (60/45.75) * 1.0434782608695652173913043478261 ;
 
@@ -101,6 +101,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     public Servo wobbleGrab;
     public Servo kicker;
+    public CRServo hook;
+    public CRServo friend;
     public RevColorSensorV3 color;
     public Servo hopperLift;
     public CRServo intakeThirdStage;
@@ -142,10 +144,10 @@ public class BaselineMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        //imu = hardwareMap.get(BNO055IMU.class, "imu");
+        //BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+        //parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        //imu.initialize(parameters);
 
         // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
@@ -168,6 +170,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         hopperLift = hardwareMap.get(Servo.class,"hopperLift");
         color = hardwareMap.get(RevColorSensorV3.class,"color");
+
+        hook = hardwareMap.get(CRServo.class,"hook");
+        friend = hardwareMap.get(CRServo.class,"friend");
 
 
 
@@ -430,7 +435,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
+        return 0;
     }
 
     @Override

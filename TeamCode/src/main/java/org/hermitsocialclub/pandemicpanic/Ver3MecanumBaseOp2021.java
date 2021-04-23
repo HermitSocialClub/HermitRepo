@@ -32,7 +32,9 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     public static double DRAWING_TARGET_RADIUS = 2;
     public static double SPEED_PERCENT = 0.8;
     public static double POWER_PERCENT = 0.8;
-    private static double INTAKE_PERCENT = 0.55;
+    private static double INTAKE_PERCENT = .30;
+    private double lastIntake = 0;
+    private double currentIntake;
     private static double INTAKE_GEAR = 1;
     public static double POWER_THRESHHOLD = Math.pow(10, -1) * 1.5;
     private final PersistantTelemetry pt = new PersistantTelemetry(telemetry);
@@ -57,6 +59,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     private boolean lastDownMash = false;
     private boolean lastUpMash = false;
     private boolean lastLeftMash = false;
+    private boolean lastRTriggerMash = false;
+    private boolean intakeOn = false;
     private double powerShotSpeed;
     private boolean kickFinished = true;
     private boolean kickDirection = false;
@@ -202,8 +206,10 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
         drive.hopperLift.setPosition(.85);
         drive.kicker.setPosition(0);
         drive.wobbleGrab.setPosition(1);
+        //drive.friend.setPower(1);
 
         while (opModeIsActive()) {
+            boolean justPressed = false;
             // Make sure to call drive.update() on *every* loop
             // Increasing loop time by utilizing bulk reads and minimizing writes will increase your odometry accuracy
             drive.update();
@@ -391,9 +397,17 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
 
             if (gamepad1.right_bumper) {
                 drive.intake.setVelocity(intake85Speed,AngleUnit.RADIANS);
+                currentIntake = intake85Speed;
+                intakeOn = true;
             } else if (gamepad1.left_bumper) {
                 drive.intake.setVelocity(0);
+                intakeOn = false;
             }
+            /*if(Math.abs(drive.intake.getVelocity()) - Math.abs(lastIntake) < -.01 && intakeOn){
+                currentIntake *= .99;
+                drive.intake.setVelocity(currentIntake);
+            }*/
+            lastIntake = drive.intake.getVelocity();
 
             if (gamepad1.right_trigger > 0.02 && kickFinished) {
                 kickFinished = false;
@@ -405,9 +419,11 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 } else {
                     drive.outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);
                 }
+                justPressed = true;
             }
 
-            if (gamepad1.right_trigger > 0.02 && !kickFinished && kickTime.milliseconds() >= 15) {
+
+            if (gamepad1.right_trigger > 0.02 && !kickFinished && !lastRTriggerMash && !justPressed) {
                 if (runtime.seconds() > 90) {
                     maxKicks = 6;
                 } else {
@@ -415,8 +431,9 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 }
                 kickStarting = true;
             }
+            lastRTriggerMash = (gamepad1.right_trigger > 0.02);
 
-            long kickInterval = 450;
+            long kickInterval = 600;
             if (kickStarting && !kickFinished &&
                     Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed : outTake75Speed)) < POWER_THRESHHOLD
                     /*&& drive.getPoseVelocity().getX() < 0.005  && drive.getPoseVelocity().getY() < 0.005
@@ -440,7 +457,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                         drive.kicker.setPosition(1);
                     } else {
                         kickDirection = true;
-                        drive.kicker.setPosition(0);
+                        drive.kicker.setPosition(-1);
                     }
                     kickTime.reset();
                     if (kickDirection) {
@@ -473,11 +490,11 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             lastLeftMash = gamepad1.dpad_left;
 
             if (gamepad2.right_trigger > 0.02) {
-                HOPPER_POSITION += WOBBLE_GRAB_INCREMENT;
-                drive.hopperLift.setPosition(HOPPER_POSITION);
+                drive.friend.setPower(gamepad2.right_trigger);
             } else if (gamepad2.left_trigger > 0.02) {
-                HOPPER_POSITION -= WOBBLE_GRAB_INCREMENT;
-                drive.hopperLift.setPosition(HOPPER_POSITION);
+                drive.friend.setPower(-gamepad2.left_trigger);
+            }else{
+                drive.friend.setPower(0);
             }
             //pt.setDebug("Hopper Position",drive.hopperLift.getPosition());
             if (Math.abs(gamepad2.left_stick_y) > .02) {
@@ -488,7 +505,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             if (gamepad2.right_bumper) {
                 drive.wobbleGrab.setPosition(1);
             } else if (gamepad2.left_bumper) {
-                drive.wobbleGrab.setPosition(0);
+                drive.wobbleGrab.setPosition(-1);
             }
             if(gamepad2.x && !last2XMash){
                 if(drive.intakeThirdStage.getPower() > 0.02){
@@ -498,6 +515,12 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 }
             }
             last2XMash = gamepad2.x;
+
+            if(Math.abs(gamepad2.right_stick_y) > 0.2){
+                drive.hook.setPower(antiDeadzone(gamepad2.right_stick_y));
+            }else {
+                drive.hook.setPower(0);
+            }
 
             //TODO: Remove Telemetry when done figuring out problem with kicker
             pt.setDebug("Intake Velocity",drive.intake.getVelocity(AngleUnit.RADIANS));
