@@ -1,28 +1,19 @@
 package org.hermitsocialclub.pandemicpanic;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.hardware.motors.GoBILDA5201Series;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.opmode.BaselineMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-import org.openftc.revextensions2.RevBulkData;
 
 
 @TeleOp(name = "Version 3 2021 Mecanum Base Op", group = "Hermit")
@@ -36,7 +27,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     private double lastIntake = 0;
     private double currentIntake;
     private static double INTAKE_GEAR = 1;
-    public static double POWER_THRESHHOLD = Math.pow(10, -1) * 1.5;
+    public static double NEAR_ZERO_THRESHHOLD = Math.pow(10, -1) * 1.5;
     private final PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     private final ElapsedTime runtime = new ElapsedTime();
     private final ElapsedTime kickTime = new ElapsedTime();
@@ -218,25 +209,29 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             // Retrieve **our** pose
             Pose2d ourPose = drive.getPoseEstimate();
 
-            //Buzzwords: Context-Optimized Greedy Nearest Neighbor Search Algorithm
+            //Context-Optimized Greedy Nearest Neighbor Search Algorithm
             if (gamepad1.right_stick_button) {
-                if (runtime.seconds() < 90) {
+                if (runtime.seconds() < 90) { //check whether the robot is in endgame and needs to switch to shooting the power shots
                     double x = ourPose.getX();
                     double y = ourPose.getY();
+                    //find the distance between the most likely trajectory and the robot's current position
                     double dist = (x - traj[2][0].end().getX()) * (x - traj[2][0].end().getX()) + (y - traj[2][0].end().getY()) * (y - traj[2][0].end().getY());
                     boolean bestDistFound = false;
                     Trajectory[][] trajectory;
                     int rowIndex = 2;
                     int colIndex = 0;
+                    //if within the correct bounds, run using the more focused, higher resolution
                     if ((x < 60 && x > -12) && (y < -12 && y > -36)) {
                         trajectory = hiRes;
                         rowIndex = 4;
                     } else trajectory = traj;
-
-                    if (dist > POWER_THRESHHOLD) {
+                    //if the distance between the closest point and the robot is negligible, skip the search and run that trajectory
+                    if (dist > NEAR_ZERO_THRESHHOLD) {
                         while (!bestDistFound) {
                             int tempRow = rowIndex;
                             int tempCol = colIndex;
+                            //check if the node below the current node is closer than the current distance, if so set the index to this and the distance to
+                            //the checked distance
                             if (rowIndex - 1 > -1) {
                                 double checkDist = (x - trajectory[rowIndex - 1][colIndex].end().getX()) * (x - trajectory[rowIndex - 1][colIndex].end().getX())
                                         + (y - trajectory[rowIndex - 1][colIndex].end().getY()) * (y - trajectory[rowIndex - 1][colIndex].end().getY());
@@ -245,6 +240,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                                     tempRow = rowIndex - 1;
                                 }
                             }
+                            //check if the node above the current node is closer than the current distance, if so set the index to this and the distance to
+                            //the checked distance
                             if (rowIndex + 1 < trajectory.length) {
                                 double checkDist = (x - trajectory[rowIndex + 1][colIndex].end().getX()) * (x - trajectory[rowIndex + 1][colIndex].end().getX())
                                         + (y - trajectory[rowIndex + 1][colIndex].end().getY()) * (y - trajectory[rowIndex + 1][colIndex].end().getY());
@@ -253,6 +250,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                                     tempRow = rowIndex + 1;
                                 }
                             }
+                            //check if the node left of the current node is closer than the current distance, if so set the index to this and the distance to
+                            //the checked distance
                             if (colIndex - 1 > -1) {
                                 double checkDist = (x - trajectory[rowIndex][colIndex - 1].end().getX()) * (x - trajectory[rowIndex][colIndex - 1].end().getX())
                                         + (y - trajectory[rowIndex][colIndex - 1].end().getY()) * (y - trajectory[rowIndex][colIndex - 1].end().getY());
@@ -262,6 +261,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                                     tempCol = colIndex - 1;
                                 }
                             }
+                            //check if the node right of the current node is closer than the current distance, if so set the index to this and the distance to
+                            //the checked distance
                             if (colIndex + 1 < trajectory[rowIndex].length) {
                                 double checkDist = (x - trajectory[rowIndex][colIndex + 1].end().getX()) * (x - trajectory[rowIndex][colIndex + 1].end().getX())
                                         + (y - trajectory[rowIndex][colIndex + 1].end().getY()) * (y - trajectory[rowIndex][colIndex + 1].end().getY());
@@ -271,6 +272,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                                     tempCol = colIndex + 1;
                                 }
                             }
+                            //check whether any of the indexes were changed to a closer changed index, if so repeat with the closer index, if not end the
+                            //search at the main node.
                             if (rowIndex != tempRow || colIndex != tempCol) {
                                 rowIndex = tempRow;
                                 colIndex = tempCol;
@@ -279,7 +282,9 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                     }
                     pt.setDebug("closest X: ", trajectory[rowIndex][colIndex].end().getX());
                     pt.setDebug("closest Y: ", trajectory[rowIndex][colIndex].end().getY());
+                    //navigate along the closest path
                     drive.followTrajectory(trajectory[rowIndex][colIndex]);
+                    //take steps to begin the outtake sequence
                     kickFinished = false;
                     kickTime.reset();
                     drive.hopperLift.setPosition(.375);
@@ -447,10 +452,10 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             long kickInterval = 600;
             if (kickStarting && !kickFinished &&
                     Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ?
-                            powerShotSpeed : outTake75Speed)) < POWER_THRESHHOLD) {
+                            powerShotSpeed : outTake75Speed)) < NEAR_ZERO_THRESHHOLD) {
                 if (kicks >= maxKicks && kickTime.milliseconds() >= kickInterval
                         && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ?
-                        powerShotSpeed : outTake75Speed)) < POWER_THRESHHOLD) {
+                        powerShotSpeed : outTake75Speed)) < NEAR_ZERO_THRESHHOLD) {
                     drive.kicker.setPosition(1);
                     drive.hopperLift.setPosition(.85);
                     if (!alwaysOn && runtime.seconds() > 90) {
