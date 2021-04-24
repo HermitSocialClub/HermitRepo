@@ -72,7 +72,7 @@ public class Scrimmage5Auto extends LinearOpMode {
         this.backSpeed = ((BACK_PERCENT * 2 * Math.PI * goBildaOutTake.getMaxRPM() *
                 goBildaOutTake.getAchieveableMaxRPMFraction()) / 60);
         this.drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        this.drive.setPoseEstimate(new Pose2d(-63, -15.5, 0));
+        this.drive.setPoseEstimate(new Pose2d(-60, -15.5, 0));
 
         this.stackDetector = new StaccDetecc();
         this.stackDetector.getConfig().setSubmat(VisionUtils.loadRectFromFile(SubmatSetupOp.SUBMAT_CONFIG));
@@ -101,6 +101,8 @@ public class Scrimmage5Auto extends LinearOpMode {
         Trajectory frontCollect;
         Trajectory frontSecondShot;
         Trajectory frontWobbleFourZone1;
+        Trajectory frontWobbleOneZone1;
+        Trajectory frontWobbleFourZone1Disengage;
         Trajectory frontWobbleCollect;
         Trajectory frontWobbleFourZone2;
         Trajectory frontBack;
@@ -139,19 +141,36 @@ public class Scrimmage5Auto extends LinearOpMode {
                     .splineToConstantHeading(new Vector2d(-3,-41),0)
                     .build();
             frontWobbleFourZone1 = drive.trajectoryBuilder(frontInitialShot.end(),Math.toRadians(0))
-                    .splineToLinearHeading(new Pose2d(55,-62,Math.toRadians(180)),Math.toRadians(-55))
+                    .splineToLinearHeading(
+                            (ringStack == 4) ?
+                                new Pose2d(50,-63,Math.toRadians(180)) :
+                            (ringStack == 1) ?
+                                    new Pose2d(25,-38,Math.toRadians(180)):
+                                    new Pose2d(-3,-58,Math.toRadians(180))
+                            ,Math.toRadians(-75)
+
+                    )
                     .addDisplacementMarker(()->drive.wobbleGrab.setPosition(1))
                     .build();
-            frontWobbleCollect = drive.trajectoryBuilder(frontWobbleFourZone1.end(),Math.toRadians(180))
-                    .splineToLinearHeading(new Pose2d(-36,-47,0),Math.toRadians(160))
+            frontWobbleFourZone1Disengage = drive.trajectoryBuilder(frontWobbleFourZone1.end())
+                    .back(2)
+                    .build();
+            frontWobbleCollect = drive.trajectoryBuilder(frontWobbleFourZone1Disengage.end(),Math.toRadians(180))
+                    .splineToLinearHeading(new Pose2d(-36,-45,0),Math.toRadians(160))
                     .addDisplacementMarker(()->drive.wobbleGrab.setPosition(0))
                     .build();
             frontWobbleFourZone2 = drive.trajectoryBuilder(frontWobbleCollect.end())
-                .splineToLinearHeading(new Pose2d(55,-53,Math.toRadians(180)),0)
+                .splineToLinearHeading((ringStack == 4) ?
+                                new Pose2d(47,-63,Math.toRadians(180)) :
+                                (ringStack == 1) ?
+                                        new Pose2d(22,-38,Math.toRadians(180)):
+                                        new Pose2d(-6,-58,Math.toRadians(180)),
+                        0)
                 .addDisplacementMarker(()->drive.wobbleGrab.setPosition(1))
                 .build();
             frontBack = drive.trajectoryBuilder(frontWobbleFourZone2.end())
-                    .splineToConstantHeading(new Vector2d(12,-53),Math.toRadians(180))
+                    .back(.5)
+                    .splineToConstantHeading(new Vector2d(10,-53),Math.toRadians(180))
                     .build();
         }
 
@@ -411,10 +430,11 @@ public class Scrimmage5Auto extends LinearOpMode {
                 //drive.intake.setVelocity(0);
                 //sleep(300);
                 drive.followTrajectory(frontWobbleFourZone1);
+                drive.followTrajectory(frontWobbleFourZone1Disengage);
                 drive.followTrajectory(frontWobbleCollect);
                 drive.followTrajectory(frontWobbleFourZone2);
                 drive.followTrajectory(frontBack);
-
+                PoseStorage.currentPose = drive.getPoseEstimate();
                 break;
             }
             case BROKEN:{
