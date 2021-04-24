@@ -1,17 +1,7 @@
-# Road Runner Quickstart
+# PandemicPanic
 
-An example FTC project using [Road Runner](https://github.com/acmerobotics/road-runner). **Note:** Road Runner is in alpha and many of its APIs are incubating.
+Hello! This is the repo for FTC Team 12675 [Hermit Social Club](https://hermitsocialclub.org/)'s code for the 2021 season.
+Feel free to take a look around at some of the things we've built this year!
 
-## Installation
-
-For more detailed instructions on getting Road Runner setup in your own project, see the [Road Runner README](https://github.com/acmerobotics/road-runner#core).
-
-1. Download or clone this repo with `git clone https://github.com/acmerobotics/road-runner-quickstart`.
-
-1. Open the project in Android Studio and build `TeamCode` like any other `ftc_app` project.
-
-1. If you have trouble with multidex, enable proguard by changing `useProguard` to `true` in `build.common.gradle`.
-
-## Documentation
-
-Check out the new [online quickstart documentation](https://acme-robotics.gitbook.io/road-runner/quickstart).
+## What's in a Name?
+https://www.reddit.com/r/FTC/comments/fjcfmn/its_panic_time/
