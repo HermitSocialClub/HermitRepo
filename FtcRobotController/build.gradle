@@ -27,6 +27,9 @@ repositories {
     flatDir {
         dirs '../libs'
     }
+
+    maven { url = "https://maven.0x778.tk" }
+
 }
 
 apply from: 'build.release.gradle'

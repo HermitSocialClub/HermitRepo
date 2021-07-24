@@ -34,7 +34,7 @@ public class Scrimmage5Auto extends LinearOpMode {
     private static final double COLLECT_LAUNCH_PERCENT = 0.645;
     private static final double COLLECT_LATE_LAUNCH_PERCENT = .665;
     private static final double BACK_PERCENT = .72;
-    private static final double INTAKE_PERCENT = .35;
+    private static final double INTAKE_PERCENT = .55;
     private PersistantTelemetry telemetry;
     private MotorConfigurationType goBildaOutTake;
     private BaselineMecanumDrive drive;
@@ -142,12 +142,8 @@ public class Scrimmage5Auto extends LinearOpMode {
                     .build();
             frontWobbleFourZone1 = drive.trajectoryBuilder(frontInitialShot.end(),Math.toRadians(0))
                     .splineToLinearHeading(
-                            (ringStack == 4) ?
-                                new Pose2d(50,-63,Math.toRadians(180)) :
-                            (ringStack == 1) ?
-                                    new Pose2d(25,-38,Math.toRadians(180)):
-                                    new Pose2d(-3,-58,Math.toRadians(180))
-                            ,Math.toRadians(-75)
+
+                                new Pose2d(50,-63,Math.toRadians(180)),Math.toRadians(-75)
 
                     )
                     .addDisplacementMarker(()->drive.wobbleGrab.setPosition(1))
@@ -156,15 +152,12 @@ public class Scrimmage5Auto extends LinearOpMode {
                     .back(2)
                     .build();
             frontWobbleCollect = drive.trajectoryBuilder(frontWobbleFourZone1Disengage.end(),Math.toRadians(180))
-                    .splineToLinearHeading(new Pose2d(-36,-45,0),Math.toRadians(160))
+                    .splineToLinearHeading(new Pose2d(-37,-43,0),Math.toRadians(160))
                     .addDisplacementMarker(()->drive.wobbleGrab.setPosition(0))
                     .build();
             frontWobbleFourZone2 = drive.trajectoryBuilder(frontWobbleCollect.end())
-                .splineToLinearHeading((ringStack == 4) ?
-                                new Pose2d(47,-63,Math.toRadians(180)) :
-                                (ringStack == 1) ?
-                                        new Pose2d(22,-38,Math.toRadians(180)):
-                                        new Pose2d(-6,-58,Math.toRadians(180)),
+                .splineToLinearHeading(
+                                new Pose2d(47,-63,Math.toRadians(180)),
                         0)
                 .addDisplacementMarker(()->drive.wobbleGrab.setPosition(1))
                 .build();
@@ -186,7 +179,7 @@ public class Scrimmage5Auto extends LinearOpMode {
             constantLaunchSpline = drive.trajectoryBuilder(drive.getPoseEstimate())
                     .splineToConstantHeading(new Vector2d(-14, 12.50), 0)
                     .addDisplacementMarker(()-> {
-                        drive.hopperLift.setPosition(.37);
+                        drive.hopperLift.setPosition(.385);
                         drive.outtake.setVelocity(powerShotSpeed);
                     })
                     .splineToConstantHeading(new Vector2d(-3, -24.50), 0)
@@ -422,7 +415,7 @@ public class Scrimmage5Auto extends LinearOpMode {
         switch (ambition){
             case FRONT_HIGH_SHOT:{
                 drive.followTrajectory(frontInitialShot);
-                drive.hopperLift.setPosition(.37);
+                drive.hopperLift.setPosition(.385);
                 launchRing(3,launchLineSpeed);
                 //drive.followTrajectory(frontCollect);
                 //drive.followTrajectory(frontSecondShot);

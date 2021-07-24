@@ -282,7 +282,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                     drive.followTrajectory(trajectory[rowIndex][colIndex]);
                     kickFinished = false;
                     kickTime.reset();
-                    drive.hopperLift.setPosition(.375);
+                    drive.hopperLift.setPosition(.385);
                     kicks = 0;
                     if (runtime.seconds() > 90) {
                         drive.outtake.setVelocity(-powerShotSpeed, AngleUnit.RADIANS);
@@ -406,8 +406,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             // Send telemetry packet off to dashboard
 
             if (gamepad1.right_bumper) {
-                //drive.intake.setVelocity(intake85Speed,AngleUnit.RADIANS);
-                drive.intake.setPower(.25);
+                drive.intake.setVelocity(intake85Speed,AngleUnit.RADIANS);
+                //drive.intake.setPower(-.25);
                 currentIntake = intake85Speed;
                 intakeOn = true;
             } else if (gamepad1.left_bumper) {
@@ -423,7 +423,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             if (gamepad1.right_trigger > 0.02 && kickFinished) {
                 kickFinished = false;
                 kickTime.reset();
-                drive.hopperLift.setPosition(.375);
+                drive.hopperLift.setPosition(.385);
                 kicks = 0;
                 if (runtime.seconds() > 90) {
                     drive.outtake.setVelocity(-powerShotSpeed, AngleUnit.RADIANS);
@@ -490,8 +490,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 if (drive.intake.getPower() != 0) {
                     drive.intake.setPower(0);
                 } else if (drive.intake.getPower() == 0) {
-                    //drive.intake.setVelocity(-intake85Speed,AngleUnit.RADIANS);
-                    drive.intake.setPower(-.25);
+                    drive.intake.setVelocity(-intake85Speed,AngleUnit.RADIANS);
+                    //drive.intake.setPower(.25);
                 }
             }
             lastLeftMash = gamepad1.dpad_left;
