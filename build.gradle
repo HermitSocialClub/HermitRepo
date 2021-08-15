@@ -5,14 +5,18 @@
  * This file has been updated for epicness -Arc
  */
 
+configurations {
+    doc { transitive false }
+}
+
 buildscript {
     repositories {
+        mavenCentral()
         google()
-        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.3'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.kotlin_plugin_version}"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlin_plugin_version}"
     }
 }
 
@@ -20,7 +24,49 @@ buildscript {
 // google() repository beginning with version 3.2 of the Android Gradle Plugin
 allprojects {
     repositories {
+        mavenCentral()
         google()
+
+        // TODO REMOVE JCENTER
+        //noinspection JcenterRepositoryObsolete
         jcenter()
+    }
+}
+
+repositories {
+    mavenCentral()
+
+    flatDir {
+        dirs '../libs'
+    }
+}
+
+dependencies {
+    doc "org.firstinspires.ftc:Hardware:${ftc_libs_version}"
+    doc "org.firstinspires.ftc:RobotCore:${ftc_libs_version}"
+    doc "org.firstinspires.ftc:FtcCommon:${ftc_libs_version}"
+    doc "org.firstinspires.ftc:OnBotJava:${ftc_libs_version}"
+    doc "org.firstinspires.ftc:Inspection:${ftc_libs_version}"
+}
+
+task extractJavadoc {
+    doLast {
+        def componentIds = configurations.doc.incoming.resolutionResult.allDependencies.collect { it.selected.id }
+
+        def result = dependencies.createArtifactResolutionQuery()
+                .forComponents(componentIds)
+                .withArtifacts(JvmLibrary, SourcesArtifact, JavadocArtifact)
+                .execute()
+
+        for (component in result.resolvedComponents) {
+            component.getArtifacts(JavadocArtifact).each { artifact ->
+                def version = artifact.identifier.componentIdentifier.version
+                def libName = artifact.identifier.componentIdentifier.moduleIdentifier.name
+                copy {
+                    from zipTree(artifact.file)
+                    into "docs/$version/$libName/"
+                }
+            }
+        }
     }
 }

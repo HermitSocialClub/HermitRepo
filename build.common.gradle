@@ -19,7 +19,6 @@ import java.util.regex.Pattern
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 def useProguard = false
 
@@ -28,6 +27,21 @@ android {
     compileSdkVersion 29
 
     signingConfigs {
+        release {
+            def apkStoreFile = System.getenv("APK_SIGNING_STORE_FILE")
+            if (apkStoreFile != null) {
+                keyAlias System.getenv("APK_SIGNING_KEY_ALIAS")
+                keyPassword System.getenv("APK_SIGNING_KEY_PASSWORD")
+                storeFile file(System.getenv("APK_SIGNING_STORE_FILE"))
+                storePassword System.getenv("APK_SIGNING_STORE_PASSWORD")
+            } else {
+                keyAlias 'androiddebugkey'
+                keyPassword 'android'
+                storeFile rootProject.file('libs/ftc.debug.keystore')
+                storePassword 'android'
+            }
+        }
+
         debug {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
@@ -40,17 +54,11 @@ android {
         noCompress "tflite"
     }
 
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-    }
-
     defaultConfig {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
         minSdkVersion 25
         targetSdkVersion 28
-        multiDexEnabled !useProguard
 
         /**
          * We keep the versionCode and versionName of robot controller applications in sync with
@@ -83,17 +91,10 @@ android {
     // http://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.BuildType.html
     buildTypes {
         release {
-            // Disable debugging for release versions so it can be uploaded to Google Play.
-            //debuggable true
-            ndk {
-                abiFilters "armeabi-v7a"//, "arm64-v8a"
-            }
+            signingConfig signingConfigs.release
 
-            if (useProguard) {
-                minifyEnabled true
-                proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                        'proguard-rules.pro'
-                println(getProguardFiles())
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
             }
         }
         debug {
@@ -101,16 +102,13 @@ android {
             jniDebuggable true
             renderscriptDebuggable true
             ndk {
-                abiFilters "armeabi-v7a"//, "arm64-v8a"
-            }
-
-            if (useProguard) {
-                minifyEnabled true
-                proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                        'proguard-rules.pro'
-                println(getProguardFiles())
+                abiFilters "armeabi-v7a", "arm64-v8a"
             }
         }
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     compileOptions {
@@ -124,6 +122,8 @@ android {
 
         java.srcDirs += 'src/main/kotlin'
     }
+
+    ndkVersion '21.3.6528147'
 }
 
 repositories {
@@ -135,5 +135,3 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.kotlin_plugin_version}"
 }
-
-apply from: 'build.release.gradle'

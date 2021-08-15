@@ -21,15 +21,8 @@ android {
     }
 }
 
-repositories {
-    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
+apply from: '../build.dependencies.gradle'
 
-    flatDir {
-        dirs '../libs'
-    }
-
-    maven { url = "https://maven.0x778.tk" }
-
+dependencies {
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
 }
-
-apply from: 'build.release.gradle'
