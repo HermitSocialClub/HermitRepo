@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.spartronics4915.lib.T265Camera;
 
+import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import static android.os.SystemClock.sleep;
@@ -31,7 +32,7 @@ public class SlamTestOp extends OpMode {
     @Override
     public void init() {
         if(slamra == null) {
-            slamra = new T265Camera(new Transform2d(), .8, hardwareMap.appContext);
+            slamra = FtcRobotControllerActivity.slamra;
         }
         slamra.setPose(startingPose);
 
