@@ -15,6 +15,8 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
+
 dependencies {
     implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
@@ -34,10 +36,14 @@ dependencies {
 }
 
 // Add our native code
-android {
-    externalNativeBuild {
-        cmake {
-            path new File(project.rootProject.projectDir, "ProjectTomato/CMakeLists.txt")
-        }
+cargo {
+    module  =  "../ProjectTomato"
+    libname = "tomato"
+    targets = ["arm"]
+}
+
+tasks.whenTaskAdded {
+    if ((it.name == 'javaPreCompileDebug' || it.name == 'javaPreCompileRelease')) {
+        it.dependsOn 'cargoBuild'
     }
 }

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# ============================
+#     git pre-commit hook
+# ============================
+# Add this file to .git/hooks/
+# to get automatic formatting
+# on every commit.
+
+# rustfmt
+cd ProjectTomato
+cargo fmt
+cd ..
+git add -u
