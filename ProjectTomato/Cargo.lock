@@ -75,13 +75,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "project_tomato"
-version = "0.1.0"
-dependencies = [
- "jni",
-]
-
-[[package]]
 name = "quote"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -128,6 +121,13 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "tomato"
+version = "0.1.0"
+dependencies = [
+ "jni",
 ]
 
 [[package]]
