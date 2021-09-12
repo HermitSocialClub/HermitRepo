@@ -70,7 +70,7 @@ public class T265LocalizerRR implements Localizer {
     public Pose2d getPoseEstimate() {
         //variable up is updated in update()
 
-        //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner Geometry
+        //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
             Translation2d oldPose = up.pose.getTranslation();
             Rotation2d oldRot = up.pose.getRotation();

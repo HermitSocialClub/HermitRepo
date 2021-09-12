@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
+import org.firstinspires.ftc.teamcode.drive.T265LocalizerRR;
 import org.firstinspires.ftc.teamcode.drive.TwoWheelTrackingLocalizer;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
@@ -157,7 +158,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
-
+        /*
         wobbleArm = hardwareMap.get(DcMotorEx.class,"wobbleArm");
         wobbleGrab = hardwareMap.get(Servo.class,"wobbleGrab");
 
@@ -173,7 +174,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         hook = hardwareMap.get(CRServo.class,"hook");
         friend = hardwareMap.get(CRServo.class,"friend");
-
+        */
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -187,7 +188,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        /*outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         outtake.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,new PIDFCoefficients(50,0,5,13.1));
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -195,7 +196,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        */
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
@@ -203,12 +204,12 @@ public class BaselineMecanumDrive extends MecanumDrive {
         // TODO: reverse any motors using DcMotor.setDirection()
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
-        outtake.setDirection(DcMotorSimple.Direction.REVERSE);
+        /*wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
+        outtake.setDirection(DcMotorSimple.Direction.REVERSE);*/
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,pt));
+        setLocalizer(new T265LocalizerRR(hardwareMap));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

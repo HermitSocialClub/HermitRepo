@@ -57,7 +57,7 @@ android {
     defaultConfig {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
-        minSdkVersion 26
+        minSdkVersion 25
         targetSdkVersion 28
 
         /**
