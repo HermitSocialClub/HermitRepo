@@ -17,12 +17,13 @@ repositories {
 dependencies {
     implementation "org.firstinspires.ftc:Inspection:${ftc_libs_version}"
     implementation "org.firstinspires.ftc:Blocks:${ftc_libs_version}"
+    implementation "org.firstinspires.ftc:Tfod:${ftc_libs_version}"
     implementation "org.firstinspires.ftc:RobotCore:${ftc_libs_version}"
     implementation "org.firstinspires.ftc:RobotServer:${ftc_libs_version}"
     implementation "org.firstinspires.ftc:OnBotJava:${ftc_libs_version}"
     implementation "org.firstinspires.ftc:Hardware:${ftc_libs_version}"
     implementation "org.firstinspires.ftc:FtcCommon:${ftc_libs_version}"
-    implementation 'org.firstinspires.ftc:tfod:1.0.2'
-    implementation 'org.tensorflow:tensorflow-lite:1.10.0'
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.2.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'org.firstinspires.ftc:gameAssets-FreightFrenzy:1.0.0'
 }
