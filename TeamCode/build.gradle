@@ -42,7 +42,7 @@ cargo {
     targets = ["arm"]
 
     // no prebuilt toolchain exists for SDK v25
-    prebuiltToolchains = false
+    //prebuiltToolchains = false
 }
 
 tasks.whenTaskAdded {
