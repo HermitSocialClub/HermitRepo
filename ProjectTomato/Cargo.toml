@@ -13,4 +13,10 @@ crate_type = ["staticlib", "dylib"]
 
 [dependencies]
 jni = "0.19.0"
-# opencv = "0.54.0"
+# clang-runtime is needed so that opencv
+# uses the clang provided by the Android SDK
+opencv = { version = "0.54.0", features = ["clang-runtime"] }
+
+[patch.crates-io]
+opencv = { git = "https://github.com/HermitSocialClub/opencv-rust" }
+opencv-binding-generator = { git = "https://github.com/HermitSocialClub/opencv-rust" }

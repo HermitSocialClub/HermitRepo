@@ -41,8 +41,13 @@ cargo {
     libname = "tomato"
     targets = ["arm"]
 
-    // no prebuilt toolchain exists for SDK v25
-    //prebuiltToolchains = false
+    exec { spec, toolchain ->
+        def openCVRoot = new File(project.rootProject.projectDir, "ProjectTomato/OpenCV-Repackaged/doc/")
+        spec.environment("OPENCV_LINK_LIBS", "libOpenCvNative")
+        spec.environment("OPENCV_LINK_PATHS", openCVRoot.getAbsolutePath())
+        spec.environment("OPENCV_INCLUDE_PATHS", new File(openCVRoot, "native_headers").getAbsolutePath())
+        spec.environment("OPENCV_CLANG_TARGET", "armv7a-unknown-linux-android$android.defaultConfig.minSdkVersion.mApiLevel")
+    }
 }
 
 tasks.whenTaskAdded {
