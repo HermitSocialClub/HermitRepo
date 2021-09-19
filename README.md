@@ -20,4 +20,5 @@ This repo has a convenient (and rather large) docker file that handles most of t
 2) Clone the repo with `git clone https://github.com/Arc-blroth/PandemicPanic --recurse-submodules pandemic_panic`
 3) Build the Dockerfile with `docker build --rm -t hermitsocialclub/pandemicpanic:latest .`. This should make a docker image with the tag `hermitsocialclub/pandemicpanic`
 4) Run the dockerfile with `docker-compose up`
-5) Run `docker-compose down` to end the container.
+5) To get a shell on the running container, use `docker exec -ti <container name> /bin/bash`.
+6) Run `docker-compose down` to end the container.
