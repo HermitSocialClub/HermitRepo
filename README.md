@@ -19,6 +19,6 @@ This repo has a convenient (and rather large) docker file that handles most of t
 1) Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2) Clone the repo with `git clone https://github.com/Arc-blroth/PandemicPanic --recurse-submodules pandemic_panic`
 3) Build the Dockerfile with `docker build --rm -t hermitsocialclub/pandemicpanic:latest .`. This should make a docker image with the tag `hermitsocialclub/pandemicpanic`
-4) Run the dockerfile with `docker-compose up`
+4) Run the dockerfile with `docker-compose up -d`
 5) To get a shell on the running container, use `docker exec -ti Steven /bin/bash`.
 6) Run `docker-compose down` to end the container.
