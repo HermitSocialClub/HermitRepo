@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  builder:
+    image: hermitsocialclub/pandemicpanic:latest
+    volumes:
+      # The actual repo, for gradle build caching, and incremental builds. In the form <LOCAL>:<CONTAINER>
+      - .:/application
+      # SDK and NDK cache, primarily for licenses and versioning. In the form <LOCAL>:<CONTAINER>
+      - /opt/android-sdk-linux/
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
