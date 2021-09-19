@@ -10,12 +10,14 @@
 
 
 // Custom definitions may go here
+import org.hermitsocialclub.gradle.patch.PatchPlugin
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
+apply plugin: PatchPlugin
 
 configurations {
     ftc265Headers
