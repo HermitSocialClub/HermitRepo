@@ -503,7 +503,6 @@ dependencies = [
 name = "tomato"
 version = "0.1.0"
 dependencies = [
- "ftc265-sys",
  "jni",
  "opencv",
 ]

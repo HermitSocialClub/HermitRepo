@@ -18,7 +18,7 @@ apply from: '../build.dependencies.gradle'
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
 
 configurations {
-    ftc265Headers
+    // ftc265Headers
 }
 
 dependencies {
@@ -38,15 +38,15 @@ dependencies {
     implementation "com.noahbres.jotai:jotai:1.0.2"
 
     implementation "com.spartronics4915.lib:ftc265:2.1.9"
-    ftc265Headers "com.intel.realsense:librealsense:2.41.1-ftc265@zip"
+    // ftc265Headers "com.intel.realsense:librealsense:2.41.1-ftc265@zip"
 }
 
 // Extract the ftc265 headers so we can use bindgen on them
-tasks.register('extractFTC265Headers', Sync) {
-    dependsOn configurations.ftc265Headers
-    from { configurations.ftc265Headers.collect { zipTree(it) } }
-    into new File(project.rootProject.projectDir, "ProjectTomato/target/ftc265")
-}
+// tasks.register('extractFTC265Headers', Sync) {
+//     dependsOn configurations.ftc265Headers
+//     from { configurations.ftc265Headers.collect { zipTree(it) } }
+//     into new File(project.rootProject.projectDir, "ProjectTomato/target/ftc265")
+// }
 
 // Add our native code
 cargo {
@@ -67,7 +67,7 @@ tasks.whenTaskAdded {
     if ((it.name == 'javaPreCompileDebug' || it.name == 'javaPreCompileRelease')) {
         it.dependsOn 'cargoBuild'
     }
-    if (it.name.startsWith('cargoBuild')) {
-        it.dependsOn 'extractFTC265Headers'
-    }
+    // if (it.name.startsWith('cargoBuild')) {
+    //     it.dependsOn 'extractFTC265Headers'
+    // }
 }

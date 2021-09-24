@@ -12,7 +12,7 @@ edition = "2021"
 crate_type = ["staticlib", "dylib"]
 
 [dependencies]
-ftc265-sys = { path = "../ftc265-sys" }
+# ftc265-sys = { path = "../ftc265-sys" }
 jni = "0.19.0"
 # clang-runtime is needed so that opencv
 # uses the clang provided by the Android SDK
