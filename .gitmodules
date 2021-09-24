@@ -1,3 +1,6 @@
 [submodule "ProjectTomato/OpenCV-Repackaged"]
 	path = ProjectTomato/OpenCV-Repackaged
 	url = https://github.com/OpenFTC/OpenCV-Repackaged
+[submodule "ProjectTomato/ftc265"]
+	path = ProjectTomato/ftc265
+	url = https://github.com/pietroglyph/ftc265

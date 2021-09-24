@@ -3,6 +3,15 @@ use std::path::PathBuf;
 fn main() {
     // Rerun this script if the wrappers are updated
     println!("cargo:rerun-if-changed=wrapper.h");
+    println!("cargo:rerun-if-changed=wrapper.cpp");
+
+    // Compile our helper function to steal the pipeline
+    // from a T265Camera's `mNativeCameraObjectPointer`.
+    cc::Build::new()
+        .cpp(true)
+        .file("wrapper.cpp")
+        .include("../target/ftc265/")
+        .compile("ftc265-sys-helper");
 
     // Generate bindings
     let bindings = bindgen::Builder::default()
