@@ -1,3 +1,10 @@
+//! The main vision code for Project Tomato.
+//!
+//! Most of these top-level methods are exported
+//! and invoked through JNI.
+
+pub mod pipeline;
+
 use jni::JNIEnv;
 
 #[no_mangle]

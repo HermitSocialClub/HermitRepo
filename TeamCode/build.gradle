@@ -56,7 +56,7 @@ cargo {
 
     exec { spec, toolchain ->
         def openCVRoot = new File(project.rootProject.projectDir, "ProjectTomato/OpenCV-Repackaged/doc/")
-        spec.environment("OPENCV_LINK_LIBS", "openCvAndroid453")
+        spec.environment("OPENCV_LINK_LIBS", "OpenCvAndroid453")
         spec.environment("OPENCV_LINK_PATHS", new File(openCVRoot, "native_libs/armeabi-v7a").getAbsolutePath())
         spec.environment("OPENCV_INCLUDE_PATHS", new File(openCVRoot, "native_headers").getAbsolutePath())
         spec.environment("OPENCV_CLANG_TARGET", "armv7a-unknown-linux-android$android.defaultConfig.minSdkVersion.mApiLevel")

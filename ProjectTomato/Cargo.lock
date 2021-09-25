@@ -504,6 +504,7 @@ name = "tomato"
 version = "0.1.0"
 dependencies = [
  "jni",
+ "lazy_static",
  "opencv",
 ]
 
