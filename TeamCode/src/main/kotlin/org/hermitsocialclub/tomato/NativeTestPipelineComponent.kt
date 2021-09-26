@@ -5,9 +5,5 @@ import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.opencv.core.Mat
 
 object NativeTestPipelineComponent : IVisionPipelineComponent {
-    init {
-        LibTomato.init()
-    }
-
     external override fun apply(t: Mat, u: VisionPipeline): Mat
 }
