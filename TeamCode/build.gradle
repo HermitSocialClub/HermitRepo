@@ -53,6 +53,8 @@ tasks.register('extractTensorflowLiteJni', Sync) {
                 include "jni/armeabi-v7a/**"
             }.singleFile
         }
+    } {
+        rename { 'libtensorflow-lite.so' }
     }
     into new File(project.rootProject.projectDir, 'ProjectTomato/target/tensorflowLite')
 }
