@@ -461,7 +461,7 @@ checksum = "692fcb63b64b1758029e0a96ee63e049ce8c5948587f2f7208df04625e5f6b56"
 [[package]]
 name = "opencv"
 version = "0.54.0"
-source = "git+https://github.com/HermitSocialClub/opencv-rust#2eb15b846d70255021a176cf3aab82caff3b743c"
+source = "git+https://github.com/HermitSocialClub/opencv-rust#e9425345c687f56d322a86e832930de4ef1473b3"
 dependencies = [
  "cc",
  "clang",
@@ -481,7 +481,7 @@ dependencies = [
 [[package]]
 name = "opencv-binding-generator"
 version = "0.29.0"
-source = "git+https://github.com/HermitSocialClub/opencv-rust#2eb15b846d70255021a176cf3aab82caff3b743c"
+source = "git+https://github.com/HermitSocialClub/opencv-rust#e9425345c687f56d322a86e832930de4ef1473b3"
 dependencies = [
  "clang",
  "clang-sys",
