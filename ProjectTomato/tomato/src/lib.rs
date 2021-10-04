@@ -3,7 +3,7 @@
 //! Most of these top-level methods are exported
 //! and invoked through JNI.
 
-pub mod pipeline;
+pub mod vision;
 
 use jni::JNIEnv;
 

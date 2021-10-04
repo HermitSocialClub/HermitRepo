@@ -7,8 +7,6 @@ use jni::sys::jobject;
 use jni::JNIEnv;
 use opencv::prelude::{Boxed, Mat};
 
-pub mod nop;
-
 const MAT_CLASS: &str = "org/opencv/core/Mat";
 
 /// Converts a Java Mat to a Rust [`Mat`].
