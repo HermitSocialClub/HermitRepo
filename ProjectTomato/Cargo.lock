@@ -634,8 +634,6 @@ dependencies = [
 [[package]]
 name = "tflite"
 version = "0.9.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5c868f33f8e73ac6c7ddd2d797a15dfccf360bfd3925868df8a3f93747b6734f"
 dependencies = [
  "bindgen 0.55.1",
  "cpp",
