@@ -1,6 +1,6 @@
 [workspace]
 members = [
-    "ftc265-sys",
+    # "ftc265-sys",
     "tomato"
 ]
 

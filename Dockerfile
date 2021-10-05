@@ -8,7 +8,7 @@ WORKDIR $SDK_HOME
 RUN apt-get --quiet update --yes
 RUN apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1 git build-essential curl file g++ cmake pkg-config \
                         libasound2-dev bison flex unzip ant \
-                        libncurses5 libclang-dev python --no-install-recommends
+                        libncurses5 libclang-dev python clang --no-install-recommends
 
 # Rust
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2021-09-04 -t armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
