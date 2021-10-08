@@ -5,11 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.AnnotatedOpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.openftc.opencvrepackaged.DynamicOpenCvNativeLibLoader;
+import org.tensorflow.lite.TensorFlowLite;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 public class LibTomato {
+    private static volatile boolean INIT_YET = false;
+
     /**
      * The LibTomato init function.
      * @throws UnsatisfiedLinkError if the library could not be loaded.
@@ -17,8 +20,12 @@ public class LibTomato {
      */
     @OpModeRegistrar
     public static void init(Context context, AnnotatedOpModeManager manager) {
+        // prevent double initializations
+        if(INIT_YET) return;
+
         try {
-            // make sure OpenCV is loaded first
+            // make sure TensorFlowLite and OpenCV are loaded first
+            TensorFlowLite.init();
             DynamicOpenCvNativeLibLoader.loadNativeLibOnStartRobot(context, manager);
             // load Tomato
             System.loadLibrary("tomato");
@@ -33,6 +40,9 @@ public class LibTomato {
         if(splat() != 69) {
             throw new AssertionError("Library init failed: splat() was not nice!");
         }
+
+        // we're done loading!
+        INIT_YET = true;
     }
 
     public static native int splat();

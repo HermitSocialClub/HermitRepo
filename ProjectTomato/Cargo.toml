@@ -1,12 +1,13 @@
 [workspace]
 members = [
-    "ftc265-sys",
+    # "ftc265-sys",
     "tomato"
 ]
 
 [patch.crates-io]
 opencv = { git = "https://github.com/HermitSocialClub/opencv-rust" }
 opencv-binding-generator = { git = "https://github.com/HermitSocialClub/opencv-rust" }
+tflite = { git = "https://github.com/HermitSocialClub/tflite-rs" }
 
 [profile.dev]
 debug = false

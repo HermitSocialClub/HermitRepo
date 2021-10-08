@@ -18,3 +18,4 @@ lazy_static = "1.4.0"
 # clang-runtime is needed so that opencv
 # uses the clang provided by the Android SDK
 opencv = { version = "0.54.0", features = ["clang-runtime"] }
+tflite = { version = "0.9.6", default-features = false }

@@ -4,7 +4,7 @@ use jni::sys::jobject;
 use jni::JNIEnv;
 use opencv::core::{Point, Scalar};
 
-use crate::pipeline::from_java_mat;
+use crate::vision::image_provider::from_java_mat;
 
 #[no_mangle]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_NativeTestPipelineComponent_apply(
