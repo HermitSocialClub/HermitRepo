@@ -1,7 +1,7 @@
 //Add deref trait in scope
 use std::cmp::Ordering;
 use std::ops::Deref;
-use opencv::prelude::*;
+// use opencv::prelude::*;
 
 use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
@@ -13,6 +13,7 @@ use crate::vision::image_provider::from_java_mat;
 #[no_mangle]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     env: JNIEnv,
+    _this: jobject,
     mat: jobject,
     _pipeline: jobject,
     _is_red: jboolean,
