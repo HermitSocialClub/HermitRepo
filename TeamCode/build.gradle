@@ -62,6 +62,7 @@ cargo {
         spec.environment("OPENCV_CLANG_TARGET", "armv7a-unknown-linux-android$android.defaultConfig.minSdkVersion.mApiLevel")
         // These modules are nonexistent on Android
         spec.environment("OPENCV_MODULE_BLACKLIST", "gapi,highgui,stitching")
+        spec.environment("RUST_BACKTRACE", "1")
     }
 }
 

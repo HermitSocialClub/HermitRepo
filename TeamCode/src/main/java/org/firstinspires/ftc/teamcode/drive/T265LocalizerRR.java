@@ -27,7 +27,7 @@ public class T265LocalizerRR implements Localizer {
 
     public static T265Camera slamra;
 
-    public static double slamraX = -9;
+    public static double slamraX = -5.5;
     public static double slamraY = 0;
 
     public static boolean makeCameraCenter = true;

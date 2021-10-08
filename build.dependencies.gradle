@@ -12,6 +12,7 @@ repositories {
 
     // For com.spartronics4915.lib:ftc265
     maven { url = "https://maven.0x778.tk" }
+    maven { url = 'https://maven.brott.dev/' }
 }
 
 dependencies {
