@@ -1,6 +1,5 @@
 package org.hermitsocialclub.opmodes
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import android.os.Environment
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.hermitsocialclub.hydra.vision.StaccDetecc
@@ -29,7 +28,8 @@ class StaccDeteccTestOp : AbstractVisionTestOp() {
 
         init {
             val cameraMatrix = Mat(3, 3, CvType.CV_64F)
-            cameraMatrix.put(0, 0,
+            cameraMatrix.put(
+                0, 0,
                 1.3606600164833324e+03, 0.0, 9.5950000000000000e+02,
                 0.0, 1.3606600164833324e+03, 5.3950000000000000e+02,
                 0.0, 0.0, 1.0

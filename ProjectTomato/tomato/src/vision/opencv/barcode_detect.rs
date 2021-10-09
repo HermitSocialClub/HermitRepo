@@ -1,8 +1,8 @@
 //Add deref trait in scope
 use std::cmp::Ordering;
 use std::ops::Deref;
-// use opencv::prelude::*;
 
+// use opencv::prelude::*;
 use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
 use opencv::core::{Mat, Point, Rect, Vector};
@@ -120,7 +120,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
             .unwrap();
         contour_areas.push(biggest_contour_area)
     }
-    
+
     //get square with biggest contour
     result = contour_areas
         .into_iter()

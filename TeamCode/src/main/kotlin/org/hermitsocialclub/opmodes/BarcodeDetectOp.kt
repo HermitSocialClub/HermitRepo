@@ -8,7 +8,7 @@ import org.openftc.easyopencv.OpenCvCamera
 
 @TeleOp(name = "BarcodeDetectOp")
 class BarcodeDetectOp : AbstractVisionTestOp() {
-	val detector = BarcodeDetect(true)
+    val detector = BarcodeDetect(true)
     override fun buildPipeline(telemetry: PersistantTelemetry): VisionPipeline {
         return VisionPipeline(hardwareMap, telemetry, detector)
     }

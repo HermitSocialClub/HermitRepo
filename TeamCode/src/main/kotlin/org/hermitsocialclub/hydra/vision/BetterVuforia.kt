@@ -60,5 +60,4 @@ class BetterVuforia : IVisionPipelineComponent {
 
         return out
     }
-
 }

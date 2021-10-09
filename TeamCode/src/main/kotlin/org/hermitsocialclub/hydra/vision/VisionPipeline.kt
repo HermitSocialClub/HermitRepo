@@ -64,7 +64,7 @@ class VisionPipeline(
         return if (initYet) {
             // pipeline initialized, check if there was an
             // error before proceeding
-            if(initError != null) {
+            if (initError != null) {
                 throw initError!!
             }
 
@@ -81,5 +81,4 @@ class VisionPipeline(
     override fun close() = synchronized(pipelineMutex) {
         camera.closeCameraDevice()
     }
-
 }

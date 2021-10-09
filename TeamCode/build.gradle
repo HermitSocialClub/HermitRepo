@@ -15,6 +15,7 @@
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
+apply plugin: 'org.jlleitschuh.gradle.ktlint'
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
 
 configurations {
@@ -97,4 +98,8 @@ tasks.whenTaskAdded {
         it.dependsOn 'extractTensorflowLiteJni'
         // it.dependsOn 'extractFTC265Headers'
     }
+}
+
+ktlint {
+    disabledRules = ["no-wildcard-imports"]
 }
