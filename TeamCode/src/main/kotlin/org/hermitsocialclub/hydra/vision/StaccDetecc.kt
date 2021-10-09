@@ -95,9 +95,12 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
                 val ratio = (stackArea.height - stackTopArea.height).toDouble() / stackArea.width.toDouble()
                 this.lastStackHeight = if (ratio < config.oneStackRatio) 1 else 4
                 pipeline.telemetry.setData("Stacc ratio", ratio)
-                pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
-                pipeline.telemetry.setData("Ring Area", "[${stackArea.x}, ${stackArea.y}" +
-                        ", ${stackArea.width}, ${stackArea.height}]")
+                pipeline.telemetry.setData("Stacc found", "true [$lastStackHeight]")
+                pipeline.telemetry.setData(
+                    "Ring Area",
+                    "[${stackArea.x}, ${stackArea.y}" +
+                        ", ${stackArea.width}, ${stackArea.height}]"
+                )
                 pipeline.telemetry.setData("Top of ring", "[${stackTopArea.x}, ${stackTopArea.y}, ${stackTopArea.width}, ${stackTopArea.height}]")
                 // rectangle(subImage, stackArea, Scalar(0.0, 255.0, 0.0), 2)
                 rectangle(subImage, stackTopArea, Scalar(0.0, 127.0, 127.0), 2)
@@ -223,10 +226,10 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         }
 
         val objectPoints = MatOfPoint3f(
-            Point3(0.0,  0.0, 0.0),
-            Point3(5.0,  0.0, 0.0),
-            Point3(0.0,  0.0, 5.0),
-            Point3(5.0,  0.0, 5.0),
+            Point3(0.0, 0.0, 0.0),
+            Point3(5.0, 0.0, 0.0),
+            Point3(0.0, 0.0, 5.0),
+            Point3(5.0, 0.0, 5.0),
             Point3(0.0, 0.75, 5.0),
             Point3(5.0, 0.75, 5.0),
         )
@@ -272,7 +275,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
             MatOfPoint3f(
                 Point3(5.0, 0.0, 0.0),
                 Point3(0.0, 5.0, 0.0),
-                Point3(0.0, 0.0, 25.0/0.75),
+                Point3(0.0, 0.0, 25.0 / 0.75),
             ),
             rvec,
             tvec,
@@ -287,5 +290,4 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 3)
         line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 3)
     }
-
 }

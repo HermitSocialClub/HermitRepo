@@ -4,7 +4,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-
 class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telemetry, val log: Boolean = true) {
 
     private val logUUID: Long = System.currentTimeMillis()
@@ -112,5 +111,4 @@ class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telem
         originalTelemetry.clearAll()
         originalTelemetry.update()
     }
-
 }

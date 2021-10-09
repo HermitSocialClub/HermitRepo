@@ -39,7 +39,7 @@ object VisionUtils {
     @JvmStatic
     fun loadRectFromFile(file: File): Rect {
         val properties = Properties()
-        if(!file.exists()) file.createNewFile()
+        if (!file.exists()) file.createNewFile()
         FileInputStream(file).use {
             properties.load(it)
         }
@@ -58,7 +58,7 @@ object VisionUtils {
         properties.setProperty("y", rect.y.toString())
         properties.setProperty("width", rect.width.toString())
         properties.setProperty("height", rect.height.toString())
-        if(!file.exists()) file.createNewFile()
+        if (!file.exists()) file.createNewFile()
         FileOutputStream(file).use {
             properties.store(it, null)
         }
@@ -112,5 +112,4 @@ object VisionUtils {
             this.action = action
         }
     }
-
 }

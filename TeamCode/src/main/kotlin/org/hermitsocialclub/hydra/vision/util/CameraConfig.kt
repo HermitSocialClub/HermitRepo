@@ -35,7 +35,7 @@ data class CameraConfig(var cameraMatrix: Mat, var distortionCoefficients: MatOf
         @Deprecated("does not work right now")
         @JvmStatic
         fun loadFromFile(file: File): CameraConfig {
-            if(!file.exists()) {
+            if (!file.exists()) {
                 throw RuntimeException("Camera config file does not exist!")
             }
             var cameraMatrix: Mat? = null

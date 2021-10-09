@@ -14,7 +14,7 @@ import org.apache.commons.math3.linear.MatrixUtils
  * @param wheelPoses wheel poses relative to the center of the robot (positive X points forward on the robot)
  */
 abstract class ThreeTrackingWheelLocalizer(
-        wheelPoses: List<Pose2d>
+    wheelPoses: List<Pose2d>
 ) : Localizer {
     private var _poseEstimate = Pose2d()
     private var ultrasonicEstimates = Pose2d()
@@ -37,8 +37,10 @@ abstract class ThreeTrackingWheelLocalizer(
             val positionVector = wheelPoses[i].vec()
             inverseMatrix.setEntry(i, 0, orientationVector.x)
             inverseMatrix.setEntry(i, 1, orientationVector.y)
-            inverseMatrix.setEntry(i, 2,
-                    positionVector.x * orientationVector.y - positionVector.y * orientationVector.x)
+            inverseMatrix.setEntry(
+                i, 2,
+                positionVector.x * orientationVector.y - positionVector.y * orientationVector.x
+            )
         }
 
         forwardSolver = LUDecomposition(inverseMatrix).solver
@@ -50,15 +52,17 @@ abstract class ThreeTrackingWheelLocalizer(
         val wheelPositions = getWheelPositions()
         if (lastWheelPositions.isNotEmpty()) {
             val wheelDeltas = wheelPositions
-                    .zip(lastWheelPositions)
-                    .map { it.first - it.second }
-            val rawPoseDelta = forwardSolver.solve(MatrixUtils.createRealMatrix(
+                .zip(lastWheelPositions)
+                .map { it.first - it.second }
+            val rawPoseDelta = forwardSolver.solve(
+                MatrixUtils.createRealMatrix(
                     arrayOf(wheelDeltas.toDoubleArray())
-            ).transpose())
+                ).transpose()
+            )
             val robotPoseDelta = Pose2d(
-                    rawPoseDelta.getEntry(0, 0),
-                    rawPoseDelta.getEntry(1, 0),
-                    rawPoseDelta.getEntry(2, 0)
+                rawPoseDelta.getEntry(0, 0),
+                rawPoseDelta.getEntry(1, 0),
+                rawPoseDelta.getEntry(2, 0)
             )
             _poseEstimate = Kinematics.relativeOdometryUpdate(_poseEstimate, robotPoseDelta)
         }

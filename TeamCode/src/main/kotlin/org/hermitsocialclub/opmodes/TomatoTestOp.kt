@@ -11,5 +11,4 @@ class TomatoTestOp : LinearOpMode() {
         telemetry.addData("Splat", LibTomato.splat())
         waitForStart()
     }
-
 }

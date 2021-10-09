@@ -18,5 +18,4 @@ abstract class HydraConfig(val hw: HardwareMap) {
     abstract var vuforiaParameters: VuforiaLocalizer.Parameters
     abstract val camera1: OpenCvCamera
     abstract val camera2: OpenCvCamera
-
 }

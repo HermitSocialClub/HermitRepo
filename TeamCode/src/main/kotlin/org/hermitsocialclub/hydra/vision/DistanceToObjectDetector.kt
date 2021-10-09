@@ -33,5 +33,4 @@ class DistanceToObjectDetector : IVisionPipelineComponent {
         }
         return image
     }
-
 }
