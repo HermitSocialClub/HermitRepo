@@ -19,8 +19,10 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     is_red: jboolean,
 ) -> jbyte {
     //Yoink Java Mat
-    let rust_mat = from_java_mat(env, mat);
-    let rust_mat = rust_mat.deref();
+    let og_mat = from_java_mat(env, mat);
+    let mut rust_mat = Mat::default();
+    opencv::imgproc::cvt_color(og_mat.deref(), &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV ,0);
+
     let mut result: i8 = 0;
 
     // define some lower and upper bound colors
