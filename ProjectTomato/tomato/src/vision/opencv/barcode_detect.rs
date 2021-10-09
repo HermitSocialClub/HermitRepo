@@ -16,7 +16,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     _this: jobject,
     mat: jobject,
     _pipeline: jobject,
-    _is_red: jboolean,
+    is_red: jboolean,
 ) -> jbyte {
     //Yoink Java Mat
     let rust_mat = from_java_mat(env, mat);
@@ -31,13 +31,24 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let mut upper_target: Vector<i32> = Vector::new();
 
     //define barcode sticker colors
-    lower_target.push(155);
-    lower_target.push(50);
-    lower_target.push(0);
+    if if_red {
+        lower_target.push(155);
+        lower_target.push(50);
+        lower_target.push(0);
+    
+        upper_target.push(155);
+        upper_target.push(50);
+        upper_target.push(0);
+    }
+    else {
+        lower_target.push(100);
+        lower_target.push(50);
+        lower_target.push(100);
 
-    upper_target.push(179);
-    upper_target.push(255);
-    upper_target.push(255);
+        upper_target.push(140);
+        upper_target.push(255);
+        upper_target.push(255);
+    }
 
     // get all stickers in image into mask
     let mut barcode = Mat::default();
