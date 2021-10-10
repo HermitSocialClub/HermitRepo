@@ -13,6 +13,10 @@ class BarcodeDetect(val isRed: Boolean) : IVisionPipelineComponent {
 
         if (result == 0.toByte()) {
             pt.setData("Barcode Scanning is a no", "")
+        } else {
+            if (result == 4.toByte()) {
+                pt.setData("cannot find 3 red blobs", "")
+            }
         }
         pt.setData("Barcode Level", result)
 

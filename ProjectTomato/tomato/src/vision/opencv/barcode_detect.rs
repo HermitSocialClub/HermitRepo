@@ -69,7 +69,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let mut contour_areas_sorted = contours.to_vec();
 
     if contour_areas_sorted.len() < 3 {
-        return result;
+        return 4i8;
     }
 
     contour_areas_sorted.sort_by(compare_contour_size);
