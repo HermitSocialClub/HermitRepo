@@ -1,11 +1,10 @@
 //Add deref trait in scope
 use std::cmp::Ordering;
-use std::ops::Deref;
 
 // use opencv::prelude::*;
 use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
-use opencv::core::{Mat, Point, Rect, Vector};
+use opencv::core::{Mat, Point, Rect, Scalar, Vector};
 use opencv::types::VectorOfVectorOfPoint;
 
 use crate::vision::image_provider::from_java_mat;
@@ -19,8 +18,10 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     is_red: jboolean,
 ) -> jbyte {
     //Yoink Java Mat
-    let rust_mat = from_java_mat(env, mat);
-    let rust_mat = rust_mat.deref();
+    let mut og_mat = from_java_mat(env, mat);
+    let mut rust_mat = Mat::default();
+    opencv::imgproc::cvt_color(&*og_mat, &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV, 0).unwrap();
+
     let mut result: i8 = 0;
 
     // define some lower and upper bound colors
@@ -31,16 +32,15 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let mut upper_target: Vector<i32> = Vector::new();
 
     //define barcode sticker colors
-    if if_red {
+    if is_red != 0 {
         lower_target.push(155);
         lower_target.push(50);
         lower_target.push(0);
-    
+
         upper_target.push(155);
         upper_target.push(50);
         upper_target.push(0);
-    }
-    else {
+    } else {
         lower_target.push(100);
         lower_target.push(50);
         lower_target.push(100);
@@ -52,7 +52,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 
     // get all stickers in image into mask
     let mut barcode = Mat::default();
-    opencv::core::in_range(rust_mat, &lower_target, &upper_target, &mut barcode).unwrap();
+    opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut barcode).unwrap();
 
     //save contours
     let mut contours = VectorOfVectorOfPoint::new();
@@ -92,7 +92,17 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         bounding_box.width += padding / 2;
         bounding_box.height += padding / 2;
 
-        let region_of_interest = Mat::roi(rust_mat, bounding_box).unwrap();
+        opencv::imgproc::rectangle(
+            &mut *og_mat,
+            bounding_box,
+            Scalar::new(255.0, 0.0, 0.0, 100.0),
+            5,
+            opencv::imgproc::FILLED,
+            0,
+        )
+        .unwrap();
+
+        let region_of_interest = Mat::roi(&rust_mat, bounding_box).unwrap();
 
         // get green spots into mask
         let mut green_mask = Mat::default();
