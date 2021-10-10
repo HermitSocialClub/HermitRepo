@@ -1,6 +1,5 @@
 //Add deref trait in scope
 use std::cmp::Ordering;
-use std::ops::Deref;
 
 // use opencv::prelude::*;
 use jni::sys::{jboolean, jbyte, jobject};
@@ -21,7 +20,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     //Yoink Java Mat
     let mut og_mat = from_java_mat(env, mat);
     let mut rust_mat = Mat::default();
-    opencv::imgproc::cvt_color(og_mat.deref(), &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV, 0).unwrap();
+    opencv::imgproc::cvt_color(&*og_mat, &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV, 0).unwrap();
 
     let mut result: i8 = 0;
 
@@ -94,7 +93,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         bounding_box.height += padding / 2;
 
         opencv::imgproc::rectangle(
-            &mut og_mat,
+            &mut *og_mat,
             bounding_box,
             Scalar::new(255.0, 0.0, 0.0, 100.0),
             5,
