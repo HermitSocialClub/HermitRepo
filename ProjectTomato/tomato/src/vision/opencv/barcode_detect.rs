@@ -37,9 +37,9 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         lower_target.push(50);
         lower_target.push(0);
 
-        upper_target.push(155);
-        upper_target.push(50);
-        upper_target.push(0);
+        upper_target.push(179);
+        upper_target.push(255);
+        upper_target.push(255);
     } else {
         lower_target.push(100);
         lower_target.push(50);
@@ -69,7 +69,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let mut contour_areas_sorted = contours.to_vec();
 
     if contour_areas_sorted.len() < 3 {
-        return result;
+        return 4i8;
     }
 
     contour_areas_sorted.sort_by(compare_contour_size);
