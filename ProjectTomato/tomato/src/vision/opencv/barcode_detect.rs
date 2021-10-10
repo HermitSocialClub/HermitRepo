@@ -20,6 +20,8 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     //Yoink Java Mat
     let mut og_mat = from_java_mat(env, mat);
     let mut rust_mat = Mat::default();
+
+    // convert weak BGR mat to strong HSV mat
     opencv::imgproc::cvt_color(&*og_mat, &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV, 0).unwrap();
 
     let mut result: i8 = 0;
@@ -92,6 +94,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         bounding_box.width += padding / 2;
         bounding_box.height += padding / 2;
 
+        // draw bounding boxes on image
         opencv::imgproc::rectangle(
             &mut *og_mat,
             bounding_box,
@@ -120,15 +123,16 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         .unwrap();
 
         // get biggest contour and add it to the list of green contours
-        if contours.len() < 1 {
-            return result;
+        if contours.is_empty() {
+            contour_areas.push(0.0);
+        } else {
+            let biggest_contour_area: f64 = contours
+                .iter()
+                .map(|contour| opencv::imgproc::contour_area(&contour, false).unwrap())
+                .max_by(|a, b| a.partial_cmp(b).unwrap())
+                .unwrap();
+            contour_areas.push(biggest_contour_area)
         }
-        let biggest_contour_area: f64 = contours
-            .iter()
-            .map(|contour| opencv::imgproc::contour_area(&contour, false).unwrap())
-            .max_by(|a, b| a.partial_cmp(b).unwrap())
-            .unwrap();
-        contour_areas.push(biggest_contour_area)
     }
 
     //get square with biggest contour
