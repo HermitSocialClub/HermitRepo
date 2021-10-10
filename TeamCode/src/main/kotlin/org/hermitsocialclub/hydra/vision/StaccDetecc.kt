@@ -73,6 +73,12 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
     var lastStackHeight = 0
         private set
 
+    /**
+     * The last stack area we detected or null.
+     */
+    var lastStackArea: Rect? = Rect()
+        private set
+
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
         val subImage = if (config.submat != null) {
             Mat(image, config.submat)
@@ -90,6 +96,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         // Find largest square area in image
         try {
             val stackArea = findStacc(colorFilter)
+            lastStackArea = stackArea
             if (stackArea != null) {
                 val stackTopArea = findStaccTop(subImage, colorFilter, stackArea)
                 val ratio = (stackArea.height - stackTopArea.height).toDouble() / stackArea.width.toDouble()
@@ -113,6 +120,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
             }
         } catch (ex: NullPointerException) {
             this.lastStackHeight = 0
+            lastStackArea = null
             pipeline.telemetry.removeData("Stacc ratio")
             pipeline.telemetry.setData("Stacc found", "false (NPE)")
         }
