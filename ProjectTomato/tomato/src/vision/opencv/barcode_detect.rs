@@ -19,7 +19,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     is_red: jboolean,
 ) -> jbyte {
     //Yoink Java Mat
-    let og_mat = from_java_mat(env, mat);
+    let mut og_mat = from_java_mat(env, mat);
     let mut rust_mat = Mat::default();
     opencv::imgproc::cvt_color(og_mat.deref(), &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV, 0).unwrap();
 
@@ -94,7 +94,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         bounding_box.height += padding / 2;
 
         opencv::imgproc::rectangle(
-            &mut rust_mat,
+            &mut og_mat,
             bounding_box,
             Scalar::new(255.0, 0.0, 0.0, 100.0),
             5,
