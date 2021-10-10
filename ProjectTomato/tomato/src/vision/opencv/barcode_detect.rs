@@ -120,7 +120,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         .unwrap();
 
         // get biggest contour and add it to the list of green contours
-        if contours.len() < 3 {
+        if contours.len() < 1 {
             return result;
         }
         let biggest_contour_area: f64 = contours
