@@ -30,26 +30,21 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let padding = 20;
     let lower_green: Vector<i32> = Vector::from_iter([36, 50, 0].into_iter());
     let upper_green: Vector<i32> = Vector::from_iter([86, 255, 255].into_iter());
-    let mut lower_target: Vector<i32> = Vector::new();
-    let mut upper_target: Vector<i32> = Vector::new();
+    let mut lower_target: Vector<i32>;
+    let mut upper_target: Vector<i32>;
 
     //define barcode sticker colors
     if is_red != 0 {
-        lower_target.push(155);
-        lower_target.push(50);
-        lower_target.push(0);
+     
+        lower_target = Vector::from_iter([155, 50, 0].into_iter());
 
-        upper_target.push(179);
-        upper_target.push(255);
-        upper_target.push(255);
+        upper_target = Vector::from_iter([179, 255, 255].into_iter());
+
     } else {
-        lower_target.push(100);
-        lower_target.push(50);
-        lower_target.push(100);
 
-        upper_target.push(140);
-        upper_target.push(255);
-        upper_target.push(255);
+	lower_target = Vector::from_iter([100, 50, 100].into_iter());
+
+        upper_target = Vector::from_iter([140, 255, 255].into_iter());
     }
 
     // get all stickers in image into mask
@@ -129,7 +124,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
             let biggest_contour_area: f64 = contours
                 .iter()
                 .map(|contour| opencv::imgproc::contour_area(&contour, false).unwrap())
-                .max_by(|a, b| a.partial_cmp(b).unwrap())
+                .max_by(|a, b| b.partial_cmp(a).unwrap())
                 .unwrap();
             contour_areas.push(biggest_contour_area)
         }
@@ -150,8 +145,8 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 //compares contour sizes cuz damn rust is verbose
 // me when floats are not an Ord
 fn compare_contour_size(a: &Vector<Point>, b: &Vector<Point>) -> Ordering {
-    opencv::imgproc::contour_area(&a, false)
+    opencv::imgproc::contour_area(&b, false)
         .unwrap()
-        .partial_cmp(&(opencv::imgproc::contour_area(&b, false).unwrap()))
+        .partial_cmp(&(opencv::imgproc::contour_area(&a, false).unwrap()))
         .unwrap()
 }
