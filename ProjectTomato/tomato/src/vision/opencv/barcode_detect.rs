@@ -24,7 +24,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     // convert weak BGR mat to strong HSV mat
     opencv::imgproc::cvt_color(&*og_mat, &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV, 0).unwrap();
 
-    let mut result: i8 = 0;
+    let mut result: i8;
 
     // define some lower and upper bound colors
     let padding = 20;
@@ -89,10 +89,10 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let mut contour_areas: Vec<f64> = Vec::new();
     for mut bounding_box in b_boxes {
         // get specific region where Team Element can be
-        bounding_box.x -= padding / 2;
-        bounding_box.y -= padding / 2;
-        bounding_box.width += padding / 2;
-        bounding_box.height += padding / 2;
+        // bounding_box.x -= padding / 2;
+        // bounding_box.y -= padding / 2;
+        // bounding_box.width += padding / 2;
+        // bounding_box.height += padding / 2;
 
         // draw bounding boxes on image
         opencv::imgproc::rectangle(
