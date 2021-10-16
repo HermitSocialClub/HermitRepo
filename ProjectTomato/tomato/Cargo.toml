@@ -19,3 +19,4 @@ lazy_static = "1.4.0"
 # uses the clang provided by the Android SDK
 opencv = { version = "0.54.0", features = ["clang-runtime"] }
 #tflite = { version = "0.9.6", default-features = false }
+tomato_macros = { path = "../tomato_macros" }

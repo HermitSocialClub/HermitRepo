@@ -6,10 +6,12 @@ use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
 use opencv::core::{Mat, Point, Rect, Scalar, Vector};
 use opencv::types::VectorOfVectorOfPoint;
+use tomato_macros::catch_panic;
 
 use crate::vision::image_provider::from_java_mat;
 
 #[no_mangle]
+#[catch_panic]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     env: JNIEnv,
     _this: jobject,

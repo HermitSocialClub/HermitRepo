@@ -1,7 +1,8 @@
 [workspace]
 members = [
     # "ftc265-sys",
-    "tomato"
+    "tomato",
+    "tomato_macros"
 ]
 
 [patch.crates-io]

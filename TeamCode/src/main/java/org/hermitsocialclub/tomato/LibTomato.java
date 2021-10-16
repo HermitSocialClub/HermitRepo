@@ -46,4 +46,6 @@ public class LibTomato {
     }
 
     public static native int splat();
+
+    public static native void panicTest();
 }
