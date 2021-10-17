@@ -8,6 +8,7 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.ByteBuffer
 import java.util.*
 
 object VisionUtils {
@@ -35,6 +36,8 @@ object VisionUtils {
     inline fun loadImageGrayscale(pipeline: VisionPipeline, name: String): Mat {
         return loadImage(pipeline, name, IMREAD_GRAYSCALE)
     }
+
+    external fun matAsByteBuffer(mat: Mat): ByteBuffer
 
     @JvmStatic
     fun loadRectFromFile(file: File): Rect {
@@ -113,3 +116,5 @@ object VisionUtils {
         }
     }
 }
+
+fun Mat.asByteBuffer(): ByteBuffer = VisionUtils.matAsByteBuffer(this)
