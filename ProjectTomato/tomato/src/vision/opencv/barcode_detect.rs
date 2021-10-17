@@ -37,14 +37,11 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 
     //define barcode sticker colors
     if is_red != 0 {
-     
         lower_target = Vector::from_iter([155, 50, 0].into_iter());
 
         upper_target = Vector::from_iter([179, 255, 255].into_iter());
-
     } else {
-
-	lower_target = Vector::from_iter([100, 50, 100].into_iter());
+        lower_target = Vector::from_iter([100, 50, 100].into_iter());
 
         upper_target = Vector::from_iter([140, 255, 255].into_iter());
     }

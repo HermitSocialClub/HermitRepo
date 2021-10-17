@@ -18,6 +18,7 @@ class TomatoTestOp : LinearOpMode() {
             msg = e.message ?: "null"
         }
         telemetry.addData("Panic?", msg)
+        telemetry.update()
 
         waitForStart()
     }
