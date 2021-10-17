@@ -9,6 +9,14 @@ use opencv::prelude::{Boxed, Mat};
 
 const MAT_CLASS: &str = "org/opencv/core/Mat";
 
+pub unsafe fn get_java_mat_ptr(env: JNIEnv, obj: jobject) -> *mut c_void {
+    let field_id = env.get_field_id(MAT_CLASS, "nativeObj", "J").unwrap();
+    env.get_field_unchecked(obj, field_id, JavaType::Primitive(Primitive::Long))
+        .unwrap()
+        .j()
+        .unwrap() as *mut c_void
+}
+
 /// Converts a Java Mat to a Rust [`Mat`].
 ///
 /// Since the native Mat that is passed to this function is still
@@ -19,13 +27,7 @@ const MAT_CLASS: &str = "org/opencv/core/Mat";
 /// dropped**: do not `take()` the Mat out of the `ManuallyDrop`
 /// or call `drop()` on the `ManuallyDrop`.
 pub fn from_java_mat(env: JNIEnv, obj: jobject) -> ManuallyDrop<Mat> {
-    let field_id = env.get_field_id(MAT_CLASS, "nativeObj", "J").unwrap();
-    let mat_ptr = env
-        .get_field_unchecked(obj, field_id, JavaType::Primitive(Primitive::Long))
-        .unwrap()
-        .j()
-        .unwrap();
-    unsafe { ManuallyDrop::new(Mat::from_raw(mat_ptr as *mut c_void)) }
+    unsafe { ManuallyDrop::new(Mat::from_raw(get_java_mat_ptr(env, obj))) }
 }
 
 /// Converts a Rust [`Mat`] to a Java Mat.
