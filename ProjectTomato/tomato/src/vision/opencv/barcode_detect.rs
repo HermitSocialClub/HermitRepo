@@ -139,8 +139,8 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 //compares contour sizes cuz damn rust is verbose
 // me when floats are not an Ord
 fn compare_contour_size(a: &Vector<Point>, b: &Vector<Point>) -> Ordering {
-    opencv::imgproc::contour_area(&b, false)
+    opencv::imgproc::contour_area(&a, false)
         .unwrap()
-        .partial_cmp(&(opencv::imgproc::contour_area(&a, false).unwrap()))
+        .partial_cmp(&(opencv::imgproc::contour_area(&b, false).unwrap()))
         .unwrap()
 }
