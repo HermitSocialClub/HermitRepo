@@ -22,7 +22,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let mut rust_mat = Mat::default();
 
     // convert weak BGR mat to strong HSV mat
-    opencv::imgproc::cvt_color(&*og_mat, &mut rust_mat, opencv::imgproc::COLOR_BGR2HSV, 0).unwrap();
+    opencv::imgproc::cvt_color(&*og_mat, &mut rust_mat, opencv::imgproc::COLOR_RGB2HSV, 0).unwrap();
 
     let result: i8;
 
