@@ -73,8 +73,9 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
         // Load image
+        pipeline.telemetry.setData("mat.type()", CvType.typeToString(mat.type()))
         val inputType = when (mat.type()) {
-            CvType.CV_8U -> DataType.INT8
+            CvType.CV_8U -> DataType.UINT8
             CvType.CV_32F -> DataType.FLOAT32
             else -> throw IllegalArgumentException("Mat should have CV_8U or CV_32F type")
         }
@@ -96,7 +97,7 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
         interpreter.run(inputImage.buffer, outputProbability.buffer.rewind())
 
         val outputType = when (outputProbability.dataType) {
-            DataType.INT8 -> CvType.CV_8U
+            DataType.UINT8 -> CvType.CV_8U
             DataType.FLOAT32 -> CvType.CV_32F
             else -> throw IllegalArgumentException("Output tensor should have INT8 or FLOAT32 type")
         }

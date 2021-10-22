@@ -43,14 +43,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         let upper_target: Vector<i32> = Vector::from_iter([10, 255, 255].into_iter());
         opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut bc2).unwrap();
         // barcode += bc2;
-        opencv::core::add(
-            &bcc,
-            &bc2,
-            &mut barcode,
-            &opencv::core::no_array().unwrap(),
-            -1,
-        )
-        .unwrap();
+        opencv::core::add(&bcc, &bc2, &mut barcode, &opencv::core::no_array().unwrap(), -1).unwrap();
     } else {
         let lower_target: Vector<i32> = Vector::from_iter([100, 50, 100].into_iter());
         let upper_target: Vector<i32> = Vector::from_iter([140, 255, 255].into_iter());
@@ -105,14 +98,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 
         // get green spots into mask
         let mut green_mask = Mat::default();
-        opencv::core::in_range(
-            &region_of_interest,
-            &lower_green,
-            &upper_green,
-            &mut green_mask,
-        )
-        .unwrap();
-
+        opencv::core::in_range(&region_of_interest, &lower_green, &upper_green, &mut green_mask).unwrap();
 
         // find green contours
         let mut contours = VectorOfVectorOfPoint::new();
@@ -144,8 +130,9 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         .enumerate()
         .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
         .map(|(index, _)| index)
-        .unwrap() as i8 + 1i8;
-    
+        .unwrap() as i8
+        + 1i8;
+
     result
 }
 
