@@ -9,10 +9,12 @@ import org.openftc.easyopencv.OpenCvCamera
 
 @TeleOp(name = "FlameDeteccTestOp")
 class FlameDeteccTestOp : AbstractVisionTestOp() {
-    val staccDetecc = StaccDetecc(StaccDetecc.StaccConfig().apply {
-        lowerYellow = Scalar(160.0, 100.0, 100.0)
-        upperYellow = Scalar(320.0, 255.0, 255.0)
-    })
+    val staccDetecc = StaccDetecc(
+        StaccDetecc.StaccConfig().apply {
+            lowerYellow = Scalar(160.0, 100.0, 100.0)
+            upperYellow = Scalar(320.0, 255.0, 255.0)
+        }
+    )
 
     override fun buildPipeline(telemetry: PersistantTelemetry): VisionPipeline {
         return VisionPipeline(hardwareMap, telemetry, staccDetecc)
