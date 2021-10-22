@@ -6,6 +6,8 @@ import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.hydra.vision.util.asByteBuffer
 import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.imgproc.Imgproc
+import org.opencv.imgproc.Imgproc.cvtColor
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
@@ -73,14 +75,10 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
         // Load image
-        pipeline.telemetry.setData("mat.type()", CvType.typeToString(mat.type()))
-        val inputType = when (mat.type()) {
-            CvType.CV_8U -> DataType.UINT8
-            CvType.CV_32F -> DataType.FLOAT32
-            else -> throw IllegalArgumentException("Mat should have CV_8U or CV_32F type")
-        }
-        val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width()), inputType)
-        inputBuffer.loadBuffer(mat.asByteBuffer())
+        val bgrMat = Mat()
+        cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
+        val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
+        inputBuffer.loadBuffer(bgrMat.asByteBuffer())
         inputImage.load(inputBuffer)
 
         // Process image
@@ -96,12 +94,9 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
         // Run model!
         interpreter.run(inputImage.buffer, outputProbability.buffer.rewind())
 
-        val outputType = when (outputProbability.dataType) {
-            DataType.UINT8 -> CvType.CV_8U
-            DataType.FLOAT32 -> CvType.CV_32F
-            else -> throw IllegalArgumentException("Output tensor should have INT8 or FLOAT32 type")
-        }
-        return Mat(imageSizeY, imageSizeX, outputType, outputProbability.buffer)
+        val outBgrMat = Mat(imageSizeY, imageSizeX, CvType.CV_8UC(3), outputProbability.buffer)
+        cvtColor(outBgrMat, mat, Imgproc.COLOR_BGR2RGBA)
+        return mat
     }
 
     // hopefully someday KT-83 will be implemented
