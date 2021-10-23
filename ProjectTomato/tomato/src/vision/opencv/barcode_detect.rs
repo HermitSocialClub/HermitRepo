@@ -125,7 +125,8 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         .enumerate()
         .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
         .map(|(index, _)| index)
-        .unwrap() + 1 as i8;
+        .unwrap()
+        + 1 as i8;
 
     result
 }

@@ -22,6 +22,7 @@ import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
 import java.lang.IllegalArgumentException
+import java.nio.ByteBuffer
 import kotlin.math.min
 
 private const val TAG: String = "MIDAS DEBUGGING"
@@ -84,10 +85,10 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
         pipeline.telemetry.setData(TAG, "TensorBuffer.createFixedSize")
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
         pipeline.telemetry.setData(TAG, "badHackPlsRemove")
-        val badHackPlsRemoveFloatBuffer = IntArray((bgrMat.total() * bgrMat.channels()).toInt())
+        val badHackPlsRemoveFloatBuffer = ByteArray((bgrMat.total() * bgrMat.channels()).toInt())
         bgrMat.get(0, 0, badHackPlsRemoveFloatBuffer)
         pipeline.telemetry.setData(TAG, "loadBuffer")
-        inputBuffer.loadArray(badHackPlsRemoveFloatBuffer)
+        inputBuffer.loadBuffer(ByteBuffer.wrap(badHackPlsRemoveFloatBuffer))
         pipeline.telemetry.setData(TAG, "load")
         inputImage.load(inputBuffer)
 
