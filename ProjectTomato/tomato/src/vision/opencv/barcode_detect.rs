@@ -29,26 +29,21 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     // define some lower and upper bound colors
     let lower_green: Vector<i32> = Vector::from_iter([50, 70, 80].into_iter());
     let upper_green: Vector<i32> = Vector::from_iter([86, 255, 255].into_iter());
+    let mut lower_target: Vector<i32>;
+    let mut upper_target: Vector<i32>;
 
     let mut barcode = Mat::default();
 
     //define barcode sticker colors
     if is_red != 0 {
-        let lower_target: Vector<i32> = Vector::from_iter([160, 70, 50].into_iter());
-        let upper_target: Vector<i32> = Vector::from_iter([180, 255, 255].into_iter());
-        opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut barcode).unwrap();
-        let mut bc2 = Mat::default();
-        let bcc = barcode.clone();
-        let lower_target: Vector<i32> = Vector::from_iter([0, 70, 50].into_iter());
-        let upper_target: Vector<i32> = Vector::from_iter([10, 255, 255].into_iter());
-        opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut bc2).unwrap();
-        // barcode += bc2;
-        opencv::core::add(&bcc, &bc2, &mut barcode, &opencv::core::no_array().unwrap(), -1).unwrap();
+        lower_target = Vector::from_iter([155, 50, 0].into_iter());
+
+        upper_target = Vector::from_iter([179, 255, 255].into_iter());
     } else {
         let lower_target: Vector<i32> = Vector::from_iter([100, 50, 100].into_iter());
         let upper_target: Vector<i32> = Vector::from_iter([140, 255, 255].into_iter());
-        opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut barcode).unwrap();
     }
+    opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut barcode).unwrap();
 
     //save contours
     let mut contours = VectorOfVectorOfPoint::new();
@@ -70,7 +65,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 
     contour_areas_sorted.sort_by(compare_contour_size);
 
-    let biggest_contours = &contour_areas_sorted[0..2];
+    let biggest_contours = &contour_areas_sorted[0..3];
     // let mut greenmap = Mat::default();
 
     // convert contours to bounding boxes, and sorting by left-to-right
@@ -130,8 +125,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         .enumerate()
         .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
         .map(|(index, _)| index)
-        .unwrap() as i8
-        + 1i8;
+        .unwrap() + 1 as i8;
 
     result
 }
