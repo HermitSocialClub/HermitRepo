@@ -5,6 +5,7 @@
 
 pub mod util;
 pub mod vision;
+pub mod telemetry;
 
 use jni::sys::jobject;
 use jni::JNIEnv;
