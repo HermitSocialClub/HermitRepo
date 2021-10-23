@@ -1,6 +1,7 @@
 package org.hermitsocialclub.tomato
 
 import android.os.Environment
+import com.qualcomm.robotcore.util.RobotLog
 import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.hydra.vision.util.asByteBuffer
@@ -22,6 +23,8 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
 import java.lang.IllegalArgumentException
 import kotlin.math.min
+
+private const val TAG: String = "MIDAS DEBUGGING"
 
 /**
  * ## Mixing Datasets for Zero-shot Cross-Dataset Transfer
@@ -76,14 +79,19 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
         // Load image
         val bgrMat = Mat()
+        pipeline.telemetry.setData(TAG, "cvtColor")
         cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
+        pipeline.telemetry.setData(TAG, "TensorBuffer.createFixedSize")
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
+        pipeline.telemetry.setData(TAG, "loadBuffer")
         inputBuffer.loadBuffer(bgrMat.asByteBuffer())
+        pipeline.telemetry.setData(TAG, "load")
         inputImage.load(inputBuffer)
 
         // Process image
         // NormalizeOp arguments are from https://git.io/JKikt
         val cropSize = min(mat.width(), mat.height())
+        pipeline.telemetry.setData(TAG, "resize and normalize")
         ImageProcessor.Builder()
             .add(ResizeWithCropOrPadOp(cropSize, cropSize))
             .add(ResizeOp(imageSizeX, imageSizeY, ResizeMethod.NEAREST_NEIGHBOR))
@@ -92,9 +100,11 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
             .process(inputImage)
 
         // Run model!
+        pipeline.telemetry.setData(TAG, "interpreter.run")
         interpreter.run(inputImage.buffer, outputProbability.buffer.rewind())
 
         val outBgrMat = Mat(imageSizeY, imageSizeX, CvType.CV_8UC(3), outputProbability.buffer)
+        pipeline.telemetry.setData(TAG, "cvtColor 2")
         cvtColor(outBgrMat, mat, Imgproc.COLOR_BGR2RGBA)
         return mat
     }
