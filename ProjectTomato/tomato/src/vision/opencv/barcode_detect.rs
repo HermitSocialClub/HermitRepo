@@ -33,6 +33,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     let mut upper_target: Vector<i32>;
 
     let mut barcode = Mat::default();
+`2    opencv::core::in_range(&rust_mat, &lower_green, &upper_green, &mut *og_mat).unwrap();
 
     //define barcode sticker colors
     if is_red != 0 {
@@ -40,8 +41,8 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 
         upper_target = Vector::from_iter([179, 255, 255].into_iter());
     } else {
-        let lower_target: Vector<i32> = Vector::from_iter([100, 50, 100].into_iter());
-        let upper_target: Vector<i32> = Vector::from_iter([140, 255, 255].into_iter());
+        lower_target = Vector::from_iter([100, 50, 100].into_iter());
+        upper_target = Vector::from_iter([140, 255, 255].into_iter());
     }
     opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut barcode).unwrap();
 
@@ -125,8 +126,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         .enumerate()
         .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
         .map(|(index, _)| index)
-        .unwrap()
-        + 1 as i8;
+        .unwrap() as i8 + 1;
 
     result
 }

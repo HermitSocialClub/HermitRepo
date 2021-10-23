@@ -420,7 +420,7 @@ public class FtcRobotControllerActivity extends Activity {
 
     FtcDashboard.start(context);
 
-    slamra = new T265Camera(new Transform2d(), .8, context);
+    //slamra = new T265Camera(new Transform2d(), .8, context);
   }
 
   protected UpdateUI createUpdateUI() {

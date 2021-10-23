@@ -45,7 +45,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.9685;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 10.45;
+    public static double TRACK_WIDTH = 10.15;
     public static double WHEEL_BASE = 13.25;
 
     /*
@@ -70,9 +70,9 @@ public class DriveConstants {
     public static double MAX_ANG_VELO = 3402.608;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
-    public static double kV = 1.0/MAX_VELO;//0.018067801;//.016667801;//1.0 / rpmToVelocity(MAX_RPM);//0.01926780108101678;////0.01587;//0.0135;//
-    public static double kA = 0;//0.0045;//0.003;//0.003;//0.00001;
-    public static double kStatic = 0;//0.003;//0.02;//0.025;//0.06619;//.05425;
+    public static double kV = 0.03025;//0.018067801;//.016667801;//1.0 / rpmToVelocity(MAX_RPM);//0.01926780108101678;////0.01587;//0.0135;//
+    public static double kA = 0.004;//0.0045;//0.003;//0.003;//0.00001;
+    public static double kStatic = 0.03;//0.003;//0.02;//0.025;//0.06619;//.05425;
 
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             MAX_VELO, MAX_ACCEL, 0.0,

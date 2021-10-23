@@ -24,6 +24,7 @@ import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
@@ -37,7 +38,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.spartronics4915.lib.T265Camera;
 
+import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 import org.firstinspires.ftc.teamcode.drive.T265LocalizerRR;
@@ -65,10 +68,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class BaselineMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(8.3, 0, 1.1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(10.4, 0, 1.5);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(/*8.3*/8, 8, /*1.1*/.1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(/*10.4*/8, 1, /*1.5*/0);
 
-    public static double LATERAL_MULTIPLIER = (60/45.75) * 1.0434782608695652173913043478261 ;
+    public static double LATERAL_MULTIPLIER = (51.767278876441985/52.5);//(60/45.75) * 1.0434782608695652173913043478261 ;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -202,14 +205,23 @@ public class BaselineMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
         /*wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);*/
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerRR(hardwareMap));
+/*        telemetry.setData("Confidence",FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().confidence.toString());
+        while(FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().confidence != T265Camera.PoseConfidence.High){
+            telemetry.setData("Confidence",FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().confidence.toString());
+            telemetry.setData("pose",FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().pose.toString());
+        }
+        telemetry.setData("Exited","Confidence Loop");
+        FtcRobotControllerActivity.slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(0,0,new Rotation2d(0)));*/
+        setLocalizer(new T265LocalizerRR(hardwareMap,true));
+        telemetry.setData("Pose Estimate",getPoseEstimate());
+        telemetry.setData("Pose",T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -33,7 +34,8 @@ public class FollowerPIDTuner extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
 
-        Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
+
+        Pose2d startPose = new Pose2d(0, 0, 0);
 
         drive.setPoseEstimate(startPose);
 
@@ -42,7 +44,7 @@ public class FollowerPIDTuner extends LinearOpMode {
         if (isStopRequested()) return;
 
         while (!isStopRequested()) {
-            Trajectory traj = drive.trajectoryBuilder(drive.getPoseEstimate())
+            Trajectory traj = drive.trajectoryBuilder(startPose)
                     .forward(DISTANCE)
                     .build();
             drive.followTrajectory(traj);
