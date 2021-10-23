@@ -70,7 +70,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 
     contour_areas_sorted.sort_by(compare_contour_size);
 
-    let biggest_contours = &contour_areas_sorted[0..3];
+    let biggest_contours = &contour_areas_sorted[0..2];
     // let mut greenmap = Mat::default();
 
     // convert contours to bounding boxes, and sorting by left-to-right
@@ -139,8 +139,8 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 //compares contour sizes cuz damn rust is verbose
 // me when floats are not an Ord
 fn compare_contour_size(a: &Vector<Point>, b: &Vector<Point>) -> Ordering {
-    opencv::imgproc::contour_area(&a, false)
+    opencv::imgproc::contour_area(&b, false)
         .unwrap()
-        .partial_cmp(&(opencv::imgproc::contour_area(&b, false).unwrap()))
+        .partial_cmp(&(opencv::imgproc::contour_area(&a, false).unwrap()))
         .unwrap()
 }
