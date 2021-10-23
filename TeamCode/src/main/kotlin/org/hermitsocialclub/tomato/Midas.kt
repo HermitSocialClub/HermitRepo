@@ -83,8 +83,11 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
         cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
         pipeline.telemetry.setData(TAG, "TensorBuffer.createFixedSize")
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
+        pipeline.telemetry.setData(TAG, "badHackPlsRemove")
+        val badHackPlsRemoveFloatBuffer = IntArray((bgrMat.total() * bgrMat.channels()).toInt())
+        bgrMat.get(0, 0, badHackPlsRemoveFloatBuffer)
         pipeline.telemetry.setData(TAG, "loadBuffer")
-        inputBuffer.loadBuffer(bgrMat.asByteBuffer())
+        inputBuffer.loadArray(badHackPlsRemoveFloatBuffer)
         pipeline.telemetry.setData(TAG, "load")
         inputImage.load(inputBuffer)
 
