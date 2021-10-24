@@ -4,7 +4,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telemetry, val log: Boolean = true) {
+class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telemetry, val log: Boolean = false) {
 
     private val logUUID: Long = System.currentTimeMillis()
     private val telemetryData = Collections.synchronizedMap(LinkedHashMap<String, String>())

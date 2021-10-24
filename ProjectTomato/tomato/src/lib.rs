@@ -3,9 +3,9 @@
 //! Most of these top-level methods are exported
 //! and invoked through JNI.
 
+pub mod telemetry;
 pub mod util;
 pub mod vision;
-pub mod telemetry;
 
 use jni::sys::jobject;
 use jni::JNIEnv;
