@@ -7,8 +7,9 @@ import kotlin.collections.LinkedHashMap
 class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telemetry, val log: Boolean = false) {
 
     private val logUUID: Long = System.currentTimeMillis()
-    private val telemetryData = Collections.synchronizedMap(LinkedHashMap<String, String>())
-    private val debugData = Collections.synchronizedMap(LinkedHashMap<String, String>())
+    private val telemetryData = LinkedHashMap<String, String>()
+    private val debugData = LinkedHashMap<String, String>()
+    private val lock = Object()
 
     companion object {
         private const val logSeperator = "=========================="
@@ -32,37 +33,37 @@ class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telem
      * @param caption The "key" for this data.
      * @param value   What to set the data to.
      */
-    fun setData(caption: String, value: Any) {
-        telemetryData[caption] = value.toString()
-        update()
+    fun setData(caption: String, value: Any) = synchronized(lock) {
+            telemetryData[caption] = value.toString()
+            update()
     }
 
-    fun setXData(key: String, formatKey: String, values: Array<Any>) {
+    fun setXData(key: String, formatKey: String, values: Array<Any>) = synchronized(lock) {
         telemetryData[key] = String.format(formatKey, *values)
         update()
     }
 
-    fun setData(key: String, formatKey: String, vararg values: Any) {
+    fun setData(key: String, formatKey: String, vararg values: Any) = synchronized(lock) {
         telemetryData[key] = String.format(formatKey, *values)
         update()
     }
 
-    fun removeData(key: String) {
+    fun removeData(key: String) = synchronized(lock) {
         telemetryData.remove(key)
         update()
     }
 
-    fun setDebug(key: String, value: Any) {
+    fun setDebug(key: String, value: Any) = synchronized(lock) {
         debugData[key] = value.toString()
         update()
     }
 
-    fun setXDebug(key: String, formatKey: String, values: Array<Any>) {
+    fun setXDebug(key: String, formatKey: String, values: Array<Any>) = synchronized(lock) {
         debugData[key] = String.format(formatKey, *values)
         update()
     }
 
-    fun setDebug(key: String, formatKey: String, vararg values: Any) {
+    fun setDebug(key: String, formatKey: String, vararg values: Any) = synchronized(lock) {
         debugData[key] = String.format(formatKey, *values)
         update()
     }
@@ -106,7 +107,7 @@ class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telem
     /**
      * Erases all telemetry data.
      */
-    fun clear() {
+    fun clear() = synchronized(lock) {
         telemetryData.clear()
         originalTelemetry.clearAll()
         originalTelemetry.update()
