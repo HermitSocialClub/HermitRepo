@@ -4,12 +4,14 @@ use std::cmp::Ordering;
 // use opencv::prelude::*;
 use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
-use opencv::core::{Mat, Point, Rect, Scalar, Vector};
-use opencv::types::VectorOfVectorOfPoint;
+use opencv::core::{Mat, Point, Rect, Scalar, Size, Vector};
+use opencv::types::{VectorOfPoint, VectorOfVectorOfPoint};
+use tomato_macros::catch_panic;
 
 use crate::vision::image_provider::from_java_mat;
 
 #[no_mangle]
+#[catch_panic]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     env: JNIEnv,
     _this: jobject,
@@ -19,37 +21,132 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
 ) -> jbyte {
     //Yoink Java Mat
     let mut og_mat = from_java_mat(env, mat);
-    let mut rust_mat = Mat::default();
 
-    // convert weak BGR mat to strong HSV mat
-    opencv::imgproc::cvt_color(&*og_mat, &mut rust_mat, opencv::imgproc::COLOR_RGB2HSV, 0).unwrap();
+    //convert weak RGB to stronk HSV 💪
+    let mut hsv = Mat::default();
+    opencv::imgproc::cvt_color(&*og_mat, &mut hsv, opencv::imgproc::COLOR_RGB2HSV, 0).unwrap();
 
-    let result: i8;
+    //get the barcode rectangles
+    let mut barcode = find_barcode_squares(&hsv, is_red);
+    let shipping_element = find_shipping_element(&hsv);
 
-    // define some lower and upper bound colors
-    let lower_green: Vector<i32> = Vector::from_iter([50, 70, 80].into_iter());
-    let upper_green: Vector<i32> = Vector::from_iter([86, 255, 255].into_iter());
-    let mut lower_target: Vector<i32>;
-    let mut upper_target: Vector<i32>;
-
-    let mut barcode = Mat::default();
-`2    opencv::core::in_range(&rust_mat, &lower_green, &upper_green, &mut *og_mat).unwrap();
-
-    //define barcode sticker colors
-    if is_red != 0 {
-        lower_target = Vector::from_iter([155, 50, 0].into_iter());
-
-        upper_target = Vector::from_iter([179, 255, 255].into_iter());
+    //getting level from ordering of the barcodes
+    let shipping_level: i8;
+    if shipping_element.x > barcode[0].x {
+        if shipping_element.x > barcode[1].x {
+            shipping_level = 3i8
+        } else {
+            shipping_level = 2i8
+        }
     } else {
-        lower_target = Vector::from_iter([100, 50, 100].into_iter());
-        upper_target = Vector::from_iter([140, 255, 255].into_iter());
+        shipping_level = 1i8
     }
-    opencv::core::in_range(&rust_mat, &lower_target, &upper_target, &mut barcode).unwrap();
 
-    //save contours
+    //draw rects
+    barcode.push(shipping_element);
+    for rect in barcode {
+        opencv::imgproc::rectangle(
+            &mut *og_mat,
+            rect,
+            Scalar::new(255.0, 0.0, 0.0, 100.0),
+            5,
+            opencv::imgproc::FILLED,
+            0,
+        )
+        .unwrap();
+    }
+    shipping_level
+}
+
+/**
+ * Find the exposed squares of the barcode
+ */
+fn find_barcode_squares(mat: &Mat, is_red: u8) -> Vec<Rect> {
+    //filter reds and blues
+    let mut barcode = Mat::default();
+    if is_red != 0 {
+        //workaround since red is on both sides of the HSV spectrum 😒
+        let mut red_right = Mat::default();
+        let lower_target: Vector<i32> = Vector::from_iter([170, 70, 50].into_iter());
+        let upper_target: Vector<i32> = Vector::from_iter([180, 255, 255].into_iter());
+        opencv::core::in_range(&mat, &lower_target, &upper_target, &mut red_right).unwrap();
+
+        let mut red_left = Mat::default();
+        let lower_target: Vector<i32> = Vector::from_iter([0, 70, 50].into_iter());
+        let upper_target: Vector<i32> = Vector::from_iter([10, 255, 255].into_iter());
+        opencv::core::in_range(&mat, &lower_target, &upper_target, &mut red_left).unwrap();
+
+        opencv::core::bitwise_or(&red_right, &red_left, &mut barcode, &opencv::core::no_array().unwrap()).unwrap();
+    } else {
+        //blue
+        let lower_target: Vector<i32> = Vector::from_iter([100, 50, 100].into_iter());
+        let upper_target: Vector<i32> = Vector::from_iter([140, 255, 255].into_iter());
+        opencv::core::in_range(&mat, &lower_target, &upper_target, &mut barcode).unwrap();
+    }
+
+    //get all square contours
+    let mut contours = get_contours(&mut barcode, true);
+
+    //extra panic to make sure stuff works
+    if contours.len() < 2 {
+        panic!("Cannot detect 2 barcode squares");
+    }
+
+    //sort and get the 2 biggest red/blue contours
+    contours.sort_by(compare_contour_size);
+    let mut biggest_contours: Vec<Rect> = contours
+        .into_iter()
+        .take(2)
+        .map(|contour| opencv::imgproc::bounding_rect(&contour).unwrap())
+        .collect();
+
+    //sort from left-to-right
+    biggest_contours.sort_by_key(|bounding_box| bounding_box.x);
+
+    biggest_contours
+}
+
+/**
+ * A method to find the shipping element in the scene
+ */
+fn find_shipping_element(mat: &Mat) -> Rect {
+    //green filter
+    let mut shipping_element = Mat::default();
+    let lower_green: Vector<i32> = Vector::from_iter([40, 100, 0].into_iter());
+    let upper_green: Vector<i32> = Vector::from_iter([86, 255, 255].into_iter());
+    opencv::core::in_range(&mat, &lower_green, &upper_green, &mut shipping_element).unwrap();
+
+    //get green blob
+    let contours = get_contours(&mut shipping_element, false);
+
+    if contours.len() < 1 {
+        panic!("cannot detect green shipping element");
+    }
+    let biggest_contour = contours.into_iter().max_by(|a, b| compare_contour_size(b, a)).unwrap();
+
+    opencv::imgproc::bounding_rect(&biggest_contour).unwrap()
+}
+
+/**
+ * Utility function that searches (and optionally filters) contours
+ */
+fn get_contours(mat: &mut Mat, get_squared: bool) -> Vec<VectorOfPoint> {
+    //blur image to reduce the chance that a random thing gets picked up as noise
+    let mut blurred_mat = Mat::default();
+    opencv::imgproc::gaussian_blur(
+        mat,
+        &mut blurred_mat,
+        Size { width: 9, height: 9 },
+        0.0,
+        0.0,
+        opencv::core::BORDER_DEFAULT,
+    )
+    .unwrap();
+
+    //find all blobs in mask
     let mut contours = VectorOfVectorOfPoint::new();
     opencv::imgproc::find_contours(
-        &mut barcode,
+        &mut blurred_mat,
         &mut contours,
         opencv::imgproc::RETR_EXTERNAL,
         opencv::imgproc::CHAIN_APPROX_SIMPLE,
@@ -57,82 +154,37 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     )
     .unwrap();
 
-    // Sorts the contours, and returns the biggest three
-    let mut contour_areas_sorted = contours.to_vec();
-
-    if contour_areas_sorted.len() < 3 {
-        return 4;
-    }
-
-    contour_areas_sorted.sort_by(compare_contour_size);
-
-    let biggest_contours = &contour_areas_sorted[0..3];
-    // let mut greenmap = Mat::default();
-
-    // convert contours to bounding boxes, and sorting by left-to-right
-    let mut b_boxes: Vec<Rect> = biggest_contours
-        .iter()
-        .map(|contour| opencv::imgproc::bounding_rect(&contour).unwrap())
-        .collect();
-    b_boxes.sort_by_key(|bounding_box| bounding_box.x);
-
-    // get biggest green box
-    let mut contour_areas: Vec<f64> = Vec::new();
-    for bounding_box in b_boxes {
-        // draw bounding boxes on image
-        opencv::imgproc::rectangle(
-            &mut *og_mat,
-            bounding_box,
-            Scalar::new(255.0, 0.0, 0.0, 100.0),
-            5,
-            opencv::imgproc::FILLED,
-            0,
-        )
-        .unwrap();
-
-        let region_of_interest = Mat::roi(&rust_mat, bounding_box).unwrap();
-
-        // get green spots into mask
-        let mut green_mask = Mat::default();
-        opencv::core::in_range(&region_of_interest, &lower_green, &upper_green, &mut green_mask).unwrap();
-
-        // find green contours
-        let mut contours = VectorOfVectorOfPoint::new();
-        opencv::imgproc::find_contours(
-            &mut green_mask,
-            &mut contours,
-            opencv::imgproc::RETR_EXTERNAL,
-            opencv::imgproc::CHAIN_APPROX_SIMPLE,
-            Point::new(0, 0),
-        )
-        .unwrap();
-
-        // get biggest contour and add it to the list of green contours
-        if contours.is_empty() {
-            contour_areas.push(0.0);
-        } else {
-            let biggest_contour_area: f64 = contours
-                .iter()
-                .map(|contour| opencv::imgproc::contour_area(&contour, false).unwrap())
-                .max_by(|a, b| a.partial_cmp(b).unwrap())
+    //extra method to filter out all non-square contours on scene
+    if get_squared {
+        // filter out all contours that are not squares
+        let contours: Vec<Vector<Point>> = contours
+            .iter()
+            .map(|a| {
+                let mut approx = VectorOfPoint::new();
+                let mut hull = VectorOfPoint::new();
+                opencv::imgproc::approx_poly_dp(
+                    &a,
+                    &mut approx,
+                    0.02 * opencv::imgproc::arc_length(&a, true).unwrap(),
+                    true,
+                )
                 .unwrap();
-            contour_areas.push(biggest_contour_area)
-        }
+                opencv::imgproc::convex_hull(&approx, &mut hull, false, true).unwrap();
+                approx
+            })
+            .filter(|hull| hull.len() < 7)
+            .collect();
+
+        return contours;
     }
 
-    //get square with biggest contour
-    result = contour_areas
-        .into_iter()
-        .enumerate()
-        .max_by(|(_, a), (_, b)| a.partial_cmp(b).unwrap())
-        .map(|(index, _)| index)
-        .unwrap() as i8 + 1;
-
-    result
+    contours.to_vec()
 }
 
-//compares contour sizes cuz damn rust is verbose
-// me when floats are not an Ord
+/**
+ * compares contour sizes cuz damn rust is verbose
+ * me when floats are not an Ord
+ */
 fn compare_contour_size(a: &Vector<Point>, b: &Vector<Point>) -> Ordering {
     opencv::imgproc::contour_area(&b, false)
         .unwrap()
