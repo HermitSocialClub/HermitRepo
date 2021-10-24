@@ -6,12 +6,11 @@ use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
 use opencv::core::{Mat, Point, Rect, Scalar, Size, Vector};
 use opencv::types::{VectorOfPoint, VectorOfVectorOfPoint};
-use tomato_macros::catch_panic;
 
 use crate::vision::image_provider::from_java_mat;
+use crate::telemetry::get_telemetry_from_pipeline;
 
 #[no_mangle]
-#[catch_panic]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     env: JNIEnv,
     _this: jobject,
@@ -19,6 +18,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     _pipeline: jobject,
     is_red: jboolean,
 ) -> jbyte {
+    get_telemetry_from_pipeline(env, );
     //Yoink Java Mat
     let mut og_mat = from_java_mat(env, mat);
 
@@ -27,41 +27,46 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     opencv::imgproc::cvt_color(&*og_mat, &mut hsv, opencv::imgproc::COLOR_RGB2HSV, 0).unwrap();
 
     //get the barcode rectangles
-    let mut barcode = find_barcode_squares(&hsv, is_red);
-    let shipping_element = find_shipping_element(&hsv);
-
-    //getting level from ordering of the barcodes
-    let shipping_level: i8;
-    if shipping_element.x > barcode[0].x {
-        if shipping_element.x > barcode[1].x {
-            shipping_level = 3i8
+    if let Ok(mut barcode) = find_barcode_squares(&hsv, is_red) {
+        if let Ok(shipping_element) = find_shipping_element(&hsv) {
+            //getting level from ordering of the barcodes
+            let shipping_level: i8;
+            if shipping_element.x > barcode[0].x {
+                if shipping_element.x > barcode[1].x {
+                    shipping_level = 3i8
+                } else {
+                    shipping_level = 2i8
+                }
+            } else {
+                shipping_level = 1i8
+            }
+        
+            //draw rects
+            barcode.push(shipping_element);
+            for rect in barcode {
+                opencv::imgproc::rectangle(
+                    &mut *og_mat,
+                    rect,
+                    Scalar::new(255.0, 0.0, 0.0, 100.0),
+                    5,
+                    opencv::imgproc::FILLED,
+                    0,
+                )
+                .unwrap();
+            }
+            shipping_level
         } else {
-            shipping_level = 2i8
+            return 4i8
         }
     } else {
-        shipping_level = 1i8
+        return 4i8
     }
-
-    //draw rects
-    barcode.push(shipping_element);
-    for rect in barcode {
-        opencv::imgproc::rectangle(
-            &mut *og_mat,
-            rect,
-            Scalar::new(255.0, 0.0, 0.0, 100.0),
-            5,
-            opencv::imgproc::FILLED,
-            0,
-        )
-        .unwrap();
-    }
-    shipping_level
 }
 
 /**
  * Find the exposed squares of the barcode
  */
-fn find_barcode_squares(mat: &Mat, is_red: u8) -> Vec<Rect> {
+fn find_barcode_squares(mat: &Mat, is_red: u8) -> Result<Vec<Rect>, ()> {
     //filter reds and blues
     let mut barcode = Mat::default();
     if is_red != 0 {
@@ -89,7 +94,7 @@ fn find_barcode_squares(mat: &Mat, is_red: u8) -> Vec<Rect> {
 
     //extra panic to make sure stuff works
     if contours.len() < 2 {
-        panic!("Cannot detect 2 barcode squares");
+        Err(());
     }
 
     //sort and get the 2 biggest red/blue contours
@@ -103,13 +108,13 @@ fn find_barcode_squares(mat: &Mat, is_red: u8) -> Vec<Rect> {
     //sort from left-to-right
     biggest_contours.sort_by_key(|bounding_box| bounding_box.x);
 
-    biggest_contours
+    Ok(biggest_contours);
 }
 
 /**
  * A method to find the shipping element in the scene
  */
-fn find_shipping_element(mat: &Mat) -> Rect {
+fn find_shipping_element(mat: &Mat) -> Result<Rect, ()> {
     //green filter
     let mut shipping_element = Mat::default();
     let lower_green: Vector<i32> = Vector::from_iter([40, 100, 0].into_iter());
@@ -120,11 +125,12 @@ fn find_shipping_element(mat: &Mat) -> Rect {
     let contours = get_contours(&mut shipping_element, false);
 
     if contours.len() < 1 {
-        panic!("cannot detect green shipping element");
+        // panic!("cannot detect green shipping element");
+        Err(());
     }
     let biggest_contour = contours.into_iter().max_by(|a, b| compare_contour_size(b, a)).unwrap();
 
-    opencv::imgproc::bounding_rect(&biggest_contour).unwrap()
+    Ok(opencv::imgproc::bounding_rect(&biggest_contour).unwrap())
 }
 
 /**
