@@ -81,7 +81,7 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
         val bgrMat = Mat()
         cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
-        val inputSizeInBytes = (mat.total() * mat.channels()).toInt()
+        val inputSizeInBytes = (bgrMat.total() * bgrMat.channels()).toInt()
         val badHackBuf = if(this.badHack?.size == inputSizeInBytes) {
             this.badHack!!
         } else {
