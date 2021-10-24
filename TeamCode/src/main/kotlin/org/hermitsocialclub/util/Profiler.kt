@@ -11,20 +11,20 @@ class Profiler(val tag: String, val telemetry: PersistantTelemetry) {
 
     fun begin(newSection: String) {
         section = newSection
-        lastSwapTime = System.currentTimeMillis()
+        lastSwapTime = System.nanoTime()
     }
 
     fun swap(newSection: String) {
-        val now = System.currentTimeMillis()
-        telemetry.setData("$tag: $section", "${now - lastSwapTime} ms")
+        val now = System.nanoTime()
+        telemetry.setData("$tag: $section", "${now - lastSwapTime} ns")
         section = newSection
         // take currentTimeMillis again so telemetry lag isn't counted in the profiling
-        lastSwapTime = System.currentTimeMillis()
+        lastSwapTime = System.nanoTime()
     }
 
     fun end() {
-        val now = System.currentTimeMillis()
-        telemetry.setData("$tag: $section", "${now - lastSwapTime} ms")
+        val now = System.nanoTime()
+        telemetry.setData("$tag: $section", "${now - lastSwapTime} ns")
         lastSwapTime = 0
     }
 }
