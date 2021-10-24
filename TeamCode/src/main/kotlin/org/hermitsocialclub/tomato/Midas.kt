@@ -57,8 +57,10 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
                 if (compatList.isDelegateSupportedOnThisDevice) {
                     val delegateOptions = compatList.bestOptionsForThisDevice
                     this.addDelegate(GpuDelegate(delegateOptions))
+                    telemetry.setData("Tflite Backend", "GPU")
                 } else {
                     this.setNumThreads(1)
+                    telemetry.setData("Tflite Backend", "CPU")
                 }
             }
         )
@@ -80,12 +82,10 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
     }
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
-        profiler.begin("input setup")
         // Load image
         val inputSize = mat.size()
         val bgrMat = Mat()
         cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
-        profiler.swap("badHackBuf")
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
         val inputSizeInBytes = (bgrMat.total() * bgrMat.channels()).toInt()
         val badHackBuf = if(this.badHack?.size == inputSizeInBytes) {
@@ -95,15 +95,13 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
             this.badHack = newBuf
             newBuf
         }
-        profiler.swap("bgrMat.get")
         bgrMat.get(0, 0, badHackBuf)
-        profiler.swap("load")
         inputBuffer.loadBuffer(ByteBuffer.wrap(badHackBuf))
         inputImage.load(inputBuffer)
 
         // Process image
         // NormalizeOp arguments are from https://git.io/JKikt
-        profiler.swap("processor init")
+        profiler.begin("processor init")
         val cropSize = min(mat.width(), mat.height())
         ImageProcessor.Builder()
             .add(ResizeWithCropOrPadOp(cropSize, cropSize))
@@ -115,13 +113,12 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
         // Run model!
         profiler.swap("interpreter.run")
         interpreter.run(inputImage.buffer, outputProbability.buffer.rewind())
+        profiler.end()
 
-        profiler.swap("modelOutMat")
         val modelOutMat = Mat(imageSizeY, imageSizeX, CvType.CV_8UC(3), outputProbability.buffer)
         val outBgrMat = Mat()
         resize(modelOutMat, outBgrMat, inputSize)
         cvtColor(outBgrMat, mat, Imgproc.COLOR_BGR2RGBA)
-        profiler.end()
         return mat
     }
 
