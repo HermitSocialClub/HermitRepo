@@ -3,6 +3,8 @@ package org.hermitsocialclub.tomato
 import android.os.Environment
 import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
+import org.hermitsocialclub.telecat.PersistantTelemetry
+import org.hermitsocialclub.util.Profiler
 import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.imgproc.Imgproc
@@ -21,8 +23,9 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
 import java.nio.ByteBuffer
 import kotlin.math.min
+import kotlin.system.measureTimeMillis
 
-private const val TAG: String = "MIDAS DEBUGGING"
+private const val TAG: String = "MIDAS"
 
 /**
  * ## Mixing Datasets for Zero-shot Cross-Dataset Transfer
@@ -35,8 +38,9 @@ private const val TAG: String = "MIDAS DEBUGGING"
  * _Towards Robust Monocular Depth Estimation: Mixing Datasets for Zero-shot Cross-dataset Transfer_,
  * IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI), 2020.
  */
-class Midas : AutoCloseable, IVisionPipelineComponent {
+class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComponent {
 
+    private val profiler = Profiler(TAG, telemetry)
     private val interpreter: Interpreter
     private val imageSizeX: Int
     private val imageSizeY: Int
@@ -76,10 +80,12 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
     }
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
+        profiler.begin("input setup")
         // Load image
         val inputSize = mat.size()
         val bgrMat = Mat()
         cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
+        profiler.swap("badHackBuf")
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
         val inputSizeInBytes = (bgrMat.total() * bgrMat.channels()).toInt()
         val badHackBuf = if(this.badHack?.size == inputSizeInBytes) {
@@ -89,12 +95,15 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
             this.badHack = newBuf
             newBuf
         }
+        profiler.swap("bgrMat.get")
         bgrMat.get(0, 0, badHackBuf)
+        profiler.swap("load")
         inputBuffer.loadBuffer(ByteBuffer.wrap(badHackBuf))
         inputImage.load(inputBuffer)
 
         // Process image
         // NormalizeOp arguments are from https://git.io/JKikt
+        profiler.swap("processor init")
         val cropSize = min(mat.width(), mat.height())
         ImageProcessor.Builder()
             .add(ResizeWithCropOrPadOp(cropSize, cropSize))
@@ -104,12 +113,15 @@ class Midas : AutoCloseable, IVisionPipelineComponent {
             .process(inputImage)
 
         // Run model!
+        profiler.swap("interpreter.run")
         interpreter.run(inputImage.buffer, outputProbability.buffer.rewind())
 
+        profiler.swap("modelOutMat")
         val modelOutMat = Mat(imageSizeY, imageSizeX, CvType.CV_8UC(3), outputProbability.buffer)
         val outBgrMat = Mat()
         resize(modelOutMat, outBgrMat, inputSize)
         cvtColor(outBgrMat, mat, Imgproc.COLOR_BGR2RGBA)
+        profiler.end()
         return mat
     }
 

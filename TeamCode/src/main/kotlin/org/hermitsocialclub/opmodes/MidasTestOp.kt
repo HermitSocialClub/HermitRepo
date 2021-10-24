@@ -10,7 +10,7 @@ import org.openftc.easyopencv.OpenCvCamera
 class MidasTestOp : AbstractVisionTestOp() {
 
     override fun buildPipeline(telemetry: PersistantTelemetry): VisionPipeline {
-        return VisionPipeline(hardwareMap, telemetry, Midas())
+        return VisionPipeline(hardwareMap, telemetry, Midas(telemetry))
     }
 
     override fun runLoop(telemetry: PersistantTelemetry, camera: OpenCvCamera, pipeline: VisionPipeline) {
