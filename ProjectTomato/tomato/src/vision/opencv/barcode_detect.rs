@@ -6,19 +6,21 @@ use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
 use opencv::core::{Mat, Point, Rect, Scalar, Size, Vector};
 use opencv::types::{VectorOfPoint, VectorOfVectorOfPoint};
+use tomato_macros::catch_panic;
 
-use crate::vision::image_provider::from_java_mat;
 use crate::telemetry::get_telemetry_from_pipeline;
+use crate::vision::image_provider::from_java_mat;
 
 #[no_mangle]
+#[catch_panic]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     env: JNIEnv,
     _this: jobject,
     mat: jobject,
-    _pipeline: jobject,
+    pipeline: jobject,
     is_red: jboolean,
 ) -> jbyte {
-    get_telemetry_from_pipeline(env, );
+    let telemetry = get_telemetry_from_pipeline(env, pipeline);
     //Yoink Java Mat
     let mut og_mat = from_java_mat(env, mat);
 
@@ -40,7 +42,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
             } else {
                 shipping_level = 1i8
             }
-        
+
             //draw rects
             barcode.push(shipping_element);
             for rect in barcode {
@@ -56,10 +58,10 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
             }
             shipping_level
         } else {
-            return 4i8
+            return 4i8;
         }
     } else {
-        return 4i8
+        return 4i8;
     }
 }
 
