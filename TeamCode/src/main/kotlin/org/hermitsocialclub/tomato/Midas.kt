@@ -52,13 +52,9 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
         interpreter = Interpreter(
             File(Environment.getExternalStorageDirectory(), "tomato/model_opt.tflite"),
             Interpreter.Options().apply {
-                this.setNumThreads(4)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    addDelegate(NnApiDelegate())
-                    telemetry.setData("Tflite Backend", "NNAPI")
-                } else {
-                    telemetry.setData("Tflite Backend", "CPU")
-                }
+                setNumThreads(4)
+                setUseXNNPACK(true)
+                telemetry.setData("Tflite Backend", "CPU")
             }
         )
 
