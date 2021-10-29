@@ -1,5 +1,6 @@
 package org.hermitsocialclub.tomato
 
+import android.os.Build
 import android.os.Environment
 import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
@@ -12,8 +13,7 @@ import org.opencv.imgproc.Imgproc.cvtColor
 import org.opencv.imgproc.Imgproc.resize
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.gpu.CompatibilityList
-import org.tensorflow.lite.gpu.GpuDelegate
+import org.tensorflow.lite.nnapi.NnApiDelegate
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
@@ -23,7 +23,6 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
 import java.nio.ByteBuffer
 import kotlin.math.min
-import kotlin.system.measureTimeMillis
 
 private const val TAG: String = "MIDAS"
 
@@ -53,13 +52,11 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
         interpreter = Interpreter(
             File(Environment.getExternalStorageDirectory(), "tomato/model_opt.tflite"),
             Interpreter.Options().apply {
-                val compatList = CompatibilityList()
-                if (compatList.isDelegateSupportedOnThisDevice) {
-                    val delegateOptions = compatList.bestOptionsForThisDevice
-                    this.addDelegate(GpuDelegate(delegateOptions))
-                    telemetry.setData("Tflite Backend", "GPU")
+                this.setNumThreads(4)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    addDelegate(NnApiDelegate())
+                    telemetry.setData("Tflite Backend", "NNAPI")
                 } else {
-                    this.setNumThreads(1)
                     telemetry.setData("Tflite Backend", "CPU")
                 }
             }
