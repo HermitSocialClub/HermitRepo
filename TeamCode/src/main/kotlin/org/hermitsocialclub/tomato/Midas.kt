@@ -1,6 +1,5 @@
 package org.hermitsocialclub.tomato
 
-import android.os.Build
 import android.os.Environment
 import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
@@ -13,7 +12,7 @@ import org.opencv.imgproc.Imgproc.cvtColor
 import org.opencv.imgproc.Imgproc.resize
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.nnapi.NnApiDelegate
+import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
@@ -81,7 +80,7 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
         cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
         val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
         val inputSizeInBytes = (bgrMat.total() * bgrMat.channels()).toInt()
-        val badHackBuf = if(this.badHack?.size == inputSizeInBytes) {
+        val badHackBuf = if (this.badHack?.size == inputSizeInBytes) {
             this.badHack!!
         } else {
             val newBuf = ByteArray(inputSizeInBytes)
@@ -96,16 +95,16 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
         // NormalizeOp arguments are from https://git.io/JKikt
         profiler.begin("processor init")
         val cropSize = min(mat.width(), mat.height())
-        ImageProcessor.Builder()
+        val processedImage = ImageProcessor.Builder()
             .add(ResizeWithCropOrPadOp(cropSize, cropSize))
             .add(ResizeOp(imageSizeX, imageSizeY, ResizeMethod.NEAREST_NEIGHBOR))
-        //  .add(NormalizeOp(115.0f, 58.0f))
+            .add(NormalizeOp(115.0f, 58.0f))
             .build()
             .process(inputImage)
 
         // Run model!
         profiler.swap("interpreter.run")
-        interpreter.run(inputImage.buffer, outputProbability.buffer.rewind())
+        interpreter.run(processedImage.buffer, outputProbability.buffer.rewind())
         profiler.end()
 
         val modelOutMat = Mat(imageSizeY, imageSizeX, CvType.CV_8UC(3), outputProbability.buffer)
