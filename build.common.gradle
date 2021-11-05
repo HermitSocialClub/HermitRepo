@@ -20,8 +20,6 @@ import java.util.regex.Pattern
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
-def useProguard = false
-
 android {
 
     compileSdkVersion 29
@@ -57,7 +55,8 @@ android {
     defaultConfig {
         signingConfig signingConfigs.debug
         applicationId 'com.qualcomm.ftcrobotcontroller'
-        minSdkVersion 25
+        minSdkVersion 24
+        //noinspection ExpiredTargetSdkVersion
         targetSdkVersion 28
 
         /**
@@ -120,6 +119,10 @@ android {
         abortOnError false
     }
 
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
+
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir rootProject.file('libs')
@@ -138,4 +141,5 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.kotlin_plugin_version}"
+
 }

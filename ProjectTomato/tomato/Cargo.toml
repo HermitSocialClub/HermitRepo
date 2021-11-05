@@ -1,0 +1,22 @@
+[package]
+name = "tomato"
+version = "0.1.0"
+authors = [
+    "Arc-blroth <45273859+Arc-blroth@users.noreply.github.com>",
+    "Cayden Pocrass <caydenrp9@gmail.com>",
+    "AdityaJain1030 <50159919+AdityaJain1030@users.noreply.github.com>"
+]
+edition = "2021"
+
+[lib]
+crate_type = ["staticlib", "dylib"]
+
+[dependencies]
+# ftc265-sys = { path = "../ftc265-sys" }
+jni = "0.19.0"
+lazy_static = "1.4.0"
+# clang-runtime is needed so that opencv
+# uses the clang provided by the Android SDK
+opencv = { version = "0.54.0", features = ["clang-runtime"] }
+#tflite = { version = "0.9.6", default-features = false }
+tomato_macros = { path = "../tomato_macros" }

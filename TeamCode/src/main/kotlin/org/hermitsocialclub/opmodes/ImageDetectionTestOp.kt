@@ -1,6 +1,5 @@
 package org.hermitsocialclub.opmodes
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.hermitsocialclub.hydra.vision.BetterVuforia
 import org.hermitsocialclub.hydra.vision.VisionPipeline
@@ -20,5 +19,4 @@ class ImageDetectionTestOp : AbstractVisionTestOp() {
 
         sleep(10)
     }
-
 }

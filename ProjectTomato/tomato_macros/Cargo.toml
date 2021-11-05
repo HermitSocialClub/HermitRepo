@@ -1,0 +1,17 @@
+[package]
+name = "tomato_macros"
+version = "0.1.0"
+authors = [
+    "Arc-blroth <45273859+Arc-blroth@users.noreply.github.com>",
+    "Cayden Pocrass <caydenrp9@gmail.com>",
+    "AdityaJain1030 <50159919+AdityaJain1030@users.noreply.github.com>"
+]
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.30"
+quote = "1.0.10"
+syn = { version = "1.0.80", features = ["full"] }

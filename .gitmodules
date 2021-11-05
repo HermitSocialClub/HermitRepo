@@ -1,0 +1,3 @@
+[submodule "ProjectTomato/OpenCV-Repackaged"]
+	path = ProjectTomato/OpenCV-Repackaged
+	url = https://github.com/OpenFTC/OpenCV-Repackaged

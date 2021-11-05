@@ -73,6 +73,12 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
     var lastStackHeight = 0
         private set
 
+    /**
+     * The last stack area we detected or null.
+     */
+    var lastStackArea: Rect? = Rect()
+        private set
+
     override fun apply(image: Mat, pipeline: VisionPipeline): Mat {
         val subImage = if (config.submat != null) {
             Mat(image, config.submat)
@@ -90,14 +96,18 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         // Find largest square area in image
         try {
             val stackArea = findStacc(colorFilter)
+            lastStackArea = stackArea
             if (stackArea != null) {
                 val stackTopArea = findStaccTop(subImage, colorFilter, stackArea)
                 val ratio = (stackArea.height - stackTopArea.height).toDouble() / stackArea.width.toDouble()
                 this.lastStackHeight = if (ratio < config.oneStackRatio) 1 else 4
                 pipeline.telemetry.setData("Stacc ratio", ratio)
-                pipeline.telemetry.setData("Stacc found", "true [${lastStackHeight}]")
-                pipeline.telemetry.setData("Ring Area", "[${stackArea.x}, ${stackArea.y}" +
-                        ", ${stackArea.width}, ${stackArea.height}]")
+                pipeline.telemetry.setData("Stacc found", "true [$lastStackHeight]")
+                pipeline.telemetry.setData(
+                    "Ring Area",
+                    "[${stackArea.x}, ${stackArea.y}" +
+                        ", ${stackArea.width}, ${stackArea.height}]"
+                )
                 pipeline.telemetry.setData("Top of ring", "[${stackTopArea.x}, ${stackTopArea.y}, ${stackTopArea.width}, ${stackTopArea.height}]")
                 // rectangle(subImage, stackArea, Scalar(0.0, 255.0, 0.0), 2)
                 rectangle(subImage, stackTopArea, Scalar(0.0, 127.0, 127.0), 2)
@@ -110,6 +120,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
             }
         } catch (ex: NullPointerException) {
             this.lastStackHeight = 0
+            lastStackArea = null
             pipeline.telemetry.removeData("Stacc ratio")
             pipeline.telemetry.setData("Stacc found", "false (NPE)")
         }
@@ -223,10 +234,10 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         }
 
         val objectPoints = MatOfPoint3f(
-            Point3(0.0,  0.0, 0.0),
-            Point3(5.0,  0.0, 0.0),
-            Point3(0.0,  0.0, 5.0),
-            Point3(5.0,  0.0, 5.0),
+            Point3(0.0, 0.0, 0.0),
+            Point3(5.0, 0.0, 0.0),
+            Point3(0.0, 0.0, 5.0),
+            Point3(5.0, 0.0, 5.0),
             Point3(0.0, 0.75, 5.0),
             Point3(5.0, 0.75, 5.0),
         )
@@ -272,7 +283,7 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
             MatOfPoint3f(
                 Point3(5.0, 0.0, 0.0),
                 Point3(0.0, 5.0, 0.0),
-                Point3(0.0, 0.0, 25.0/0.75),
+                Point3(0.0, 0.0, 25.0 / 0.75),
             ),
             rvec,
             tvec,
@@ -287,5 +298,4 @@ class StaccDetecc @JvmOverloads constructor(var config: StaccConfig = StaccConfi
         line(image, corner, imgptsArray[1], Scalar(0.0, 255.0, 0.0), 3)
         line(image, corner, imgptsArray[2], Scalar(0.0, 0.0, 255.0), 3)
     }
-
 }

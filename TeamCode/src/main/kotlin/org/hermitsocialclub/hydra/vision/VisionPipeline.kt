@@ -17,13 +17,15 @@ class VisionPipeline(
 ) : OpenCvPipeline(), Closeable {
 
     val camera: OpenCvCamera
-    private val pipelineMutex = Object()
     var pipeline: List<IVisionPipelineComponent> = listOf(*components)
         set(value) {
             synchronized(pipelineMutex) {
                 field = value
             }
         }
+    private val pipelineMutex = Object()
+    private var initYet = false
+    private var initError: Throwable? = null
 
     var cannyLowerThreshold: Double = 35.0
     var cannyUpperThreshold: Double = 125.0
@@ -36,33 +38,47 @@ class VisionPipeline(
         )
         camera = OpenCvCameraFactory.getInstance()
             .createWebcam(hardwareMap.get(WebcamName::class.java, "webCam"), cameraMonitorViewId)
-        camera.openCameraDevice()
 
-        synchronized(pipelineMutex) {
-            pipeline.forEach {
-                it.init(this)
+        camera.openCameraDeviceAsync(object : OpenCvCamera.AsyncCameraOpenListener {
+            override fun onOpened() {
+                synchronized(pipelineMutex) {
+                    pipeline.forEach {
+                        it.init(this@VisionPipeline)
+                    }
+                    initYet = true
+                }
+
+                camera.setPipeline(this@VisionPipeline)
+                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
             }
+
+            override fun onError(errorCode: Int) {
+                synchronized(pipelineMutex) {
+                    initError = RuntimeException("Couldn't open camera device: $errorCode")
+                }
+            }
+        })
+    }
+
+    override fun processFrame(input: Mat): Mat = synchronized(pipelineMutex) {
+        return if (initYet) {
+            // pipeline initialized, check if there was an
+            // error before proceeding
+            if (initError != null) {
+                throw initError!!
+            }
+
+            // no error, process the frame using our pipeline
+            var mat = input
+            pipeline.forEach { mat = it.apply(mat, this) }
+            mat
+        } else {
+            // pipeline not initialized yet
+            input
         }
-
-        camera.setPipeline(this)
-        start()
-    }
-    override fun processFrame(input: Mat): Mat {
-        var mat = input
-        pipeline.forEach { mat = it.apply(mat, this) }
-        return mat
     }
 
-    fun start() {
-        camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
-    }
-
-    fun pause() {
-        camera.stopStreaming()
-    }
-
-    override fun close() {
+    override fun close() = synchronized(pipelineMutex) {
         camera.closeCameraDevice()
     }
-
 }

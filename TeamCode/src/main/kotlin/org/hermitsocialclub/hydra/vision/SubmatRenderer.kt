@@ -15,5 +15,4 @@ class SubmatRenderer(var submat: Rect) : IVisionPipelineComponent {
         Imgproc.rectangle(image, submat, Scalar(25.0, 175.0, 255.0), 3)
         return image
     }
-
 }

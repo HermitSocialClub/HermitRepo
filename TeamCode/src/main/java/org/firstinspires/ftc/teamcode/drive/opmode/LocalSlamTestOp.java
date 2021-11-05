@@ -8,10 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
+import org.firstinspires.ftc.teamcode.drive.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @TeleOp(name = "Local Slam")
 public class LocalSlamTestOp extends OpMode {
+    Canvas field;
+    TelemetryPacket packet;
 
     private PersistantTelemetry telemetry;
 
@@ -26,6 +30,7 @@ public class LocalSlamTestOp extends OpMode {
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.setPoseEstimate(new Pose2d(0,0));
     }
 
     @Override
@@ -43,8 +48,9 @@ public class LocalSlamTestOp extends OpMode {
 
 
 
-        TelemetryPacket packet = new TelemetryPacket();
-        Canvas field = packet.fieldOverlay();
+        packet = new TelemetryPacket();
+
+        field = packet.fieldOverlay();
 
         drive.setWeightedDrivePower(
                 new Pose2d(
@@ -70,6 +76,7 @@ public class LocalSlamTestOp extends OpMode {
         double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());
+        packet.put("Pose Confidence", ((T265LocalizerRR) (drive.getLocalizer())).getConfidence());
 
         dash.sendTelemetryPacket(packet);
 

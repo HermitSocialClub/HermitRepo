@@ -1,0 +1,7 @@
+{
+	"recommendations": [
+		"redhat.java",
+		"ms-azuretools.vscode-docker",
+		"naco-siren.gradle-language"
+	]
+}
