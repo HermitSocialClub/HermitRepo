@@ -1,8 +1,10 @@
 package org.hermitsocialclub.pandemicpanic.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -13,30 +15,33 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+@Autonomous(name = "Meet0Auto", group = "Hermit")
 public class Meet0Auto extends LinearOpMode {
-   // @Override
-    DcMotor frontleft;
-    DcMotor frontright;
-    DcMotor backleft;
-    DcMotor backright;
-    DcMotor duckwheel;
+
+    DcMotor left_drive;
+    DcMotor right_drive;
+    DcMotor left_drive_2;
+    DcMotor right_drive_2;
+    DcMotor duck_wheel;
+    DcMotor intake;
     //28 * 20 / (2ppi * 4.125)
     Double width = 18.0; //inches
     Integer cpr = 28; //counts per rotation
-    Integer gearratio = 40;
+    Integer gear_ratio = 40;
     Double diameter = 4.125;
-    Double cpi = (cpr * gearratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
+    Double cpi = (cpr * gear_ratio)/(Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
     Double bias = 0.8;//default 0.8
     Double meccyBias = 0.9;//change to adjust only strafing movement
-    //
+
     Double conversion = cpi * bias;
     Boolean exit = false;
-    //
+
     BNO055IMU imu;
     Orientation angles;
     Acceleration gravity;
-    //
+
     ElapsedTime runtime = new ElapsedTime();
+
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -48,27 +53,30 @@ public class Meet0Auto extends LinearOpMode {
                 //
                 initGyro();
                 //
-                frontleft = hardwareMap.dcMotor.get("frontleft");
-                frontright = hardwareMap.dcMotor.get("frontright");
-                backleft = hardwareMap.dcMotor.get("backleft");
-                backright = hardwareMap.dcMotor.get("backright");
-                duckwheel = hardwareMap.dcMotor.get("duckweel");
+                left_drive = hardwareMap.dcMotor.get("frontleft");
+                right_drive = hardwareMap.dcMotor.get("frontright");
+                left_drive_2 = hardwareMap.dcMotor.get("backleft");
+                right_drive_2 = hardwareMap.dcMotor.get("backright");
+                duck_wheel = hardwareMap.dcMotor.get("duckweel");
+                intake = hardwareMap.dcMotor.get("intake");
 
-                frontright.setDirection(DcMotorSimple.Direction.REVERSE);
-                backright.setDirection(DcMotorSimple.Direction.REVERSE);
+                right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
+                right_drive_2.setDirection(DcMotorSimple.Direction.REVERSE);
                 //
                 waitForStart();
                 //
                 moveToPosition(35.8, 0.5);
-
                 //
-               /*
-               moveToPosition(16,02);
-               //
+                /*
+                moveToPosition(16,02);
+                //
                 duckKnocker(3,0.2);
-               //
-                moveToPosition(-95,0.5);*/
+                //
+                moveToPosition(-95,0.5);
+                //
+                intakerr(5,0.55);
                 //alternative path to do carousel first and then back p into the warehouse
+        */
             }
             //
     /*
@@ -79,34 +87,34 @@ public class Meet0Auto extends LinearOpMode {
                 //
                 int move = (int)(Math.round(inches*conversion));
                 //
-                backleft.setTargetPosition(backleft.getCurrentPosition() + move);
-                frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
-                backright.setTargetPosition(backright.getCurrentPosition() + move);
-                frontright.setTargetPosition(frontright.getCurrentPosition() + move);
+                left_drive_2.setTargetPosition(left_drive_2.getCurrentPosition() + move);
+                left_drive.setTargetPosition(left_drive.getCurrentPosition() + move);
+                right_drive_2.setTargetPosition(right_drive_2.getCurrentPosition() + move);
+                right_drive.setTargetPosition(right_drive.getCurrentPosition() + move);
                 //
-                frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //
-                frontleft.setPower(speed);
-                backleft.setPower(speed);
-                frontright.setPower(speed);
-                backright.setPower(speed);
+                left_drive.setPower(speed);
+                left_drive_2.setPower(speed);
+                right_drive.setPower(speed);
+                right_drive_2.setPower(speed);
                 //
-                while (frontleft.isBusy() && frontright.isBusy() && backleft.isBusy() && backright.isBusy()){
+                while (left_drive.isBusy() && right_drive.isBusy() && left_drive_2.isBusy() && right_drive_2.isBusy()){
                     if (exit){
-                        frontright.setPower(0);
-                        frontleft.setPower(0);
-                        backright.setPower(0);
-                        backleft.setPower(0);
+                        right_drive.setPower(0);
+                        left_drive.setPower(0);
+                        right_drive_2.setPower(0);
+                        left_drive_2.setPower(0);
                         return;
                     }
                 }
-                frontright.setPower(0);
-                frontleft.setPower(0);
-                backright.setPower(0);
-                backleft.setPower(0);
+                right_drive.setPower(0);
+                left_drive.setPower(0);
+                right_drive_2.setPower(0);
+                left_drive_2.setPower(0);
                 return;
             }
             //
@@ -205,21 +213,21 @@ public class Meet0Auto extends LinearOpMode {
                         telemetry.addData("second after", convertDegrees(second));
                         telemetry.update();
                     }
-                    frontleft.setPower(0);
-                    frontright.setPower(0);
-                    backleft.setPower(0);
-                    backright.setPower(0);
+                    left_drive.setPower(0);
+                    right_drive.setPower(0);
+                    left_drive_2.setPower(0);
+                    right_drive_2.setPower(0);
                 }
                 //</editor-fold>
                 //
-                frontleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                frontright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backleft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                backright.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                left_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                right_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                left_drive_2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                right_drive_2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
             //
     /*
@@ -230,35 +238,49 @@ public class Meet0Auto extends LinearOpMode {
                 //
                 int move = (int)(Math.round(inches * cpi * meccyBias));
                 //
-                backleft.setTargetPosition(backleft.getCurrentPosition() - move);
-                frontleft.setTargetPosition(frontleft.getCurrentPosition() + move);
-                backright.setTargetPosition(backright.getCurrentPosition() + move);
-                frontright.setTargetPosition(frontright.getCurrentPosition() - move);
+                left_drive_2.setTargetPosition(left_drive_2.getCurrentPosition() - move);
+                left_drive.setTargetPosition(left_drive.getCurrentPosition() + move);
+                right_drive_2.setTargetPosition(right_drive_2.getCurrentPosition() + move);
+                right_drive.setTargetPosition(right_drive.getCurrentPosition() - move);
                 //
-                frontleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                frontright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backleft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                backright.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 //
-                frontleft.setPower(speed);
-                backleft.setPower(speed);
-                frontright.setPower(speed);
-                backright.setPower(speed);
+                left_drive.setPower(speed);
+                left_drive_2.setPower(speed);
+                right_drive.setPower(speed);
+                right_drive_2.setPower(speed);
                 //
-                while (frontleft.isBusy() && frontright.isBusy() && backleft.isBusy() && backright.isBusy()){}
-                frontright.setPower(0);
-                frontleft.setPower(0);
-                backright.setPower(0);
-                backleft.setPower(0);
+                while (left_drive.isBusy() && right_drive.isBusy() && left_drive_2.isBusy() && right_drive_2.isBusy()){}
+                right_drive.setPower(0);
+                left_drive.setPower(0);
+                right_drive_2.setPower(0);
+                left_drive_2.setPower(0);
                 return;
             }
             //
-             public void duckKnocker(double timeout, double speed){
-                duckwheel.setPower(speed);
+             public void duckKnocker(long timeout, double speed){
+               /* duckwheel.setPower(speed);
                 while (opModeIsActive() &&
                          (runtime.seconds() < timeout) &&
-                         (frontleft.isBusy() && frontright.isBusy())&&(backleft.isBusy() && backright.isBusy()));
+                         (frontleft.isBusy() && frontright.isBusy())&&(backleft.isBusy() && backright.isBusy())); */
+
+                 long start = System.currentTimeMillis();
+                 long end = start + timeout *1000;
+                 while (System.currentTimeMillis() < end) {
+                     duck_wheel.setPower(speed);
+                 }
              }
+    public void intakerr (long timeout, double speed){
+
+        long start = System.currentTimeMillis();
+        long end = start + timeout *1000;
+        while (System.currentTimeMillis() < end) {
+            duck_wheel.setPower(speed);
+        }
+    }
     /*
     A tradition within the Thunder Pengwins code, we always start programs with waitForStartify,
     our way of adding personality to our programs.
@@ -310,15 +332,15 @@ public class Meet0Auto extends LinearOpMode {
     encoder mode and turn.
      */
             public void turnWithEncoder(double input){
-                frontleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backleft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                frontright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                backright.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                left_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                right_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 //
-                frontleft.setPower(input);
-                backleft.setPower(input);
-                frontright.setPower(-input);
-                backright.setPower(-input);
+                left_drive.setPower(input);
+                left_drive_2.setPower(input);
+                right_drive.setPower(-input);
+                right_drive_2.setPower(-input);
             }
             //
         }
