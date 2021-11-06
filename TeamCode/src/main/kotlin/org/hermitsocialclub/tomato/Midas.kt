@@ -5,11 +5,13 @@ import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.hermitsocialclub.util.Profiler
+import org.opencv.core.Core.normalize
 import org.opencv.core.CvType
 import org.opencv.core.Mat
+import org.opencv.core.Rect
+import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
-import org.opencv.imgproc.Imgproc.cvtColor
-import org.opencv.imgproc.Imgproc.resize
+import org.opencv.imgproc.Imgproc.*
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.ops.NormalizeOp
@@ -76,10 +78,23 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
         // Load image
         val inputSize = mat.size()
-        val bgrMat = Mat()
-        cvtColor(mat, bgrMat, Imgproc.COLOR_RGBA2BGR)
-        val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(mat.height(), mat.width(), 3), DataType.UINT8)
-        val inputSizeInBytes = (bgrMat.total() * bgrMat.channels()).toInt()
+        val matWidth = mat.width()
+        val matHeight = mat.height()
+        val cropSize = min(matWidth, matHeight)
+
+        val croppedMat = mat.submat(Rect(
+            (matWidth - cropSize) / 2,
+            (matHeight - cropSize) / 2,
+            cropSize,
+            cropSize
+        )).clone()
+        cvtColor(croppedMat, croppedMat, COLOR_RGBA2BGR)
+
+        val resizedMat = Mat(imageSizeY, imageSizeX, croppedMat.type())
+        resize(croppedMat, resizedMat, Size(imageSizeY.toDouble(), imageSizeX.toDouble()), 0.0, 0.0, INTER_NEAREST)
+
+        val inputBuffer = TensorBuffer.createFixedSize(intArrayOf(imageSizeY, imageSizeX, 3), DataType.UINT8)
+        val inputSizeInBytes = (resizedMat.total() * resizedMat.channels()).toInt()
         val badHackBuf = if (this.badHack?.size == inputSizeInBytes) {
             this.badHack!!
         } else {
@@ -87,30 +102,19 @@ class Midas(telemetry: PersistantTelemetry) : AutoCloseable, IVisionPipelineComp
             this.badHack = newBuf
             newBuf
         }
-        bgrMat.get(0, 0, badHackBuf)
+        resizedMat.get(0, 0, badHackBuf)
         inputBuffer.loadBuffer(ByteBuffer.wrap(badHackBuf))
-        inputImage.load(inputBuffer)
-
-        // Process image
-        // NormalizeOp arguments are from https://git.io/JKikt
-        profiler.begin("processor init")
-        val cropSize = min(mat.width(), mat.height())
-        val processedImage = ImageProcessor.Builder()
-            .add(ResizeWithCropOrPadOp(cropSize, cropSize))
-            .add(ResizeOp(imageSizeX, imageSizeY, ResizeMethod.NEAREST_NEIGHBOR))
-            .add(NormalizeOp(115.0f, 58.0f))
-            .build()
-            .process(inputImage)
 
         // Run model!
-        profiler.swap("interpreter.run")
-        interpreter.run(processedImage.buffer, outputProbability.buffer.rewind())
+        profiler.begin("interpreter.run")
+        interpreter.run(inputBuffer, outputProbability.buffer.rewind())
         profiler.end()
 
+        outputProbability.buffer.rewind()
         val modelOutMat = Mat(imageSizeY, imageSizeX, CvType.CV_8UC(3), outputProbability.buffer)
         val outBgrMat = Mat()
         resize(modelOutMat, outBgrMat, inputSize)
-        cvtColor(outBgrMat, mat, Imgproc.COLOR_BGR2RGBA)
+        cvtColor(outBgrMat, mat, COLOR_BGR2RGBA)
         return mat
     }
 
