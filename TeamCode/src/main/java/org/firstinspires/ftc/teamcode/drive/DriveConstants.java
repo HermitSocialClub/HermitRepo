@@ -43,10 +43,10 @@ public class DriveConstants {
      * angular distances although most angular parameters are wrapped in Math.toRadians() for
      * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from GEAR_RATIO.
      */
-    public static double WHEEL_RADIUS = 1.9685;
+    public static double WHEEL_RADIUS = 3;
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 10.15;
-    public static double WHEEL_BASE = 13.25;
+    public static double TRACK_WIDTH = 16.3;
+    public static double WHEEL_BASE = 16.5;
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -67,12 +67,12 @@ public class DriveConstants {
     public static int MAX_VELO = 32;
     public static int SLOW_VELO = 20;
     public static int MAX_ACCEL = 30;
-    public static double MAX_ANG_VELO = 3402.608;
+    public static double MAX_ANG_VELO = 6;
     public static double MAX_ANG_ACCEL = Math.toRadians(180);
 
-    public static double kV = 0.03025;//0.018067801;//.016667801;//1.0 / rpmToVelocity(MAX_RPM);//0.01926780108101678;////0.01587;//0.0135;//
-    public static double kA = 0.004;//0.0045;//0.003;//0.003;//0.00001;
-    public static double kStatic = 0.03;//0.003;//0.02;//0.025;//0.06619;//.05425;
+    public static double kV = 0.011962055475993843;//0.03025;//0.018067801;//.016667801;//1.0 / rpmToVelocity(MAX_RPM);//0.01926780108101678;////0.01587;//0.0135;//
+    public static double kA = 0.0026;//0.004;//0.0045;//0.003;//0.003;//0.00001;
+    public static double kStatic = 0.01;//0.03;//0.003;//0.02;//0.025;//0.06619;//.05425;
 
     public static DriveConstraints BASE_CONSTRAINTS = new DriveConstraints(
             MAX_VELO, MAX_ACCEL, 0.0,

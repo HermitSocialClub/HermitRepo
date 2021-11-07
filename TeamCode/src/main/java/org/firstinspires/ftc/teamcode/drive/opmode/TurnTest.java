@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -21,9 +22,12 @@ public class TurnTest extends LinearOpMode {
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
         SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
+        drive.setPoseEstimate(new Pose2d(0,0,0));
         waitForStart();
 
         if (isStopRequested()) return;
+
+        drive.setPoseEstimate(new Pose2d(0,0,0));
 
         drive.turn(Math.toRadians(ANGLE));
     }

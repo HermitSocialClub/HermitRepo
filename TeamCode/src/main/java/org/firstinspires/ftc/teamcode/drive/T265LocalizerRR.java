@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
@@ -22,13 +23,17 @@ public class T265LocalizerRR implements Localizer {
 
     private Pose2d poseOffset = new Pose2d();
     private static Pose2d mPoseEstimate = new Pose2d();
+    private static com.arcrobotics.ftclib.geometry.Pose2d originalPose;
     private Pose2d rawPose = new Pose2d();
     private T265Camera.CameraUpdate up;
 
     public static T265Camera slamra;
 
-    public static double slamraX = 6;
-    public static double slamraY = 0.4;
+    public static double slamraX = 7.5;
+    public static double slamraY = -0.5;
+    //The pose of the camera relative to the center of the robot in centimeters
+    public static Transform2d slamFormPose = new Transform2d(
+            new Translation2d(slamraX * .0254,slamraY * .0254),new Rotation2d(0));
 
     public static boolean makeCameraCenter = false;
 
@@ -43,7 +48,7 @@ public class T265LocalizerRR implements Localizer {
         poseOffset = new Pose2d();
         mPoseEstimate = new Pose2d();
         rawPose = new Pose2d();
-        T265Camera tempCam  = new T265Camera(new Transform2d(),.8,hardwareMap.appContext);
+        T265Camera tempCam  = new T265Camera(slamFormPose,.8,hardwareMap.appContext);
 
         if (slamra == null) {
             slamra = tempCam;
@@ -61,6 +66,7 @@ public class T265LocalizerRR implements Localizer {
         if (slamra.getLastReceivedCameraUpdate().confidence == T265Camera.PoseConfidence.Failed) {
             RobotLog.e("Realsense Failed to get Position");
         }
+        originalPose = slamra.getLastReceivedCameraUpdate().pose;
     }
 
     /**
@@ -70,14 +76,21 @@ public class T265LocalizerRR implements Localizer {
     @Override
     public Pose2d getPoseEstimate() {
         //variable up is updated in update()
-
+        update();
         //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
-            Translation2d oldPose = up.pose.getTranslation();
-            Rotation2d oldRot = up.pose.getRotation();
+            Translation2d curPose = up.pose.getTranslation();
+           RobotLog.v("CurPose: " + curPose.toString());
+           RobotLog.v("Original Pose: " + originalPose.toString());
+            Rotation2d curRot = up.pose.getRotation();
+            Translation2d newPose = curPose.minus(originalPose.getTranslation());
+            RobotLog.v("New Pose: " + newPose.toString());
+            Rotation2d newRot = curRot.minus(originalPose.getRotation());
             //The T265's unit of measurement is meters.  dividing it by .0254 converts meters to inches.
-            rawPose = new Pose2d(oldPose.getX() / .0254, oldPose.getY() / .0254, norm(oldRot.getRadians() + angleModifer)); //raw pos
+            rawPose = new Pose2d(-newPose.getX() / .0254, -newPose.getY() / .0254, norm(newRot.getRadians() + angleModifer)); //raw pos
+            RobotLog.v("Raw Pose: " + rawPose.toString());
             mPoseEstimate = rawPose.plus(poseOffset); //offsets the pose to be what the pose estimate is;
+
         } else {
             RobotLog.v("NULL Camera Update");
         }
@@ -92,34 +105,31 @@ public class T265LocalizerRR implements Localizer {
 //        RobotLog.v("Raw POS: " + rawPose.toString());
 //        RobotLog.v("POSE OFFSET " + poseOffset.toString());
 //        RobotLog.v("POSE ESTIMATE " + mPoseEstimate.toString());
-         return adjustPosbyCameraPos(mPoseEstimate);
+         return (mPoseEstimate);
 
     }
 
     @Override
     public void setPoseEstimate(@NotNull Pose2d pose2d) {
+        update();
+        originalPose = up.pose;
         RobotLog.v("Set Pose to " + pose2d.toString());
         pose2d = new Pose2d(pose2d.getX(),pose2d.getY(),0);
-        adjustPosbyCameraPos(pose2d);
+
         RobotLog.v("SETTING POSE ESTIMATE TO " + pose2d.toString());
         poseOffset = pose2d.minus(rawPose);
         poseOffset = new Pose2d(poseOffset.getX(), poseOffset.getY(), Math.toRadians(0));
         RobotLog.v("SET POSE OFFSET TO " + poseOffset.toString());
         Pose2d newPos = new Pose2d(pose2d.getX() * .0254, pose2d.getY() * .0254, pose2d.getHeading());
-        slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(newPos.getX(), newPos.getY(), new Rotation2d(newPos.getHeading())));
 
-         mPoseEstimate = rawPose.plus(poseOffset); //set mPose to new pose.
+
+
+         mPoseEstimate = newPos; //set mPose to new pose.
 //        /* Alternate to using pose2d.minus()*/
         try {
-            poseOffset = new Pose2d(pose2d.getX() - rawPose.getX(), pose2d.getY() - rawPose.getY(), pose2d.getHeading() - rawPose.getHeading());
+            poseOffset = ( new Pose2d(pose2d.getX(), pose2d.getY(), pose2d.getHeading()));
         } catch (Exception e) {
 
-        }
-        pose2d = mPoseEstimate;
-        while(Math.abs(slamra.getLastReceivedCameraUpdate().pose.getX() - pose2d.getX()) > .1 ||
-                Math.abs(slamra.getLastReceivedCameraUpdate().pose.getY() - pose2d.getY()) > .1 ||
-                Math.abs(slamra.getLastReceivedCameraUpdate().pose.getHeading() - pose2d.getHeading()) > .1) {
-            slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(newPos.getX(), newPos.getY(), new Rotation2d(newPos.getHeading())));
         }
     }
 
@@ -130,7 +140,7 @@ public class T265LocalizerRR implements Localizer {
     /**
      * @return the heading of the robot (in radains)
      */
-    public static double getHeading() {
+    public double getHeading() {
         return norma(mPoseEstimate.getHeading() - angleModifer);
     }
 
@@ -188,7 +198,36 @@ public class T265LocalizerRR implements Localizer {
         double cameraAngle = mPoseEstimate.getHeading() - angle;
         double detlaX = dist * Math.cos(cameraAngle);
         double detlaY = dist * Math.sin(cameraAngle);
-        return mPoseEstimate.minus(new Pose2d(detlaX,detlaY));
+        return mPoseEstimate;
+    }
+
+    /**
+     * Converts from FTCLib Pose to Roadrunner Pose or vice-versa
+     * Returns just an object so you might want to cast things first
+     * Probably would've been better as a switch block but am lazy
+      */
+    private Object convertPose(Object pose){
+
+        double x = 0;
+        double y = 0;
+        double heading = 0;
+
+        //Converts Roadrunner to FTCLib
+        if(pose.getClass().equals(Pose2d.class)){
+
+            x = ((Pose2d) pose).getX() * .0254;
+            y = ((Pose2d) pose).getY() * .0254;
+            heading = ((Pose2d) pose).getHeading();
+
+            return new com.arcrobotics.ftclib.geometry.Pose2d(x,y,new Rotation2d(heading));
+        } else if(pose.getClass().equals(com.arcrobotics.ftclib.geometry.Pose2d.class)){
+            x = ((com.arcrobotics.ftclib.geometry.Pose2d) pose).getX() / .0254;
+            y = ((com.arcrobotics.ftclib.geometry.Pose2d) pose).getY() / .0254;
+            heading = ((com.arcrobotics.ftclib.geometry.Pose2d) pose).getHeading();
+
+            return new Pose2d(x,y,heading);
+        }else return null;
+
     }
 
     /**

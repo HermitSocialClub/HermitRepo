@@ -96,7 +96,7 @@ fn find_barcode_squares(mat: &Mat, is_red: u8) -> Result<Vec<Rect>, ()> {
 
     //extra panic to make sure stuff works
     if contours.len() < 2 {
-        Err(());
+        return Err(());
     }
 
     //sort and get the 2 biggest red/blue contours
@@ -110,7 +110,7 @@ fn find_barcode_squares(mat: &Mat, is_red: u8) -> Result<Vec<Rect>, ()> {
     //sort from left-to-right
     biggest_contours.sort_by_key(|bounding_box| bounding_box.x);
 
-    Ok(biggest_contours);
+    Ok(biggest_contours)
 }
 
 /**
@@ -128,7 +128,7 @@ fn find_shipping_element(mat: &Mat) -> Result<Rect, ()> {
 
     if contours.len() < 1 {
         // panic!("cannot detect green shipping element");
-        Err(());
+        return Err(());
     }
     let biggest_contour = contours.into_iter().max_by(|a, b| compare_contour_size(b, a)).unwrap();
 

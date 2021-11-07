@@ -68,10 +68,10 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
  */
 @Config
 public class BaselineMecanumDrive extends MecanumDrive {
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(/*8.3*/8, 8, /*1.1*/.1);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(/*10.4*/8, 1, /*1.5*/0);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0,0,0);//(/*8.3*/8, 8, /*1.1*/.1);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0,0,0);//(/*10.4*/8, 1, /*1.5*/0);
 
-    public static double LATERAL_MULTIPLIER = (51.767278876441985/52.5);//(60/45.75) * 1.0434782608695652173913043478261 ;
+    public static double LATERAL_MULTIPLIER = 0;//(51.767278876441985/52.5);//(60/45.75) * 1.0434782608695652173913043478261 ;
 
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;
@@ -205,8 +205,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         /*wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
         outtake.setDirection(DcMotorSimple.Direction.REVERSE);*/
 
