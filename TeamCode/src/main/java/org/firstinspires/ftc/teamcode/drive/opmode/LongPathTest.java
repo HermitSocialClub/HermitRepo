@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.AssetsTrajectoryManager;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
@@ -32,8 +31,8 @@ public class LongPathTest extends LinearOpMode {
                                 drive.constraints.maxAngAccel,
                                 15,10.75,
                                 TrajectoryGroupConfig.DriveType.MECANUM,
-                                DriveConstants.TRACK_WIDTH,
-                                DriveConstants.TRACK_WIDTH,1.0);
+                                Meet3Bot.TRACK_WIDTH,
+                                Meet3Bot.TRACK_WIDTH,1.0);
         try {
             trajectory = AssetsTrajectoryManager.loadConfig("PewPewTest").
                     toTrajectory(tgc);

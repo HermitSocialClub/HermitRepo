@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import android.util.Pair;
 
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.kinematics.Kinematics;
@@ -10,20 +9,16 @@ import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.util.Angle;
 
-import org.firstinspires.ftc.teamcode.vision.IVuforiaEngine;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 
-import static com.acmerobotics.roadrunner.drive.MecanumDrive.*;
 import static java.util.Collections.emptyList;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.WHEEL_BASE;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.WHEEL_BASE;
 
 public class MecanumLocalizerEVI implements Localizer {
     MecanumDrive drive;

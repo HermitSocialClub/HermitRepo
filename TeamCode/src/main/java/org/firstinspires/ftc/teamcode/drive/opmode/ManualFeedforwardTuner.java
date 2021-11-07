@@ -13,16 +13,15 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kA;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kV;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -61,9 +60,9 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
         MotionState goal = new MotionState(movingForward ? DISTANCE : 0, 0, 0, 0);
         return MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
-                DriveConstants.BASE_CONSTRAINTS.maxVel,
-                DriveConstants.BASE_CONSTRAINTS.maxAccel,
-                DriveConstants.BASE_CONSTRAINTS.maxJerk);
+                Meet3Bot.BASE_CONSTRAINTS.maxVel,
+                Meet3Bot.BASE_CONSTRAINTS.maxAccel,
+                Meet3Bot.BASE_CONSTRAINTS.maxJerk);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.slamraX;
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.slamraY;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
@@ -11,7 +13,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.spartronics4915.lib.T265Camera;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,8 +30,7 @@ public class T265LocalizerRR implements Localizer {
 
     public static T265Camera slamra;
 
-    public static double slamraX = 7.5;
-    public static double slamraY = -0.5;
+
     //The pose of the camera relative to the center of the robot in centimeters
     public static Transform2d slamFormPose = new Transform2d(
             new Translation2d(slamraX * .0254,slamraY * .0254),new Rotation2d(0));

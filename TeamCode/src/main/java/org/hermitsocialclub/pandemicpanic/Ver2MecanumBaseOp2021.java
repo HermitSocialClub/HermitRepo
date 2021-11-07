@@ -1,5 +1,7 @@
 package org.hermitsocialclub.pandemicpanic;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
+
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -9,19 +11,16 @@ import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.BaselineMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
 import org.firstinspires.ftc.teamcode.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-import org.opencv.core.Mat;
 
 @Disabled
 @TeleOp(name = "Version 2 2021 Mecanum Base Op", group = "Hermit")
@@ -71,7 +70,7 @@ public class Ver2MecanumBaseOp2021 extends LinearOpMode {
     }
 
     private Mode mode = Mode.NORMAL_CONTROL;
-    private PIDFController headingController = new PIDFController(BaselineMecanumDrive.HEADING_PID);
+    private PIDFController headingController = new PIDFController(HEADING_PID);
 
 private boolean wobbleGrabLock = false;
 private  boolean lastXMash = false;

@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.trajectory.config.TrajectoryGroupConfig;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
@@ -27,8 +27,8 @@ public class KuaiAttemptsRoadrunner extends LinearOpMode {
                 drive.constraints.maxAngAccel,
                 15, 10.75,
                 TrajectoryGroupConfig.DriveType.MECANUM,
-                DriveConstants.TRACK_WIDTH,
-                DriveConstants.TRACK_WIDTH,
+                Meet3Bot.TRACK_WIDTH,
+                Meet3Bot.TRACK_WIDTH,
                 1.0);
 
         Trajectory t1 = drive.trajectoryBuilder(new Pose2d(38, -64, -90)).splineTo(new Vector2d(0, -64),2).build();

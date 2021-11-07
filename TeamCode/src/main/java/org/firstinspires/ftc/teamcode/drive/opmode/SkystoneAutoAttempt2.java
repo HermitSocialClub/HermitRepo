@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.AssetsTrajectoryManager;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
@@ -27,7 +27,7 @@ public class SkystoneAutoAttempt2 extends LinearOpMode {
         PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
         SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(telemetry);
        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
-        TrajectoryGroupConfig tgc = new TrajectoryGroupConfig(drive.constraints.maxVel,drive.constraints.maxAccel,drive.constraints.maxAngVel,drive.constraints.maxAngAccel,15,10.75, TrajectoryGroupConfig.DriveType.MECANUM, DriveConstants.TRACK_WIDTH,DriveConstants.TRACK_WIDTH,1.0);
+        TrajectoryGroupConfig tgc = new TrajectoryGroupConfig(drive.constraints.maxVel,drive.constraints.maxAccel,drive.constraints.maxAngVel,drive.constraints.maxAngAccel,15,10.75, TrajectoryGroupConfig.DriveType.MECANUM, Meet3Bot.TRACK_WIDTH, Meet3Bot.TRACK_WIDTH,1.0);
         try {
             foundationApproach = drive.trajectoryBuilder(new Pose2d()).forward(33.0).build();
             t2 = drive.trajectoryBuilder(new Pose2d()).splineToLinearHeading(new Pose2d(6.0,-17.0),Math.toRadians(90)).build();/*AssetsTrajectoryManager.loadConfig("Foundation Pull").

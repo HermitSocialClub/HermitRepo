@@ -34,7 +34,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
@@ -45,16 +44,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.WHEEL_BASE;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.getMotorVelocityF;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kA;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.WHEEL_BASE;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.getMotorVelocityF;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kA;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kV;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.

@@ -1,5 +1,7 @@
 package org.hermitsocialclub.pandemicpanic;
 
+import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
+
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -35,7 +37,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     private final MotorConfigurationType goBildaOuttake = MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
     private final MotorConfigurationType goBildaIntake = MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
     private final Mode mode = Mode.NORMAL_CONTROL;
-    private final PIDFController headingController = new PIDFController(BaselineMecanumDrive.HEADING_PID);
+    private final PIDFController headingController = new PIDFController(HEADING_PID);
     private final ElapsedTime ringTime = new ElapsedTime();
     // Declare a target vector you'd like your bot to align with
     // Can be any x/y coordinate of your choosing
