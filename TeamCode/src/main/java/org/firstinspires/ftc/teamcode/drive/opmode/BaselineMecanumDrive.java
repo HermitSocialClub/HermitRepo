@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -93,7 +94,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private LinkedList<Pose2d> poseHistory;
 
-    public DcMotorEx leftFront, leftRear, rightRear, rightFront, outtake, intake, wobbleArm;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront, outtake, intake, wobbleArm, lift;
     private List<DcMotorEx> motors;
     private BNO055IMU imu;
 
@@ -112,8 +113,16 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private PersistantTelemetry telemetry;
 
-    DriveConstants constant = bot.constants instanceof Meet0Bot ? new Meet0Bot()
-            : bot.constants instanceof Meet3Bot ? new Meet3Bot() : null;
+    DriveConstants constant;
+
+    {
+        try {
+            constant = bot.constants.getClass().getConstructor().newInstance();
+        }catch (ReflectiveOperationException e){
+            constant = new Meet3Bot();
+        }
+    }
+
 
     public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
 
@@ -161,23 +170,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
-        /*
-        wobbleArm = hardwareMap.get(DcMotorEx.class,"wobbleArm");
-        wobbleGrab = hardwareMap.get(Servo.class,"wobbleGrab");
 
-        intake = hardwareMap.get(DcMotorEx.class,"tobeFlywheel");
-
-        outtake = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
-        kicker = hardwareMap.get(Servo.class,"kicker");
-        intakeThirdStage = hardwareMap.get(CRServo.class,"intakeThirdStage");
-        intakeThirdStage.setPower(0);
-
-        hopperLift = hardwareMap.get(Servo.class,"hopperLift");
-        color = hardwareMap.get(RevColorSensorV3.class,"color");
-
-        hook = hardwareMap.get(CRServo.class,"hook");
-        friend = hardwareMap.get(CRServo.class,"friend");
-        */
+        lift = hardwareMap.get(DcMotorEx.class,"lift");
+        intake = hardwareMap.get(DcMotorEx.class,"intake");
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -188,38 +183,24 @@ public class BaselineMecanumDrive extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        /*outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtake.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,new PIDFCoefficients(50,0,5,13.1));
-
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        outtake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        */
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
         setMotorDirections(DIRECTIONS);
-        /*wobbleArm.setDirection(DcMotorSimple.Direction.REVERSE);
-        outtake.setDirection(DcMotorSimple.Direction.REVERSE);*/
+
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-/*        telemetry.setData("Confidence",FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().confidence.toString());
-        while(FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().confidence != T265Camera.PoseConfidence.High){
-            telemetry.setData("Confidence",FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().confidence.toString());
-            telemetry.setData("pose",FtcRobotControllerActivity.slamra.getLastReceivedCameraUpdate().pose.toString());
-        }
-        telemetry.setData("Exited","Confidence Loop");
-        FtcRobotControllerActivity.slamra.setPose(new com.arcrobotics.ftclib.geometry.Pose2d(0,0,new Rotation2d(0)));*/
         setLocalizer(new T265LocalizerRR(hardwareMap,true));
-        telemetry.setData("Pose Estimate",getPoseEstimate());
+        telemetry.setData("Pose Estimatlocae",getPoseEstimate());
         telemetry.setData("Pose",T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
     }
 
