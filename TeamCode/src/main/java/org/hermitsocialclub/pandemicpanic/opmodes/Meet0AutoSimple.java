@@ -1,10 +1,9 @@
 package org.hermitsocialclub.pandemicpanic.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name = "Meet0Auto", group = "Hermit")
-public class Meet0Auto extends LinearOpMode {
+@Autonomous(name = "Meet0AutoSimple", group = "Hermit")
+public class Meet0AutoSimple extends LinearOpMode {
 
     DcMotor left_drive;
     DcMotor right_drive;
@@ -68,40 +67,8 @@ public class Meet0Auto extends LinearOpMode {
                 waitForStart();
                 //
                 moveLinears(0.5,0.1);
-                moveToPosition(18.5,0.2);
-                strafeToPosition(13,0.2);
-                moveToPosition(-16,0.2);
-                strafeToPosition(3,0.2);
-                duckKnocker(3,0.2);
-                moveToPosition(16,0.2);
-                strafeToPosition(-50,0.3);
-                moveLinears(1,0.1);
-                strafeToPosition(-40,0.1);
-
-
-              /*  moveLinears(0.5,0.1);
                 //
-                strafeToPosition(18.5,0.2);
-                //
-                moveToPosition(-13,0.2);
-                //
-                strafeToPosition(-16,0.2);
-                //
-                moveToPosition(-3,0.2);
-                //
-                duckKnocker(3,0.2);
-                //
-                strafeToPosition(16,0.2);
-                //
-                moveToPosition(50,0.3);
-                //
-                moveLinears(1,0.1);
-                //
-                moveToPosition(40,0.5);
-                //
-                //intakerr(3,0.55);
-                //alternative path to do carousel first and then back p into the warehouse
-        */
+                moveToPosition(35.8, 0.5);
             }
             //
     /*
