@@ -70,7 +70,7 @@ public class Meet0Bot extends DriveConstants {
 
     public static double kV_IMPL = 0.03025;//0.018067801;//.016667801;//1.0 / rpmToVelocity(MAX_RPM);//0.01926780108101678;////0.01587;//0.0135;//
     public static double kA_IMPL = 0.004;//0.0045;//0.003;//0.003;//0.00001;
-    public static double kStatic_IMPL = 0.03;//0.003;//0.02;//0.025;//0.06619;//.05425;
+    public static double kStatic_IMPL = .03;//0.003;//0.02;//0.025;//0.06619;//.05425;
 
     public static DriveConstraints BASE_CONSTRAINTS_IMPL = new DriveConstraints(
             MAX_VELO, MAX_ACCEL, 0.0,

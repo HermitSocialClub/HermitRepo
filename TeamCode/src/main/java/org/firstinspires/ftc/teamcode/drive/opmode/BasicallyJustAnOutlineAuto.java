@@ -7,7 +7,10 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.hermitsocialclub.hydra.vision.VisionPipeline;
+import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.tomato.BarcodeDetect;
 
 //m() is just Math.toRadians, I'm just lazy
 
@@ -18,7 +21,13 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
     PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
     FtcDashboard dashboard;
 
+    private VisionPipeline visionPipeline;
+    private BarcodeDetect barcodeDetect;
 
+
+
+
+    private int code = -1;
 
 
     BaselineMecanumDrive drive;
@@ -30,6 +39,7 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
     Pose2d dropFreight = new Pose2d(-12,42,m(-90));
     Pose2d goToBarrier = new Pose2d(20,42,0);
     Pose2d pickUpFreight = new Pose2d(48,48,m(45));
+    private VisionSemaphore semaphore;
 
     @Override
     public void init() {
@@ -49,6 +59,9 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
                 //.splineToSplineHeading(pickUpFreight,m(25))//Goes towards the freight
                 //.addDisplacementMarker(()->{/*TODO: Intake the Freight*/})
                 .build();
+        barcodeDetect = new BarcodeDetect(true);
+        semaphore = new VisionSemaphore();
+        visionPipeline = new VisionPipeline(hardwareMap, telemetry, barcodeDetect, semaphore);
         //TODO: Initialize trajectory grid for tele-op
     }
 
@@ -57,6 +70,7 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
         super.init_loop();
 
         //TODO: Continually scan for the team element
+        code = barCode();
     }
 
     @Override
@@ -78,6 +92,11 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
 
     private double m(double heading){
         return Math.toRadians(heading);
+    }
+
+    private int barCode(){
+        semaphore.waitForFrame();
+        return barcodeDetect.getResult();
     }
 
 }

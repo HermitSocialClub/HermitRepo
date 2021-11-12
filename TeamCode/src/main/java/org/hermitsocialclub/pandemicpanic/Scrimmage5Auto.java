@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.qualcomm.hardware.motors.GoBILDA5202Series;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
@@ -24,6 +25,7 @@ import org.hermitsocialclub.hydra.vision.util.VisionUtils;
 import org.hermitsocialclub.opmodes.SubmatSetupOp;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
+@Disabled
 @Autonomous(name = "Scrimmage5Auto")
 public class Scrimmage5Auto extends LinearOpMode {
 
