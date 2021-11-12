@@ -24,6 +24,7 @@ public class Meet0Auto extends LinearOpMode {
     DcMotor right_drive_2;
     DcMotor duck_wheel;
     DcMotor intake;
+    DcMotor linear;
     //28 * 20 / (2ppi * 4.125)
     Double width = 18.0; //inches
     Integer cpr = 28; //counts per rotation
@@ -59,22 +60,39 @@ public class Meet0Auto extends LinearOpMode {
                 right_drive_2 = hardwareMap.dcMotor.get("backright");
                 duck_wheel = hardwareMap.dcMotor.get("duckweel");
                 intake = hardwareMap.dcMotor.get("intake");
+                linear = hardwareMap.dcMotor.get("linear");
 
                 right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
                 right_drive_2.setDirection(DcMotorSimple.Direction.REVERSE);
                 //
                 waitForStart();
                 //
+                moveLinears(0.5,0.1);
+                //
                 moveToPosition(35.8, 0.5);
                 //
                 /*
-                moveToPosition(16,02);
+                moveLinears(0.5,0.1);
+                //
+                strafeToPosition(18.5,0.2);
+                //
+                moveToPosition(-13,0.2);
+                //
+                strafeToPosition(-16,0.2);
+                //
+                moveToPosition(-3,0.2);
                 //
                 duckKnocker(3,0.2);
                 //
-                moveToPosition(-95,0.5);
+                strafeToPosition(16,0.2);
                 //
-                intakerr(5,0.55);
+                moveToPosition(50,0.3);
+                //
+                moveLinears(1,0.1);
+                //
+                moveToPosition(40,0.5);
+                //
+                //intakerr(3,0.55);
                 //alternative path to do carousel first and then back p into the warehouse
         */
             }
@@ -273,6 +291,14 @@ public class Meet0Auto extends LinearOpMode {
                      duck_wheel.setPower(speed);
                  }
              }
+    public void moveLinears (double timeout, double speed){
+
+        double start = System.currentTimeMillis();
+        double end = start + timeout *1000;
+        while (System.currentTimeMillis() < end) {
+            linear.setPower(speed);
+        }
+    }
     public void intakerr (long timeout, double speed){
 
         long start = System.currentTimeMillis();
