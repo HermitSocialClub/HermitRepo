@@ -19,6 +19,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 public class Meet0TeleOp extends OpMode {
     Canvas field;
     TelemetryPacket packet;
+    DcMotor duck_wheel;
 
     private PersistantTelemetry telemetry;
 
@@ -34,6 +35,7 @@ public class Meet0TeleOp extends OpMode {
             .getMotorType(NeveRest40Gearmotor.class);
 
     @Override
+
     public void init() {
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
@@ -54,19 +56,27 @@ public class Meet0TeleOp extends OpMode {
     public void loop() {
 
         trigVal = gamepad1.left_trigger > 0.05 ? gamepad1.left_trigger :
-                  gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0;
+                gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0;
 
         drive.lift.setVelocity(liftType
                 .getAchieveableMaxTicksPerSecond() * .65 *
                 trigVal, AngleUnit.RADIANS);
 
-        if (gamepad1.right_bumper){
+        if (gamepad1.right_bumper) {
             drive.intake.setPower(.85);
-        }else if (gamepad1.left_bumper){
+        } else if (gamepad1.left_bumper) {
             drive.intake.setPower(-.85);
-        }else drive.intake.setPower(0);
+        } else drive.intake.setPower(0);
 
-
+        if (gamepad1.x) {
+            duck_wheel.setPower(0.3);
+        }else{
+            duck_wheel.setPower(0);
+        }
+       /* drive.duck_wheel.setVelocity(liftType
+                .getAchieveableMaxTicksPerSecond() * .65 *
+                trigVal, AngleUnit.RADIANS);
+*/
         packet = new TelemetryPacket();
 
         field = packet.fieldOverlay();

@@ -105,6 +105,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public RevColorSensorV3 color;
     public Servo hopperLift;
     public CRServo intakeThirdStage;
+   public DcMotor duck_wheel;
 
 
     private VoltageSensor batteryVoltageSensor;
@@ -173,6 +174,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         lift = hardwareMap.get(DcMotorEx.class,"lift");
         intake = hardwareMap.get(DcMotorEx.class,"intake");
+        duck_wheel = hardwareMap.dcMotor.get("duckweel");
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
