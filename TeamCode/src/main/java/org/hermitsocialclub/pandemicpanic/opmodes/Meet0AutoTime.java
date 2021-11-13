@@ -66,42 +66,12 @@ public class Meet0AutoTime extends LinearOpMode {
                 //
                 waitForStart();
                 //
-                moveLinears(0.5,0.1);
-                moveToPosition(18.5,0.2);
-                strafeToPosition(13,0.2);
-                moveToPosition(-16,0.2);
-                strafeToPosition(3,0.2);
-                duckKnocker(3,0.2);
-                moveToPosition(16,0.2);
-                strafeToPosition(-50,0.3);
-                moveLinears(1,0.1);
-                strafeToPosition(-40,0.1);
-
                 moveToPositionTime(0.5,0.1);
-               // strafeToPositionTime();
-              /*  moveLinears(0.5,0.1);
-                //
-                strafeToPosition(18.5,0.2);
-                //
-                moveToPosition(-13,0.2);
-                //
-                strafeToPosition(-16,0.2);
-                //
-                moveToPosition(-3,0.2);
-                //
-                duckKnocker(3,0.2);
-                //
-                strafeToPosition(16,0.2);
-                //
-                moveToPosition(50,0.3);
-                //
-                moveLinears(1,0.1);
-                //
-                moveToPosition(40,0.5);
-                //
-                //intakerr(3,0.55);
-                //alternative path to do carousel first and then back p into the warehouse
-        */
+                strafeToPositionTime(1.5,0.15);
+                duckKnocker(2,0.2);
+                moveToPositionTime(2,0.15);
+                strafeToPositionTime(0.5,0.1);
+                intakerr(2,-0.4);
             }
             //
     /*
