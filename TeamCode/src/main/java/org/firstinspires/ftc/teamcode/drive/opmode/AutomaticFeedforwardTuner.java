@@ -17,9 +17,9 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.MAX_RPM;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.rpmToVelocity;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MAX_RPM;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.rpmToVelocity;
 
 /*
  * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an

@@ -1,17 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive;
 
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.GEAR_RATIO_IMPL;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TICKS_PER_REV_IMPL;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.WHEEL_RADIUS_IMPL;
-
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
 public abstract class DriveConstants {
+    /*
     public static double TICKS_PER_REV;
     public static double MAX_RPM;
     public static boolean RUN_USING_ENCODER;
@@ -111,4 +101,6 @@ public abstract class DriveConstants {
 
 
     public abstract void initialize(HardwareMap hardwareMap);
+
+ */
 }

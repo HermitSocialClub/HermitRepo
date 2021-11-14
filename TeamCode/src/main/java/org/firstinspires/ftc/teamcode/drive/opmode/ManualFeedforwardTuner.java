@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kA;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kStatic;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kV;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -13,15 +19,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;
-
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kA;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kV;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,
@@ -60,9 +60,9 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         MotionState start = new MotionState(movingForward ? 0 : DISTANCE, 0, 0, 0);
         MotionState goal = new MotionState(movingForward ? DISTANCE : 0, 0, 0, 0);
         return MotionProfileGenerator.generateSimpleMotionProfile(start, goal,
-                Meet3Bot.BASE_CONSTRAINTS.maxVel,
-                Meet3Bot.BASE_CONSTRAINTS.maxAccel,
-                Meet3Bot.BASE_CONSTRAINTS.maxJerk);
+                BASE_CONSTRAINTS.maxVel,
+                BASE_CONSTRAINTS.maxAccel,
+                BASE_CONSTRAINTS.maxJerk);
     }
 
     @Override

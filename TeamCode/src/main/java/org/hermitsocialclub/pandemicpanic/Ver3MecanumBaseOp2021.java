@@ -1,6 +1,6 @@
 package org.hermitsocialclub.pandemicpanic;
 
-import static org.firstinspires.ftc.teamcode.drive.DriveConstants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.HEADING_PID;
 
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;

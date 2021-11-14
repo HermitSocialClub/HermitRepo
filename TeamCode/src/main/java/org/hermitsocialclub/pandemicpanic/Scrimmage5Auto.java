@@ -1,5 +1,10 @@
 package org.hermitsocialclub.pandemicpanic;
 
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MAX_ANG_VELO;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TRACK_WIDTH;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -15,7 +20,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
-import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
+import org.firstinspires.ftc.teamcode.drive.Meet0Bot.*;
 import org.firstinspires.ftc.teamcode.drive.opmode.BaselineMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
 import org.hermitsocialclub.hydra.vision.StaccDetecc;
@@ -118,23 +123,23 @@ public class Scrimmage5Auto extends LinearOpMode {
                     .splineToConstantHeading(new Vector2d(-18,-48),0,
                             new MecanumConstraints(
                                     new DriveConstraints(30,
-                                            Meet3Bot.MAX_ACCEL,
+                                            MAX_ACCEL,
                                             0,
-                                            Meet3Bot.MAX_ANG_VELO,
-                                            Meet3Bot.MAX_ANG_ACCEL,
+                                            MAX_ANG_VELO,
+                                            MAX_ANG_ACCEL,
                                             0),
-                                    Meet3Bot.TRACK_WIDTH
+                                    TRACK_WIDTH
                             ))
                     .addDisplacementMarker(() -> drive.intake.setVelocity(-intakeSpeed,AngleUnit.RADIANS))
                     .splineToConstantHeading(new Vector2d(6,-47),0,
                             new MecanumConstraints(
                                     new DriveConstraints(30,
-                                            Meet3Bot.MAX_ACCEL,
+                                            MAX_ACCEL,
                                             0,
-                                            Meet3Bot.MAX_ANG_VELO,
-                                            Meet3Bot.MAX_ANG_ACCEL,
+                                            MAX_ANG_VELO,
+                                            MAX_ANG_ACCEL,
                                             0),
-                                    Meet3Bot.TRACK_WIDTH
+                                    TRACK_WIDTH
                             ))
                     .build();
             frontSecondShot = drive.trajectoryBuilder(frontCollect.end())

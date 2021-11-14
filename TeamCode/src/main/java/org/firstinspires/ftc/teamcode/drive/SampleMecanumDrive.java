@@ -1,6 +1,14 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.WHEEL_BASE;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.getMotorVelocityF;
+
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -44,16 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.WHEEL_BASE;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.getMotorVelocityF;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kA;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.kV;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.*;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.

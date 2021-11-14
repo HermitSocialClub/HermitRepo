@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.GEAR_RATIO;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TICKS_PER_REV;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.WHEEL_RADIUS;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.getMotorVelocityF;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -68,7 +73,7 @@ public class MaxVelocityTuner extends LinearOpMode {
 
         drive.setDrivePower(new Pose2d());
 
-        double effectiveKf = Meet3Bot.getMotorVelocityF(veloInchesToTicks(maxVelocity));
+        double effectiveKf = getMotorVelocityF(veloInchesToTicks(maxVelocity));
 
         telemetry.addData("Max Velocity", maxVelocity);
         telemetry.addData("Voltage Compensated kF", effectiveKf * batteryVoltageSensor.getVoltage() / 12);
@@ -78,6 +83,6 @@ public class MaxVelocityTuner extends LinearOpMode {
     }
 
     private double veloInchesToTicks(double inchesPerSec) {
-        return inchesPerSec / (2 * Math.PI * Meet3Bot.WHEEL_RADIUS) / Meet3Bot.GEAR_RATIO * Meet3Bot.TICKS_PER_REV;
+        return inchesPerSec / (2 * Math.PI * WHEEL_RADIUS) / GEAR_RATIO * TICKS_PER_REV;
     }
 }
