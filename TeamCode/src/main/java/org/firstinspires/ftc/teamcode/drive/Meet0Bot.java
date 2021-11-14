@@ -88,8 +88,8 @@ public class Meet0Bot extends DriveConstants {
 
     public static int POSE_HISTORY_LIMIT_IMPL = 200;
 
-    public static double slamraX_IMPL = 6;
-    public static double slamraY_IMPL = -.4;
+    public static double slamraX_IMPL = 2.75;
+    public static double slamraY_IMPL = 2.375;
 
     //leftFront, leftRear, rightRear, rightFront
     public static DcMotorSimple.Direction[] DIRECTIONS_IMPL

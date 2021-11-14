@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.slamraX;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.slamraY;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.slamraX_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.slamraY_IMPL;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -33,7 +35,7 @@ public class T265LocalizerRR implements Localizer {
 
     //The pose of the camera relative to the center of the robot in centimeters
     public static Transform2d slamFormPose = new Transform2d(
-            new Translation2d(slamraX * .0254,slamraY * .0254),new Rotation2d(0));
+            new Translation2d(slamraX_IMPL * .0254,slamraY_IMPL * .0254),new Rotation2d(0));
 
     public static boolean makeCameraCenter = false;
 

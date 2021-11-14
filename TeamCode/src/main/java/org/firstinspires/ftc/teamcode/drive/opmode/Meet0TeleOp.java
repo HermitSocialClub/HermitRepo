@@ -81,13 +81,13 @@ public class Meet0TeleOp extends OpMode {
 
         field = packet.fieldOverlay();
 
-
-        double r = MoveUtils.joystickXYToRadius(gamepad1.right_stick_x, -gamepad1.left_stick_y);
-        double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.right_stick_x, gamepad1.left_stick_y);
-
-        double[] powers = MoveUtils.theAlgorithm(r, robotAngle, gamepad1.left_stick_x, 1);
-        MoveUtils.setEachMotor(new DcMotor[]{drive.leftFront,drive.rightFront,drive.leftRear,drive.rightRear},
-                powers);
+        drive.setWeightedDrivePower(
+                new Pose2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.right_stick_x,
+                        -gamepad1.left_stick_x
+                )
+        );
 
         drive.update();
 

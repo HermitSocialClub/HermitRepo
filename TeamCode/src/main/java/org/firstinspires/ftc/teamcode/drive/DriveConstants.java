@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive;
 
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.GEAR_RATIO_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TICKS_PER_REV_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.WHEEL_RADIUS_IMPL;
+
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -89,11 +93,11 @@ public abstract class DriveConstants {
 
 
     public static double encoderTicksToInches(double ticks) {
-        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+        return WHEEL_RADIUS_IMPL * 2 * Math.PI * GEAR_RATIO_IMPL * ticks / TICKS_PER_REV_IMPL;
     }
 
     public static double rpmToVelocity(double rpm) {
-        return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
+        return rpm * GEAR_RATIO_IMPL * 2 * Math.PI * WHEEL_RADIUS_IMPL / 60.0;
     }
 
     public static double getMotorVelocityF(double ticksPerSecond) {
