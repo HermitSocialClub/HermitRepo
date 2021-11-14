@@ -1,4 +1,4 @@
-package org.hermitsocialclub.drive.opmode;
+package org.hermitsocialclub.opmodes.freightfrenzy;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;

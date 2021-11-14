@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.qualcomm.hardware.motors.GoBILDA5201Series;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;

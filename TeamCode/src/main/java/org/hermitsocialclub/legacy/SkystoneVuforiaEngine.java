@@ -1,4 +1,4 @@
-package org.hermitsocialclub.vision;
+package org.hermitsocialclub.legacy;
 
 import android.util.Pair;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -15,9 +15,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraException;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.hermitsocialclub.legacy.AutoUtils;
-import org.hermitsocialclub.legacy.DataDump;
-import org.hermitsocialclub.pandemicpanic.MecanumConfiguration;
+import org.hermitsocialclub.opmodes.pandemicpanic.MecanumConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;

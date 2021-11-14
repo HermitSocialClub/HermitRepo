@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import static org.hermitsocialclub.pandemicpanic.Ver3MecanumBaseOp2021.SPEED_PERCENT;
+import static org.hermitsocialclub.opmodes.pandemicpanic.Ver3MecanumBaseOp2021.SPEED_PERCENT;
 import static org.hermitsocialclub.util.TuningController.goBildaOuttake;
 
 @Disabled

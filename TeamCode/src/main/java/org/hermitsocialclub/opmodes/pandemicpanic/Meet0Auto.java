@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic.opmodes;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;

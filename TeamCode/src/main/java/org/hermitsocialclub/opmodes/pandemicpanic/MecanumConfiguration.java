@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.*;
@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
-public class TobeFlywheelConfiguration {
+public class MecanumConfiguration {
 
     public DcMotor left_drive = null;
     public DcMotor left_drive_2 = null;
@@ -43,7 +43,7 @@ public class TobeFlywheelConfiguration {
     public DcMotor right_drive_2 = null;
     public DcMotor[] drive_Motors;
     public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
-    public DcMotor tobeFlywheel;
+    public DcMotor tapeShooter;
     public Servo foundation_Mover = null;
     public Servo foundation_Mover_2 = null;
     public BNO055IMU imu = null;
@@ -89,7 +89,7 @@ public class TobeFlywheelConfiguration {
         imu = hwMap.get(BNO055IMU.class, "imu");
         colorSensor = hwMap.get(ColorSensor.class, "Color Sensor");
         block_Clamper_2 = hwMap.get(Servo.class, "block clamper 2");
-        tobeFlywheel = hwMap.get(DcMotor.class, "tobeFlywheel");
+        tapeShooter = hwMap.get(DcMotor.class, "tapeShooter");
         capSlinger = hwMap.get(Servo.class, "capSlinger");
         topClaw = hwMap.get(Servo.class, "topClaw");
         leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
@@ -102,7 +102,6 @@ public class TobeFlywheelConfiguration {
         right_drive.setDirection(DcMotor.Direction.REVERSE);   // Set to FORWARD if using AndyMark motors
         left_drive_2.setDirection(DcMotor.Direction.FORWARD);  // Set to REVERSE if using AndyMark motors
         right_drive_2.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
-        tobeFlywheel.setDirection(DcMotor.Direction.FORWARD);
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm2.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -111,29 +110,25 @@ public class TobeFlywheelConfiguration {
         right_drive.setPower(0);
         left_drive_2.setPower(0);
         right_drive_2.setPower(0);
-        tobeFlywheel.setPower(0);
         arm.setPower(0);
         arm2.setPower(0);
         drive_Motors = new DcMotor[]{left_drive, right_drive, left_drive_2, right_drive_2};
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        left_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        right_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        tobeFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        left_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        left_drive_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        right_drive_2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         left_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        tobeFlywheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Define and initialize Rev Color sensor
         colorSensor.enableLed(true);
-        //sonicHedgehogSensor.initialize(parameters);
 
         // Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

@@ -1,4 +1,4 @@
-package org.hermitsocialclub.vision;
+package org.hermitsocialclub.legacy;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.vuforia.Vec3F;

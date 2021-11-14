@@ -31,7 +31,7 @@ import org.hermitsocialclub.util.MoveUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
-import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.legacy.SkystoneVuforiaEngine;
 
 import java.util.ArrayList;
 import java.util.Arrays;

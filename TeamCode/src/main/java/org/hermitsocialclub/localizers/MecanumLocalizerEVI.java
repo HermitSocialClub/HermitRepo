@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.kinematics.Kinematics;
 import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.acmerobotics.roadrunner.localization.Localizer;
 import com.acmerobotics.roadrunner.util.Angle;
-import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.legacy.SkystoneVuforiaEngine;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

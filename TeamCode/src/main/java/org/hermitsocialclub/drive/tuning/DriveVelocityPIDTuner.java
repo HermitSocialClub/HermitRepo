@@ -18,7 +18,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.hermitsocialclub.drive.SampleMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.legacy.SkystoneVuforiaEngine;
 
 import java.util.List;
 

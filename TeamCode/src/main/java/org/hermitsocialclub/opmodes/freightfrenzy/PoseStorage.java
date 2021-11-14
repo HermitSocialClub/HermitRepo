@@ -1,4 +1,4 @@
-package org.hermitsocialclub.drive.opmode;
+package org.hermitsocialclub.opmodes.freightfrenzy;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 

@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic.opmodes;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
-@Autonomous(name = "Meet0AutoSimple", group = "Hermit")
-public class Meet0AutoSimple extends LinearOpMode {
+@Autonomous(name = "Meet0AutoTime", group = "Hermit")
+public class Meet0AutoTime extends LinearOpMode {
 
     DcMotor left_drive;
     DcMotor right_drive;
@@ -61,9 +61,12 @@ public class Meet0AutoSimple extends LinearOpMode {
         //
         waitForStart();
         //
-        moveLinears(0.5, 0.1);
-        //
-        moveToPosition(35.8, 0.5);
+        moveToPositionTime(0.5, 0.1);
+        strafeToPositionTime(1.5, 0.15);
+        duckKnocker(2, 0.2);
+        moveToPositionTime(2, 0.15);
+        strafeToPositionTime(0.5, 0.1);
+        intakerr(2, -0.4);
     }
 
     //
@@ -224,6 +227,30 @@ public class Meet0AutoSimple extends LinearOpMode {
     This function uses the encoders to strafe left or right.
     Negative input for inches results in left strafing.
      */
+    public void moveToPositionTime(double time, double speed) {
+        double start = System.currentTimeMillis();
+        double end = start + time * 1000;
+        while (System.currentTimeMillis() < end) {
+            right_drive.setPower(speed);
+            right_drive_2.setPower(speed);
+            left_drive.setPower(speed);
+            left_drive_2.setPower(speed);
+        }
+    }
+
+    public void strafeToPositionTime(double time, double speed) {
+        double start = System.currentTimeMillis();
+        double end = start + time * 1000;
+        while (System.currentTimeMillis() < end) {
+            right_drive.setPower(-speed);
+            right_drive_2.setPower(speed);
+            left_drive.setPower(speed);
+            left_drive_2.setPower(-speed);
+            //positive number goes left
+
+        }
+    }
+
     public void strafeToPosition(double inches, double speed) {
         //
         int move = (int) (Math.round(inches * cpi * meccyBias));

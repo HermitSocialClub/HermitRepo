@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
-import org.hermitsocialclub.drive.opmode.PoseStorage;
+import org.hermitsocialclub.opmodes.freightfrenzy.PoseStorage;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import static org.hermitsocialclub.drive.config.Meet0BotConstants.HEADING_PID;

@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic.opmodes;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 
-@Autonomous(name = "Meet0AutoMoreComplicated", group = "Hermit")
-public class Meet0AutoDropsStuffOff extends LinearOpMode {
+@Autonomous(name = "Meet0AutoSimple", group = "Hermit")
+public class Meet0AutoSimple extends LinearOpMode {
 
     DcMotor left_drive;
     DcMotor right_drive;
@@ -61,12 +61,9 @@ public class Meet0AutoDropsStuffOff extends LinearOpMode {
         //
         waitForStart();
         //
-        strafeToPosition(20.8, 0.3);
-        moveToPosition(12.8, 0.2);
-        intakerr(-3, 0.4);
-        strafeToPosition(-20.8, 0.3);
-        moveToPosition(5.4, 0.2);
-        strafeToPosition(-81.4, 0.2);
+        moveLinears(0.5, 0.1);
+        //
+        moveToPosition(35.8, 0.5);
     }
 
     //

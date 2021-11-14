@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic.opmodes;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;

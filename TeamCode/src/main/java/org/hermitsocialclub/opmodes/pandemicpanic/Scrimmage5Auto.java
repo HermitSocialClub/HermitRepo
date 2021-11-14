@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -16,7 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
-import org.hermitsocialclub.drive.opmode.PoseStorage;
+import org.hermitsocialclub.opmodes.freightfrenzy.PoseStorage;
 import org.hermitsocialclub.hydra.opmodes.SubmatSetupOp;
 import org.hermitsocialclub.hydra.vision.StaccDetecc;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;

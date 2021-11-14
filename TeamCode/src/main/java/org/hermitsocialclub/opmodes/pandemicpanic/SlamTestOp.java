@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic.opmodes;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;

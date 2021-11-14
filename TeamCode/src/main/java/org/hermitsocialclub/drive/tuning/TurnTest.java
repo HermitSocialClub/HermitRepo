@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.legacy.SkystoneVuforiaEngine;
 
 /*
  * This is a simple routine to test turning capabilities.
