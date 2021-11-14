@@ -37,15 +37,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.getMotorVelocityF;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kA;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kStatic;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kV;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.getMotorVelocityF;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.kA;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.kStatic;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.kV;
 
 /*
  * Simple tank drive hardware implementation for REV hardware.

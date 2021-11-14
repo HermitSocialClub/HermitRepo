@@ -1,19 +1,19 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive;
 
 
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.DIRECTIONS;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.HEADING_PID;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.LATERAL_MULTIPLIER;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.OMEGA_WEIGHT;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.POSE_HISTORY_LIMIT;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TRANSLATIONAL_PID;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.VX_WEIGHT;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.VY_WEIGHT;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.DIRECTIONS;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.LATERAL_MULTIPLIER;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.OMEGA_WEIGHT;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.POSE_HISTORY_LIMIT;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRANSLATIONAL_PID;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.VX_WEIGHT;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.VY_WEIGHT;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.encoderTicksToInches;
 
 import androidx.annotation.NonNull;
 
@@ -50,10 +50,9 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.drive.BotSwitch;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.Meet0Bot;
-import org.firstinspires.ftc.teamcode.drive.T265LocalizerRR;
+import org.firstinspires.ftc.teamcode.localizers.T265LocalizerRR;
+import org.firstinspires.ftc.teamcode.util.BotSwitch;
+import org.firstinspires.ftc.teamcode.util.Meet0Bot;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.hermitsocialclub.telecat.PersistantTelemetry;

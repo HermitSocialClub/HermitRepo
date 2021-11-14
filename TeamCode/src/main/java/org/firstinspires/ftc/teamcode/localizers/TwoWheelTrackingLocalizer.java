@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.firstinspires.ftc.teamcode.localizers;
 
 import androidx.annotation.NonNull;
 
@@ -7,7 +7,7 @@ import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.drive.opmode.BaselineMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 

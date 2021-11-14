@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive.tuning;
 
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kV;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -21,8 +21,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drive.Meet0Bot;
-import org.firstinspires.ftc.teamcode.drive.Meet0Bot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.telecat.PersistantTelemetry;

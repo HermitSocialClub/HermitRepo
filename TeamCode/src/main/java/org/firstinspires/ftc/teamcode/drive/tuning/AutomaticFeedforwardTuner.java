@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive.tuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
+import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
 import org.firstinspires.ftc.teamcode.util.LoggingUtil;
 import org.firstinspires.ftc.teamcode.util.RegressionUtil;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
@@ -17,9 +18,9 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MAX_RPM;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.rpmToVelocity;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MAX_RPM;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.rpmToVelocity;
 
 /*
  * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an

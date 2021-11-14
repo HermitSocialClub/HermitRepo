@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive.tuning;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
-import org.firstinspires.ftc.teamcode.drive.T265LocalizerRR;
+import org.firstinspires.ftc.teamcode.localizers.T265LocalizerRR;
+import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @TeleOp(name = "Local Slam")

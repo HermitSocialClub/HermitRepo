@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive.tuning;
 
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.GEAR_RATIO;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TICKS_PER_REV;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.WHEEL_RADIUS;
-import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.getMotorVelocityF;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.GEAR_RATIO;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TICKS_PER_REV;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.WHEEL_RADIUS;
+import static org.firstinspires.ftc.teamcode.util.Meet0Bot.getMotorVelocityF;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
+import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;
