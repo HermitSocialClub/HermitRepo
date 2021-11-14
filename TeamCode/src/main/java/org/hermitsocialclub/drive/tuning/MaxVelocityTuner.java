@@ -14,7 +14,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;
 
-import static org.hermitsocialclub.util.Meet0Bot.*;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.*;
 
 /**
  * This routine is designed to calculate the maximum velocity your bot can achieve under load. It

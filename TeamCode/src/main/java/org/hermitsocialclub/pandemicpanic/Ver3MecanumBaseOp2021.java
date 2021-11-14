@@ -14,7 +14,7 @@ import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.drive.opmode.PoseStorage;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.HEADING_PID;
 
 
 @TeleOp(name = "Version 3 2021 Mecanum Base Op", group = "Hermit")

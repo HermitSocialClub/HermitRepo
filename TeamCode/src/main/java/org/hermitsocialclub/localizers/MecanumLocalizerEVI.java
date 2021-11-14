@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.hermitsocialclub.util.Meet0Bot.TRACK_WIDTH;
-import static org.hermitsocialclub.util.Meet0Bot.WHEEL_BASE;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.TRACK_WIDTH;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.WHEEL_BASE;
 
 public class MecanumLocalizerEVI implements Localizer {
     MecanumDrive drive;

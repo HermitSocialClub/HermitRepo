@@ -13,8 +13,8 @@ import com.spartronics4915.lib.T265Camera;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static org.hermitsocialclub.util.Meet0Bot.slamraX;
-import static org.hermitsocialclub.util.Meet0Bot.slamraY;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.slamraX;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.slamraY;
 
 /**
  * a Road Runner localizer that uses the Intel T265 Realsense

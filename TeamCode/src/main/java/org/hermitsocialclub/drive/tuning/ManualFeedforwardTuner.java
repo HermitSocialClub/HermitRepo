@@ -17,7 +17,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;
 
-import static org.hermitsocialclub.util.Meet0Bot.*;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.*;
 
 /*
  * This routine is designed to tune the open-loop feedforward coefficients. Although it may seem unnecessary,

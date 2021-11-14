@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hermitsocialclub.util.Meet0Bot.*;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.*;
 
 /*
  * Simple tank drive hardware implementation for REV hardware.

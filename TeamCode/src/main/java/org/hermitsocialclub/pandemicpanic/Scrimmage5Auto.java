@@ -24,7 +24,7 @@ import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.hydra.vision.util.VisionUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-import static org.hermitsocialclub.util.Meet0Bot.*;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.*;
 
 @Disabled
 @Autonomous(name = "Scrimmage5Auto")

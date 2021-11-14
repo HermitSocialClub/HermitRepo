@@ -1,7 +1,6 @@
-package org.hermitsocialclub.util;
+package org.hermitsocialclub.drive.config;
 
 import com.acmerobotics.dashboard.config.Config;
-import org.hermitsocialclub.drive.DriveConstants;
 
 /*
  * Constants shared between multiple drive types.
@@ -15,7 +14,7 @@ import org.hermitsocialclub.drive.DriveConstants;
  * and op modes themselves.
  */
 @Config
-public class Meet3Bot extends DriveConstants {
+public class Meet3BotConstants extends DriveConstants {
 /*
 
     public static double TICKS_PER_REV = 537.6;

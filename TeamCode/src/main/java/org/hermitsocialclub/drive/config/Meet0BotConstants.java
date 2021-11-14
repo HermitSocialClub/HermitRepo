@@ -1,11 +1,10 @@
-package org.hermitsocialclub.util;
+package org.hermitsocialclub.drive.config;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.hermitsocialclub.drive.DriveConstants;
 
 /*
  * Constants shared between multiple drive types.
@@ -19,7 +18,7 @@ import org.hermitsocialclub.drive.DriveConstants;
  * and op modes themselves.
  */
 @Config
-public class Meet0Bot extends DriveConstants {
+public class Meet0BotConstants extends DriveConstants {
 
     /*
      * These are motor constants that should be listed online for your motors.

@@ -1,4 +1,4 @@
-package org.hermitsocialclub.drive;
+package org.hermitsocialclub.drive.config;
 
 public abstract class DriveConstants {
     /*

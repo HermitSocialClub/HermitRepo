@@ -27,19 +27,20 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.hermitsocialclub.drive.config.DriveConstants;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-import org.hermitsocialclub.util.BotSwitch;
+import org.hermitsocialclub.drive.config.BotSwitch;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
-import org.hermitsocialclub.util.Meet0Bot;
+import org.hermitsocialclub.drive.config.Meet0BotConstants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.hermitsocialclub.util.Meet0Bot.*;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.*;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -92,13 +93,13 @@ public class BaselineMecanumDrive extends MecanumDrive {
     BotSwitch botSwitch = new BotSwitch();
 
     {
-        constant = new Meet0Bot();
+        constant = new Meet0BotConstants();
     }
 
     public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
 
 
-        super(Meet0Bot.kV, Meet0Bot.kA, Meet0Bot.kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        super(Meet0BotConstants.kV, Meet0BotConstants.kA, Meet0BotConstants.kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         this.telemetry = pt;
 

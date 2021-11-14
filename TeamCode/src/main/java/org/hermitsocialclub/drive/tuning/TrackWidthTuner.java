@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-import static org.hermitsocialclub.util.Meet0Bot.TRACK_WIDTH;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.TRACK_WIDTH;
 
 /*
  * This routine determines the effective track width. The procedure works by executing a point turn

@@ -21,7 +21,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.MoveUtils;
 import org.hermitsocialclub.util.UltimateGoalConfiguration;
 
-import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.HEADING_PID;
 
 @Disabled
 @TeleOp(name = "Version 2 2021 Mecanum Base Op", group = "Hermit")

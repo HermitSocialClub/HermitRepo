@@ -1,11 +1,9 @@
-package org.hermitsocialclub.util;
-
-import org.hermitsocialclub.drive.DriveConstants;
+package org.hermitsocialclub.drive.config;
 
 public class BotSwitch {
 
-    static Meet3Bot meet3Bot;
-    static Meet0Bot meet0Bot;
+    static Meet3BotConstants meet3Bot;
+    static Meet0BotConstants meet0Bot;
 
     //TODO: If you add another bot remember to add it to @BaselineMecanumDrive.java too
     public enum BOT {

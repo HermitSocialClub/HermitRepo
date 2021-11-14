@@ -17,7 +17,7 @@ import org.hermitsocialclub.util.RegressionUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hermitsocialclub.util.Meet0Bot.*;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.*;
 
 /*
  * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an

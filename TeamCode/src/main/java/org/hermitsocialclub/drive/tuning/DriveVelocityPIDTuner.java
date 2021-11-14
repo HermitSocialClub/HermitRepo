@@ -22,7 +22,7 @@ import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
 
 import java.util.List;
 
-import static org.hermitsocialclub.util.Meet0Bot.*;
+import static org.hermitsocialclub.drive.config.Meet0BotConstants.*;
 
 /*
  * This routine is designed to tune the PID coefficients used by the REV Expansion Hubs for closed-
