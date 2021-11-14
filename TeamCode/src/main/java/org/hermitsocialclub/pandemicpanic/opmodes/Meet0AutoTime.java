@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@Autonomous(name = "Meet0Auto", group = "Hermit")
+@Autonomous(name = "Meet0AutoTime", group = "Hermit")
 public class Meet0AutoTime extends LinearOpMode {
 
     DcMotor left_drive;

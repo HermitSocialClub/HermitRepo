@@ -55,23 +55,23 @@ public class Meet0TeleOp extends OpMode {
     @Override
     public void loop() {
 
-        trigVal = gamepad1.left_trigger > 0.05 ? gamepad1.left_trigger :
-                gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0;
+        trigVal = gamepad1.left_trigger > 0.05 ? -gamepad1.left_trigger/10 :
+                gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0.000005;
 
         drive.lift.setVelocity(liftType
-                .getAchieveableMaxTicksPerSecond() * .65 *
+                .getAchieveableMaxTicksPerSecond() * .15 *
                 trigVal, AngleUnit.RADIANS);
 
         if (gamepad1.right_bumper) {
-            drive.intake.setPower(.85);
-        } else if (gamepad1.left_bumper) {
             drive.intake.setPower(-.85);
+        } else if (gamepad1.left_bumper) {
+            drive.intake.setPower(.85);
         } else drive.intake.setPower(0);
 
         if (gamepad1.x) {
-            duck_wheel.setPower(0.3);
+            drive.duck_wheel.setPower(-0.3);
         }else{
-            duck_wheel.setPower(0);
+            drive.duck_wheel.setPower(0);
         }
        /* drive.duck_wheel.setVelocity(liftType
                 .getAchieveableMaxTicksPerSecond() * .65 *
@@ -84,8 +84,8 @@ public class Meet0TeleOp extends OpMode {
         drive.setWeightedDrivePower(
                 new Pose2d(
                         -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
+                        -gamepad1.right_stick_x,
+                        -gamepad1.left_stick_x
                 )
         );
 

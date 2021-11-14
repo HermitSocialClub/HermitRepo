@@ -59,6 +59,20 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.POSE_HISTORY_L
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.TRANSLATIONAL_PID;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.VX_WEIGHT;
 import static org.firstinspires.ftc.teamcode.drive.DriveConstants.VY_WEIGHT;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.BASE_CONSTRAINTS_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.DIRECTIONS_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.HEADING_PID_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.LATERAL_MULTIPLIER_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.MOTOR_VELO_PID_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.OMEGA_WEIGHT_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.POSE_HISTORY_LIMIT_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TRACK_WIDTH_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.TRANSLATIONAL_PID_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.VX_WEIGHT_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.VY_WEIGHT_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kA_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kStatic_IMPL;
+import static org.firstinspires.ftc.teamcode.drive.Meet0Bot.kV_IMPL;
 import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.BASE_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.MOTOR_VELO_PID;
 import static org.firstinspires.ftc.teamcode.drive.Meet3Bot.RUN_USING_ENCODER;
@@ -117,19 +131,14 @@ public class BaselineMecanumDrive extends MecanumDrive {
     DriveConstants constant;
 
     {
-        try {
-            constant = bot.constants.getClass().getConstructor().newInstance();
-        }catch (ReflectiveOperationException e){
-            constant = new Meet3Bot();
-        }
+        constant = new Meet0Bot();
     }
-
 
     public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
 
 
 
-        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        super(kV_IMPL, kA_IMPL, kStatic_IMPL, TRACK_WIDTH_IMPL, TRACK_WIDTH_IMPL, LATERAL_MULTIPLIER_IMPL);
 
         this.telemetry = pt;
 
@@ -140,11 +149,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         mode = Mode.IDLE;
 
-        turnController = new PIDFController(HEADING_PID);
+        turnController = new PIDFController(HEADING_PID_IMPL);
         turnController.setInputBounds(0, 2 * Math.PI);
 
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+        constraints = new MecanumConstraints(BASE_CONSTRAINTS_IMPL, TRACK_WIDTH_IMPL);
+        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID_IMPL, TRANSLATIONAL_PID_IMPL, HEADING_PID_IMPL,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
         poseHistory = new LinkedList<>();
@@ -174,7 +183,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         lift = hardwareMap.get(DcMotorEx.class,"lift");
         intake = hardwareMap.get(DcMotorEx.class,"intake");
-        duck_wheel = hardwareMap.dcMotor.get("duckweel");
+        duck_wheel = hardwareMap.dcMotor.get("duck_wheel");
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -189,14 +198,14 @@ public class BaselineMecanumDrive extends MecanumDrive {
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+        if (RUN_USING_ENCODER && MOTOR_VELO_PID_IMPL != null) {
+            //setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID_IMPL);
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-        setMotorDirections(DIRECTIONS);
+        setMotorDirections(DIRECTIONS_IMPL);
 
 
         // TODO: if desired, use setLocalizer() to change the localization method
@@ -270,7 +279,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         poseHistory.add(currentPose);
 
-        if (POSE_HISTORY_LIMIT > -1 && poseHistory.size() > POSE_HISTORY_LIMIT) {
+        if (POSE_HISTORY_LIMIT_IMPL > -1 && poseHistory.size() > POSE_HISTORY_LIMIT_IMPL) {
             poseHistory.removeFirst();
         }
 
@@ -387,14 +396,14 @@ public class BaselineMecanumDrive extends MecanumDrive {
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
-            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
-                    + VY_WEIGHT * Math.abs(drivePower.getY())
-                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
+            double denom = VX_WEIGHT_IMPL * Math.abs(drivePower.getX())
+                    + VY_WEIGHT_IMPL * Math.abs(drivePower.getY())
+                    + OMEGA_WEIGHT_IMPL * Math.abs(drivePower.getHeading());
 
             vel = new Pose2d(
-                    VX_WEIGHT * drivePower.getX(),
-                    VY_WEIGHT * drivePower.getY(),
-                    OMEGA_WEIGHT * drivePower.getHeading()
+                    VX_WEIGHT_IMPL * drivePower.getX(),
+                    VY_WEIGHT_IMPL * drivePower.getY(),
+                    OMEGA_WEIGHT_IMPL * drivePower.getHeading()
             ).div(denom);
         }
 
