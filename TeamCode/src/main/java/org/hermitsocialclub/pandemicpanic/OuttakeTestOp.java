@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-import static org.firstinspires.ftc.teamcode.util.TuningController.goBildaOuttake;
+import static org.hermitsocialclub.util.TuningController.goBildaOuttake;
 import static org.hermitsocialclub.pandemicpanic.Ver3MecanumBaseOp2021.SPEED_PERCENT;
 @Disabled
 @TeleOp(name = "Outtake Tester Op")

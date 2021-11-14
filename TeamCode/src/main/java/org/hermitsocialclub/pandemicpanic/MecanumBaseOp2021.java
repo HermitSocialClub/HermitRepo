@@ -11,11 +11,9 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.util.UltimateGoalConfiguration;
+import org.hermitsocialclub.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
-import org.opencv.core.Mat;
 
-import java.lang.reflect.Method;
 @Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "2021 Mecanum Base Op", group = "Hermit")
 

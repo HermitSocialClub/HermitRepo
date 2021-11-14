@@ -1,6 +1,6 @@
 package org.hermitsocialclub.pandemicpanic;
 
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.HEADING_PID;
+import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
 
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -17,9 +17,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
-import org.firstinspires.ftc.teamcode.util.UltimateGoalConfiguration;
+import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.drive.opmode.PoseStorage;
+import org.hermitsocialclub.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @Disabled

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
 
-import org.firstinspires.ftc.teamcode.util.AnalogUltrasonic;
+import org.hermitsocialclub.util.AnalogUltrasonic;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevBulkData;

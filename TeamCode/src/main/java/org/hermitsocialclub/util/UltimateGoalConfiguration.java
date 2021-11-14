@@ -27,35 +27,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.util;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.openftc.revextensions2.ExpansionHubEx;
+import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.RevBulkData;
 
-public class MecanumConfiguration {
+public class UltimateGoalConfiguration {
 
     public DcMotor left_drive = null;
     public DcMotor left_drive_2 = null;
     public DcMotor right_drive = null;
     public DcMotor right_drive_2 = null;
+    public DcMotorEx wobbleArm;
     public DcMotor[] drive_Motors;
     public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
-    public DcMotor tapeShooter;
-    public Servo foundation_Mover = null;
-    public Servo foundation_Mover_2 = null;
     public BNO055IMU imu = null;
-    public Servo block_Clamper = null;
-    public DcMotor arm = null;
-    public DcMotor arm2 = null;
-    public ColorSensor colorSensor;
-    public DistanceSensor distanceSensor;
-    public Servo block_Clamper_2;
-    public Servo capSlinger;
-    public Servo topClaw;
-    public DcMotorEx spinner;
+    public CRServo wobbleGrab;
+    public CRServo intakeThirdStage;
+    public RevColorSensorV3 color;
+    public Servo hopperLift;
+
+    RevBulkData bulkData;
+    public AnalogInput a0, a1, a2, a3;
+    public DigitalChannel d0, d1, d2, d3, d4, d5, d6, d7;
+    public ExpansionHubMotor motor0, motor1, motor2, motor3, outTakeBulk;
+    public ExpansionHubEx expansionHub, controlHub;
 
     public static final double MID_SERVO = 1;
     public static final double ARM_UP_POWER = 0.45;
@@ -79,38 +82,47 @@ public class MecanumConfiguration {
         right_drive = hwMap.get(DcMotor.class, "right_drive");
         left_drive_2 = hwMap.get(DcMotor.class, "left_drive_2");
         right_drive_2 = hwMap.get(DcMotor.class, "right_drive_2");
-        foundation_Mover = hwMap.get(Servo.class, "Foundation_Mover");
-        foundation_Mover_2 = hwMap.get(Servo.class, "Foundation_Mover_2");
-        block_Clamper = hwMap.get(Servo.class, "Block_Clamper");
-        arm = hwMap.get(DcMotor.class, "arm");
-        arm2 = hwMap.get(DcMotor.class, "arm2");
+
+        wobbleArm = hwMap.get(DcMotorEx.class,"wobbleArm");
+        wobbleGrab = hwMap.get(CRServo.class,"wobbleGrab");
+
         imu = hwMap.get(BNO055IMU.class, "imu");
-        colorSensor = hwMap.get(ColorSensor.class, "Color Sensor");
-        block_Clamper_2 = hwMap.get(Servo.class, "block clamper 2");
-        tapeShooter = hwMap.get(DcMotor.class, "tapeShooter");
-        capSlinger = hwMap.get(Servo.class, "capSlinger");
-        topClaw = hwMap.get(Servo.class, "topClaw");
-        leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
-        rightEncoder = hwMap.get(DcMotorEx.class, "tapeShooter");
-        frontEncoder = hwMap.get(DcMotorEx.class, "arm");
-        spinner = hwMap.get(DcMotorEx.class,"tapeShooter" +
-                "");
+        leftEncoder = hwMap.get(DcMotorEx.class, "right_drive_2");
+        rightEncoder = hwMap.get(DcMotorEx.class, "left_drive_2");
+        frontEncoder = hwMap.get(DcMotorEx.class, "left_drive");
+
+        hopperLift = hwMap.get(Servo.class,"hopperLift");
+        color = hwMap.get(RevColorSensorV3.class,"color");
+
+        intakeThirdStage = hwMap.get(CRServo.class,"intakeThirdStage");
+
+        expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
+        controlHub = hwMap.get(ExpansionHubEx.class,"Control Hub");
+        motor0 = (ExpansionHubMotor) left_drive;
+        motor1 = (ExpansionHubMotor) right_drive;
+        motor2 = (ExpansionHubMotor) left_drive_2;
+        motor3 = (ExpansionHubMotor) right_drive_2;
+        outTakeBulk = (ExpansionHubMotor) hwMap.dcMotor.get("takeruFlyOut");
+
+
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors
         right_drive.setDirection(DcMotor.Direction.REVERSE);   // Set to FORWARD if using AndyMark motors
         left_drive_2.setDirection(DcMotor.Direction.FORWARD);  // Set to REVERSE if using AndyMark motors
         right_drive_2.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
-        arm.setDirection(DcMotorSimple.Direction.REVERSE);
-        arm2.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         // Set all motors to zero power
         left_drive.setPower(0);
         right_drive.setPower(0);
         left_drive_2.setPower(0);
         right_drive_2.setPower(0);
-        arm.setPower(0);
-        arm2.setPower(0);
         drive_Motors = new DcMotor[]{left_drive, right_drive, left_drive_2, right_drive_2};
+
+        wobbleArm.setPower(0);
+        wobbleGrab.setPower(0);
+
+        intakeThirdStage.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -122,11 +134,11 @@ public class MecanumConfiguration {
         right_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         left_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        wobbleArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        wobbleArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Define and initialize Rev Color sensor
-        colorSensor.enableLed(true);
 
         // Initialize IMU
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
