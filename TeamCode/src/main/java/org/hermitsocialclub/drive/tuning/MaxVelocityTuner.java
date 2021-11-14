@@ -1,10 +1,5 @@
 package org.hermitsocialclub.drive.tuning;
 
-import static org.hermitsocialclub.util.Meet0Bot.GEAR_RATIO;
-import static org.hermitsocialclub.util.Meet0Bot.TICKS_PER_REV;
-import static org.hermitsocialclub.util.Meet0Bot.WHEEL_RADIUS;
-import static org.hermitsocialclub.util.Meet0Bot.getMotorVelocityF;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -14,11 +9,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;
+
+import static org.hermitsocialclub.util.Meet0Bot.*;
 
 /**
  * This routine is designed to calculate the maximum velocity your bot can achieve under load. It
@@ -37,7 +33,7 @@ public class MaxVelocityTuner extends LinearOpMode {
     private double maxVelocity = 0.0;
 
     private VoltageSensor batteryVoltageSensor;
-    private PersistantTelemetry pt = new PersistantTelemetry(super.telemetry);
+    private final PersistantTelemetry pt = new PersistantTelemetry(super.telemetry);
 
     @Override
     public void runOpMode() throws InterruptedException {

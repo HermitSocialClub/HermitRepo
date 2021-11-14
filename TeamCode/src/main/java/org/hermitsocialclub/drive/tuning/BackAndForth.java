@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
@@ -26,7 +25,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
  * is recommended that you use the FollowerPIDTuner opmode for further fine tuning.
  */
 @Config
-@Autonomous(name = "BackAndForth",group = "drive")
+@Autonomous(name = "BackAndForth", group = "drive")
 public class BackAndForth extends LinearOpMode {
 
     public static double DISTANCE = 50;
@@ -34,7 +33,7 @@ public class BackAndForth extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
-        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
 
         Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)

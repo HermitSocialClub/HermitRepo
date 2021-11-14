@@ -1,17 +1,15 @@
 package org.hermitsocialclub.pandemicpanic;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum Base Op Basic", group = "Hermit")
 
 public class MecanumBaseOpBasic extends LinearOpMode {
 
-    private PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+    private final PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     public DcMotor left_drive = null;
     public DcMotor left_drive_2 = null;
     public DcMotor right_drive = null;
@@ -25,7 +23,7 @@ public class MecanumBaseOpBasic extends LinearOpMode {
     public double invertedControls = 1;
     double clamperPosition = 0;
     double topClawPosition = 0;
-    private boolean foundationPull = false;
+    private final boolean foundationPull = false;
     private double initialLeftTicks, initialRightTicks, initialTopTicks;
 
 
@@ -99,15 +97,12 @@ public class MecanumBaseOpBasic extends LinearOpMode {
             double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.left_stick_x, gamepad1.left_stick_y);
 
             double[] powers = MoveUtils.theAlgorithm(r, robotAngle, -gamepad1.right_stick_x, precisionModifier * invertedControls);
-            MoveUtils.setEachMotor(new DcMotor[]{ left_drive,  right_drive,  left_drive_2,  right_drive_2}, powers);
-
-
+            MoveUtils.setEachMotor(new DcMotor[]{left_drive, right_drive, left_drive_2, right_drive_2}, powers);
 
 
         }
 
     }
-
 
 
 }

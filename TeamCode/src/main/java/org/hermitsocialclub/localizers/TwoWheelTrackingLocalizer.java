@@ -1,15 +1,13 @@
 package org.hermitsocialclub.localizers;
 
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
-import org.hermitsocialclub.util.Encoder;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.util.Encoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,21 +44,22 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     public static double PERPENDICULAR_Y = -5;
 
     public static double X_MULTIPLIER = 1.13; // MULTIPLIER IN X DIRECTION
-    public static double Y_MULTIPLIER = (99.5/59.5)*0.71494927132117931908466912072023;//1.68; // MULTIPLIER IN Y DIRECTION
+    public static double Y_MULTIPLIER = (99.5 / 59.5) * 0.71494927132117931908466912072023;//1.68; // MULTIPLIER IN Y DIRECTION
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
     // Perpendicular is perpendicular to the forward axis
-    private Encoder parallelEncoder, perpendicularEncoder;
+    private final Encoder parallelEncoder;
+    private final Encoder perpendicularEncoder;
 
-    private BaselineMecanumDrive drive;
+    private final BaselineMecanumDrive drive;
 
-    private PersistantTelemetry telemetry;
+    private final PersistantTelemetry telemetry;
 
     public TwoWheelTrackingLocalizer(HardwareMap hardwareMap, BaselineMecanumDrive drive, PersistantTelemetry telemetry) {
         super(Arrays.asList(
-            new Pose2d(PARALLEL_X, PARALLEL_Y, 0),
-            new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
+                new Pose2d(PARALLEL_X, PARALLEL_Y, 0),
+                new Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90))
         ));
 
         this.drive = drive;

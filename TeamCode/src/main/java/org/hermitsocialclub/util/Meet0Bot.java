@@ -5,7 +5,6 @@ import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
 import org.hermitsocialclub.drive.DriveConstants;
 
 /*
@@ -34,7 +33,7 @@ public class Meet0Bot extends DriveConstants {
      */
 
     public static final boolean RUN_USING_ENCODER = false;
-    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0,0,0, 22.259453425873854);//getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+    public static PIDFCoefficients MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 22.259453425873854);//getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
     /*
      * These are physical constants that can be determined from your robot (including the track
@@ -96,10 +95,12 @@ public class Meet0Bot extends DriveConstants {
     //leftFront, leftRear, rightRear, rightFront
     public static DcMotorSimple.Direction[] DIRECTIONS
             = {DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
-               DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD};
+            DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD};
+
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
     }
+
     public static double rpmToVelocity(double rpm) {
         return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0;
     }

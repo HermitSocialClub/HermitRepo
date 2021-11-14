@@ -3,7 +3,6 @@ package org.hermitsocialclub.util;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.AnalogOutput;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.RevBulkData;
@@ -34,7 +33,7 @@ public class AnalogUltrasonic {
     private boolean pulseFinished = false;
 
     public AnalogUltrasonic(AnalogInput echo, AnalogOutput trigger, PersistantTelemetry telemetry, RevBulkData bulk,
-                            ExpansionHubEx rev){
+                            ExpansionHubEx rev) {
         this.echo = echo;
         this.trigger = trigger;
 
@@ -47,14 +46,15 @@ public class AnalogUltrasonic {
         trigger.setAnalogOutputMode((byte) 1);
     }
 
-    public void pulse(){
+    public void pulse() {
         pulseFinished = false;
         triggerTime.reset();
 
         // Set high and wait 10 us
         trigger.setAnalogOutputVoltage(640);
-        while (triggerTime.nanoseconds() * 10000 <= TRIGGER_PULSE_PERIOD) {}
-        telemetry.setData("trigger time %f microseconds",triggerTime.nanoseconds()*1000);
+        while (triggerTime.nanoseconds() * 10000 <= TRIGGER_PULSE_PERIOD) {
+        }
+        telemetry.setData("trigger time %f microseconds", triggerTime.nanoseconds() * 1000);
 
         // Set low and wait for data
         trigger.setAnalogOutputVoltage(0);
@@ -73,15 +73,15 @@ public class AnalogUltrasonic {
         pulseFinished = true;
     }
 
-    public double getDistance(){
+    public double getDistance() {
         return distance;
     }
 
-    public long getPulseUptime(TimeUnit unit){
+    public long getPulseUptime(TimeUnit unit) {
         return echoTime.time(unit);
     }
 
-    public boolean getPulseFinished(){
+    public boolean getPulseFinished() {
         return pulseFinished;
     }
 

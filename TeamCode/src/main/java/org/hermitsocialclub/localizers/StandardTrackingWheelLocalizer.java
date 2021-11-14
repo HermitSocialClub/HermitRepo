@@ -1,6 +1,6 @@
 package org.hermitsocialclub.localizers;
-import androidx.annotation.NonNull;
 
+import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer;
@@ -8,9 +8,8 @@ import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
-import org.hermitsocialclub.util.Encoder;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.util.Encoder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,9 +40,11 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     public List<Double> initialPos;
     public boolean initialPosTaken;
 
-    private PersistantTelemetry telemetry;
+    private final PersistantTelemetry telemetry;
 
-    private Encoder leftEncoder, rightEncoder, frontEncoder;
+    private final Encoder leftEncoder;
+    private final Encoder rightEncoder;
+    private final Encoder frontEncoder;
 
     public static double LEFT_X_MULTIPLIER = 1.1880561390647101148678033918417;//1.228778966131907;
     public static double RIGHT_X_MULTIPLIER = 1.1880561390647101148678033918417;//1.228778966131907;//71.25/60.07878281971142 * (61.25/59.866903109526284);//69/56.42137206749;
@@ -100,10 +101,10 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
 
         List<Double> a = Arrays.asList(
 
-            encoderTicksToInches(leftEncoder.getCurrentPosition() * LEFT_X_MULTIPLIER + 13),
-            encoderTicksToInches(rightEncoder.getCurrentPosition() * RIGHT_X_MULTIPLIER),
-            encoderTicksToInches(frontEncoder.getCurrentPosition() * Y_MULTIPLIER)
-    );
+                encoderTicksToInches(leftEncoder.getCurrentPosition() * LEFT_X_MULTIPLIER + 13),
+                encoderTicksToInches(rightEncoder.getCurrentPosition() * RIGHT_X_MULTIPLIER),
+                encoderTicksToInches(frontEncoder.getCurrentPosition() * Y_MULTIPLIER)
+        );
         /*if(initialPosTaken) {
             telemetry.setDebug("leftEncoder", a.get(0) - initialPos.get(0));
             telemetry.setDebug("rightEncoder", a.get(1) - initialPos.get(1));
@@ -116,7 +117,6 @@ public class StandardTrackingWheelLocalizer extends ThreeTrackingWheelLocalizer 
     }
 
     public List<Double> getWheelChange() {
-
 
 
         return Arrays.asList(

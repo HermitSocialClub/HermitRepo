@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
@@ -40,7 +39,7 @@ public class MaxAngularVeloTuner extends LinearOpMode {
 
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
 
-        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -74,11 +73,11 @@ public class MaxAngularVeloTuner extends LinearOpMode {
             double angle = pose.getHeading();
 
             double arrowX = Math.cos(angle) * robotRadius, arrowY = Math.sin(angle) * robotRadius;
-            double x1 = pose.getX() + arrowX  / 2, y1 = pose.getY() + arrowY / 2;
+            double x1 = pose.getX() + arrowX / 2, y1 = pose.getY() + arrowY / 2;
             double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
             field.strokeLine(x1, y1, x2, y2);
 
-            field.strokeCircle(pose.getX(),pose.getY(),angle);
+            field.strokeCircle(pose.getX(), pose.getY(), angle);
             dash.sendTelemetryPacket(packet);
         }
 

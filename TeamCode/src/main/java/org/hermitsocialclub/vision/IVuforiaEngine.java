@@ -2,7 +2,6 @@ package org.hermitsocialclub.vision;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.vuforia.Vec3F;
-
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 
 public interface IVuforiaEngine {
@@ -14,7 +13,6 @@ public interface IVuforiaEngine {
     Vec3F getPosition(String id);
 
     /**
-     *
      * Gets the distance from the camera to a tracked object, in millimeters.
      * If the object is not visible, this returns {@link Double#POSITIVE_INFINITY}<br/>
      * <br/>
@@ -23,7 +21,6 @@ public interface IVuforiaEngine {
      *
      * @param id String id of a tracked object.
      * @return distance in millimeters.
-     *
      */
     Double getDistanceToObject(String id);
 

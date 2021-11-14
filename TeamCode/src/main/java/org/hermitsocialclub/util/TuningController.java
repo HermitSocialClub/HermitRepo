@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Config
 public class TuningController {
-    public static MotorConfigurationType goBildaOuttake =  MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
+    public static MotorConfigurationType goBildaOuttake = MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
     public static double MOTOR_TICKS_PER_REV = 28;
     public static double MOTOR_MAX_RPM = 5400;
     public static double MOTOR_GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
@@ -42,9 +42,9 @@ public class TuningController {
         REST
     }
 
-    private StateMachine stateMachine;
+    private final StateMachine stateMachine;
 
-    private ElapsedTime externalTimer = new ElapsedTime();
+    private final ElapsedTime externalTimer = new ElapsedTime();
 
     private double currentTargetVelo = 0.0;
 

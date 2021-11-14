@@ -1,7 +1,5 @@
 package org.hermitsocialclub.pandemicpanic;
 
-import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
-
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -11,11 +9,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.drive.opmode.PoseStorage;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+
+import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
 
 
 @TeleOp(name = "Version 3 2021 Mecanum Base Op", group = "Hermit")
@@ -25,10 +24,10 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     public static double DRAWING_TARGET_RADIUS = 2;
     public static double SPEED_PERCENT = 0.75;
     public static double POWER_PERCENT = 0.8;
-    private static double INTAKE_PERCENT = .25;
+    private static final double INTAKE_PERCENT = .25;
     private double lastIntake = 0;
     private double currentIntake;
-    private static double INTAKE_GEAR = 1;
+    private static final double INTAKE_GEAR = 1;
     public static double NEAR_ZERO_THRESHHOLD = Math.pow(10, -1) * 1.5;
     private final PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     private final ElapsedTime runtime = new ElapsedTime();
@@ -49,8 +48,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     public double invertedControls = 1;
     private boolean lastAMash = false;
     private boolean lastBMash = false;
-    private boolean lastDownMash = false;
-    private boolean lastUpMash = false;
+    private final boolean lastDownMash = false;
+    private final boolean lastUpMash = false;
     private boolean lastLeftMash = false;
     private boolean lastRTriggerMash = false;
     private boolean intakeOn = false;
@@ -64,9 +63,9 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
     private boolean kickStarting = false;
     private boolean lastYMash = false;
     private boolean alwaysOn = true;
-    private boolean hopperMash = false;
-    private boolean ringDetected = false;
-    private double HOPPER_POSITION = 1;
+    private final boolean hopperMash = false;
+    private final boolean ringDetected = false;
+    private final double HOPPER_POSITION = 1;
     private boolean last2XMash = false;
 
     @Override
@@ -388,20 +387,20 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             Pose2d driveDirection = new Pose2d();
 
 
-                    // Read pose
-                    Pose2d poseEstimate = ourPose;
+            // Read pose
+            Pose2d poseEstimate = ourPose;
 
-                    // Create a vector from the gamepad x/y inputs
-                    // Then, rotate that vector by the inverse of that heading
-                    Vector2d input = new Vector2d(
-                            -antiDeadzone(gamepad1.left_stick_y),
-                            -antiDeadzone(gamepad1.left_stick_x)
-                    );
-                    driveDirection = new Pose2d(
-                            input.getX() * precisionModifier * invertedControls,
-                            input.getY() * precisionModifier * invertedControls,
-                            -antiDeadzone(gamepad1.right_stick_x) * precisionModifier * invertedControls *.75
-                    );
+            // Create a vector from the gamepad x/y inputs
+            // Then, rotate that vector by the inverse of that heading
+            Vector2d input = new Vector2d(
+                    -antiDeadzone(gamepad1.left_stick_y),
+                    -antiDeadzone(gamepad1.left_stick_x)
+            );
+            driveDirection = new Pose2d(
+                    input.getX() * precisionModifier * invertedControls,
+                    input.getY() * precisionModifier * invertedControls,
+                    -antiDeadzone(gamepad1.right_stick_x) * precisionModifier * invertedControls * .75
+            );
 
             // Draw bot on canvas
 
@@ -413,7 +412,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             // Send telemetry packet off to dashboard
 
             if (gamepad1.right_bumper) {
-                drive.intake.setVelocity(intake85Speed,AngleUnit.RADIANS);
+                drive.intake.setVelocity(intake85Speed, AngleUnit.RADIANS);
                 //drive.intake.setPower(-.25);
                 currentIntake = intake85Speed;
                 intakeOn = true;
@@ -461,7 +460,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                     drive.kicker.setPosition(1);
                     drive.hopperLift.setPosition(.85);
                     if (!alwaysOn && runtime.seconds() > 90) {
-                        drive.outtake.setVelocity(0); }
+                        drive.outtake.setVelocity(0);
+                    }
                     kicks = 0;
                     kickFinished = true;
                     kickStarting = false;
@@ -473,10 +473,12 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                     } else {
                         kickDirection = true;
                         drive.kicker.setPosition(-1);
-                    }kickTime.reset();
+                    }
+                    kickTime.reset();
                     if (kickDirection) {
                         kicks++;
-                    } }
+                    }
+                }
 
                 if (kicks == 0) {
                     kickTime.reset();
@@ -497,7 +499,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 if (drive.intake.getPower() != 0) {
                     drive.intake.setPower(0);
                 } else if (drive.intake.getPower() == 0) {
-                    drive.intake.setVelocity(-intake85Speed,AngleUnit.RADIANS);
+                    drive.intake.setVelocity(-intake85Speed, AngleUnit.RADIANS);
                     //drive.intake.setPower(.25);
                 }
             }
@@ -507,7 +509,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                 drive.friend.setPower(gamepad2.right_trigger);
             } else if (gamepad2.left_trigger > 0.02) {
                 drive.friend.setPower(-gamepad2.left_trigger);
-            }else{
+            } else {
                 drive.friend.setPower(0);
             }
             //pt.setDebug("Hopper Position",drive.hopperLift.getPosition());
@@ -521,23 +523,23 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
             } else if (gamepad2.left_bumper) {
                 drive.wobbleGrab.setPosition(-1);
             }
-            if(gamepad2.x && !last2XMash){
-                if(drive.intakeThirdStage.getPower() > 0.02){
+            if (gamepad2.x && !last2XMash) {
+                if (drive.intakeThirdStage.getPower() > 0.02) {
                     drive.intakeThirdStage.setPower(0);
-                }else if(drive.intakeThirdStage.getPower() < 0.02){
+                } else if (drive.intakeThirdStage.getPower() < 0.02) {
                     drive.intakeThirdStage.setPower(1);
                 }
             }
             last2XMash = gamepad2.x;
 
-            if(Math.abs(gamepad2.right_stick_y) > 0.2){
+            if (Math.abs(gamepad2.right_stick_y) > 0.2) {
                 drive.hook.setPower(antiDeadzone(gamepad2.right_stick_y));
-            }else {
+            } else {
                 drive.hook.setPower(0);
             }
 
             //TODO: Remove Telemetry when done figuring out problem with kicker
-            pt.setDebug("Intake Velocity",drive.intake.getVelocity(AngleUnit.RADIANS));
+            pt.setDebug("Intake Velocity", drive.intake.getVelocity(AngleUnit.RADIANS));
             /*
             pt.setDebug("Outtake Actual Speed", drive.outtake.getVelocity(AngleUnit.RADIANS));
             pt.setDebug("Outtake Intended Speed", outTake75Speed);

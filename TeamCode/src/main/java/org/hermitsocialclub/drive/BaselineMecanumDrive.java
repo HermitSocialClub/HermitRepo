@@ -1,22 +1,7 @@
 package org.hermitsocialclub.drive;
 
 
-import static org.hermitsocialclub.util.Meet0Bot.BASE_CONSTRAINTS;
-import static org.hermitsocialclub.util.Meet0Bot.DIRECTIONS;
-import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
-import static org.hermitsocialclub.util.Meet0Bot.LATERAL_MULTIPLIER;
-import static org.hermitsocialclub.util.Meet0Bot.MOTOR_VELO_PID;
-import static org.hermitsocialclub.util.Meet0Bot.OMEGA_WEIGHT;
-import static org.hermitsocialclub.util.Meet0Bot.POSE_HISTORY_LIMIT;
-import static org.hermitsocialclub.util.Meet0Bot.TRACK_WIDTH;
-import static org.hermitsocialclub.util.Meet0Bot.TRANSLATIONAL_PID;
-import static org.hermitsocialclub.util.Meet0Bot.VX_WEIGHT;
-import static org.hermitsocialclub.util.Meet0Bot.VY_WEIGHT;
-import static org.hermitsocialclub.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.hermitsocialclub.util.Meet0Bot.encoderTicksToInches;
-
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -38,29 +23,23 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.BotSwitch;
-import org.hermitsocialclub.util.Meet0Bot;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
-import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.util.Meet0Bot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.hermitsocialclub.util.Meet0Bot.*;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.
@@ -74,19 +53,19 @@ public class BaselineMecanumDrive extends MecanumDrive {
         FOLLOW_TRAJECTORY
     }
 
-    private FtcDashboard dashboard;
-    private NanoClock clock;
+    private final FtcDashboard dashboard;
+    private final NanoClock clock;
 
     private Mode mode;
 
-    private PIDFController turnController;
+    private final PIDFController turnController;
     private MotionProfile turnProfile;
     private double turnStart;
 
-    private DriveConstraints constraints;
-    private TrajectoryFollower follower;
+    private final DriveConstraints constraints;
+    private final TrajectoryFollower follower;
 
-    private LinkedList<Pose2d> poseHistory;
+    private final LinkedList<Pose2d> poseHistory;
 
     public DcMotorEx leftFront, leftRear, rightRear, rightFront, outtake, intake, wobbleArm, lift;
     public List<DcMotorEx> motors;
@@ -99,24 +78,24 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public RevColorSensorV3 color;
     public Servo hopperLift;
     public CRServo intakeThirdStage;
-   public DcMotor duck_wheel;
+    public DcMotor duck_wheel;
 
 
-    private VoltageSensor batteryVoltageSensor;
+    private final VoltageSensor batteryVoltageSensor;
 
     private Pose2d lastPoseOnTurn;
 
-    private PersistantTelemetry telemetry;
+    private final PersistantTelemetry telemetry;
 
     DriveConstants constant;
 
     BotSwitch botSwitch = new BotSwitch();
+
     {
         constant = new Meet0Bot();
     }
 
     public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
-
 
 
         super(Meet0Bot.kV, Meet0Bot.kA, Meet0Bot.kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -162,8 +141,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
 
-        lift = hardwareMap.get(DcMotorEx.class,"lift");
-        intake = hardwareMap.get(DcMotorEx.class,"intake");
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
         duck_wheel = hardwareMap.dcMotor.get("duckwheel");
 
 
@@ -191,9 +170,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerRR(hardwareMap,true));
-        telemetry.setData("Pose Estimatlocae",getPoseEstimate());
-        telemetry.setData("Pose",T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
+        setLocalizer(new T265LocalizerRR(hardwareMap, true));
+        telemetry.setData("Pose Estimatlocae", getPoseEstimate());
+        telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }
 
@@ -419,7 +398,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         rightFront.setPower(v3);
     }
 
-    public void setMotorDirections (DcMotorSimple.Direction[] directions){
+    public void setMotorDirections(DcMotorSimple.Direction[] directions) {
 
         int i = 0;
         for (DcMotorSimple.Direction direction : directions) {
@@ -456,31 +435,37 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         return (double) imu.getAngularVelocity().zRotationRate;
     }
-    public void liftWobble(double position, double power, AngleUnit unit, double timeout){
+
+    public void liftWobble(double position, double power, AngleUnit unit, double timeout) {
         ElapsedTime time = new ElapsedTime();
         double finPos = 0;
         double originalPosition = wobbleArm.getCurrentPosition();
-        switch (unit){
-            case DEGREES: finPos = originalPosition + 90 * position/360; break;
-            case RADIANS: finPos = originalPosition + 90 * position/(2*Math.PI); break;
+        switch (unit) {
+            case DEGREES:
+                finPos = originalPosition + 90 * position / 360;
+                break;
+            case RADIANS:
+                finPos = originalPosition + 90 * position / (2 * Math.PI);
+                break;
         }
         wobbleArm.setTargetPosition((int) finPos);
         wobbleArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         wobbleArm.setPower(power);
         time.reset();
-        while (wobbleArm.isBusy() && time.milliseconds() < timeout){
-            telemetry.setDebug("finPos",finPos);
-            telemetry.setDebug("currentPosition",wobbleArm.getCurrentPosition());
-            telemetry.setDebug("targetPosition",wobbleArm.getTargetPosition());
-            telemetry.setDebug("originalPosition",originalPosition);
-            telemetry.setDebug("positionDifference",wobbleArm.getTargetPosition() - originalPosition);
+        while (wobbleArm.isBusy() && time.milliseconds() < timeout) {
+            telemetry.setDebug("finPos", finPos);
+            telemetry.setDebug("currentPosition", wobbleArm.getCurrentPosition());
+            telemetry.setDebug("targetPosition", wobbleArm.getTargetPosition());
+            telemetry.setDebug("originalPosition", originalPosition);
+            telemetry.setDebug("positionDifference", wobbleArm.getTargetPosition() - originalPosition);
         }
 
         wobbleArm.setPower(0);
         wobbleArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        telemetry.setDebug("posError",finPos - wobbleArm.getCurrentPosition());
+        telemetry.setDebug("posError", finPos - wobbleArm.getCurrentPosition());
     }
-    public double ticksToRadians(double ticks, MotorConfigurationType motor, int GEAR_RATIO){
+
+    public double ticksToRadians(double ticks, MotorConfigurationType motor, int GEAR_RATIO) {
         return 2 * Math.PI * GEAR_RATIO * ticks / motor.getTicksPerRev();
     }
 }

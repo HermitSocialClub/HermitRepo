@@ -1,16 +1,7 @@
 package org.hermitsocialclub.drive;
 
 
-import static org.hermitsocialclub.util.Meet0Bot.BASE_CONSTRAINTS;
-import static org.hermitsocialclub.util.Meet0Bot.MOTOR_VELO_PID;
-import static org.hermitsocialclub.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.hermitsocialclub.util.Meet0Bot.TRACK_WIDTH;
-import static org.hermitsocialclub.util.Meet0Bot.WHEEL_BASE;
-import static org.hermitsocialclub.util.Meet0Bot.encoderTicksToInches;
-import static org.hermitsocialclub.util.Meet0Bot.getMotorVelocityF;
-
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -32,22 +23,15 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.hermitsocialclub.localizers.StandardTrackingWheelLocalizer;
+import org.hermitsocialclub.pandemicpanic.MoveUtils;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
 import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
-import org.hermitsocialclub.pandemicpanic.MoveUtils;
-import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,34 +56,35 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private PersistantTelemetry telemetry;
 
-    private FtcDashboard dashboard;
-    private NanoClock clock;
+    private final FtcDashboard dashboard;
+    private final NanoClock clock;
 
     private Mode mode;
 
-    private PIDFController turnController;
+    private final PIDFController turnController;
     private MotionProfile turnProfile;
     private double turnStart;
 
     public DriveConstraints constraints;
-    private TrajectoryFollower follower;
+    private final TrajectoryFollower follower;
 
-    private List<Pose2d> poseHistory;
+    private final List<Pose2d> poseHistory;
 
     public DcMotorEx leftFront, leftRear, rightRear, rightFront, arm, arm2;
     public Servo topClaw;
-    private List<DcMotorEx> motors;
-    private BNO055IMU imu;
+    private final List<DcMotorEx> motors;
+    private final BNO055IMU imu;
     public ColorSensor colorSensor;
     public HardwareMap hwMap;
 
-    public enum SKYSTONE{
-        ONE,TWO,THREE
+    public enum SKYSTONE {
+        ONE, TWO, THREE
     }
+
     public SKYSTONE skystone;
 
     public SampleMecanumDrive(HardwareMap hardwareMap, SkystoneVuforiaEngine vuforiaEngine) {
-        super(kV, kA, kStatic, TRACK_WIDTH,WHEEL_BASE);
+        super(kV, kA, kStatic, TRACK_WIDTH, WHEEL_BASE);
 
         hwMap = hardwareMap;
 
@@ -139,9 +124,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
-        arm = hardwareMap.get(DcMotorEx.class,"arm");
-        arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
-        topClaw = hardwareMap.get(Servo.class,"topClaw");
+        arm = hardwareMap.get(DcMotorEx.class, "arm");
+        arm2 = hardwareMap.get(DcMotorEx.class, "arm2");
+        topClaw = hardwareMap.get(Servo.class, "topClaw");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -162,16 +147,16 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: reverse any motors using DcMotor.setDirection()
-       rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
-           // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
-            setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,telemetry));
+        // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, telemetry));
     }
 
-    public SampleMecanumDrive(HardwareMap hardwareMap, SkystoneVuforiaEngine vuforiaEngine, PersistantTelemetry telemetry){
-        super(kV, kA, kStatic, TRACK_WIDTH,WHEEL_BASE);
+    public SampleMecanumDrive(HardwareMap hardwareMap, SkystoneVuforiaEngine vuforiaEngine, PersistantTelemetry telemetry) {
+        super(kV, kA, kStatic, TRACK_WIDTH, WHEEL_BASE);
 
         hwMap = hardwareMap;
 
@@ -213,9 +198,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftRear = hardwareMap.get(DcMotorEx.class, "left_drive_2");
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
-        arm = hardwareMap.get(DcMotorEx.class,"arm");
-        arm2 = hardwareMap.get(DcMotorEx.class,"arm2");
-        topClaw = hardwareMap.get(Servo.class,"topClaw");
+        arm = hardwareMap.get(DcMotorEx.class, "arm");
+        arm2 = hardwareMap.get(DcMotorEx.class, "arm2");
+        topClaw = hardwareMap.get(Servo.class, "topClaw");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -241,7 +226,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // setLocalizer(new MecanumLocalizerEVI(this,vuforiaEngine,new Pose2d(38,63)));
-        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap,telemetry));
+        setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap, telemetry));
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -437,6 +422,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
     }
+
     Integer linearCPR = 28; //counts per rotation
     Integer LinearGearRatio = 20; //NeverRest 20
     Double linearDiameter = 2.0;
@@ -444,7 +430,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void Linear(double Linear_Position, double inches) {
 
-        int move = (int) (Math.round(inches * LinearCPI/2));
+        int move = (int) (Math.round(inches * LinearCPI / 2));
 
         //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
         arm.setTargetPosition(arm.getCurrentPosition() - move);
@@ -466,7 +452,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     public void LinearSync(double Linear_Position, double inches) {
 
-        int move = (int) (Math.round(inches * LinearCPI/2));
+        int move = (int) (Math.round(inches * LinearCPI / 2));
 
         //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
         arm.setTargetPosition(arm.getCurrentPosition() - move);
@@ -481,14 +467,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         while (MoveUtils.areAllMotorsBusy(new DcMotor[]{arm})) {
             arm.setPower(-Linear_Position);
             arm2.setPower(Linear_Position);
-                update();
+            update();
 
         }
         arm.setPower(0);
         arm2.setPower(0);
-        while (isBusy()){update();}
+        while (isBusy()) {
+            update();
+        }
 
     }
+
     public void LinearTime(double Linear_Position, double time) {
 
         ElapsedTime armTime = new ElapsedTime();
@@ -506,14 +495,17 @@ public class SampleMecanumDrive extends MecanumDrive {
         arm.setPower(0);
         arm2.setPower(0);
     }
-    public void skystoneDetect(){
-        colorSensor = hwMap.get(ColorSensor.class,"Color Sensor");
-        while(isBusy()&& ((colorSensor.red() * colorSensor.green()) / Math.pow(colorSensor.blue(), 2) >= 3)){
-        if(!isBusy()){return;  }
+
+    public void skystoneDetect() {
+        colorSensor = hwMap.get(ColorSensor.class, "Color Sensor");
+        while (isBusy() && ((colorSensor.red() * colorSensor.green()) / Math.pow(colorSensor.blue(), 2) >= 3)) {
+            if (!isBusy()) {
+                return;
+            }
         }
-        if (getPoseEstimate().getX()>-40){
+        if (getPoseEstimate().getX() > -40) {
             skystone = SKYSTONE.ONE;
-        } else if(getPoseEstimate().getX() > -47){
+        } else if (getPoseEstimate().getX() > -47) {
             skystone = SKYSTONE.TWO;
         } else skystone = SKYSTONE.THREE;
     }

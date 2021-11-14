@@ -8,19 +8,16 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
-
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.LoggingUtil;
 import org.hermitsocialclub.util.RegressionUtil;
-import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hermitsocialclub.util.Meet0Bot.MAX_RPM;
-import static org.hermitsocialclub.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.hermitsocialclub.util.Meet0Bot.rpmToVelocity;
+import static org.hermitsocialclub.util.Meet0Bot.*;
 
 /*
  * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an
@@ -49,7 +46,7 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
         PersistantTelemetry pt = new PersistantTelemetry(super.telemetry);
 
-        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
 
         NanoClock clock = NanoClock.system();
 

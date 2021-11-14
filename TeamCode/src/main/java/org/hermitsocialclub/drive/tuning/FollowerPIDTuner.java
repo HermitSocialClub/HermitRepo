@@ -1,4 +1,3 @@
-
 package org.hermitsocialclub.drive.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -6,7 +5,6 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
@@ -32,7 +30,7 @@ public class FollowerPIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap,pt);
+        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
 
 
         Pose2d startPose = new Pose2d(0, 0, 0);

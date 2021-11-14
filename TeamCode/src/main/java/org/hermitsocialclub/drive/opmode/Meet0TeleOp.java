@@ -8,7 +8,6 @@ import com.qualcomm.hardware.motors.NeveRest40Gearmotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
@@ -37,7 +36,7 @@ public class Meet0TeleOp extends OpMode {
     public void init() {
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        drive.setPoseEstimate(new Pose2d(0,0));
+        drive.setPoseEstimate(new Pose2d(0, 0));
     }
 
     @Override
@@ -53,7 +52,7 @@ public class Meet0TeleOp extends OpMode {
     @Override
     public void loop() {
 
-        trigVal = gamepad1.left_trigger > 0.05 ? -gamepad1.left_trigger/10 :
+        trigVal = gamepad1.left_trigger > 0.05 ? -gamepad1.left_trigger / 10 :
                 gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0.000005;
 
         drive.lift.setVelocity(liftType
@@ -68,7 +67,7 @@ public class Meet0TeleOp extends OpMode {
 
         if (gamepad1.right_stick_button) {
             drive.duck_wheel.setPower(-0.3);
-        }else{
+        } else {
             drive.duck_wheel.setPower(0);
         }
        /* drive.duck_wheel.setVelocity(liftType
@@ -96,10 +95,9 @@ public class Meet0TeleOp extends OpMode {
         telemetry.setData("heading", pose.getHeading());*/
 
 
-
-        field.strokeCircle(pose.getX(),pose.getY(),angle);
+        field.strokeCircle(pose.getX(), pose.getY(), angle);
         double arrowX = Math.cos(angle) * robotRadius, arrowY = Math.sin(angle) * robotRadius;
-        double x1 = pose.getX() + arrowX  / 2, y1 = pose.getY() + arrowY / 2;
+        double x1 = pose.getX() + arrowX / 2, y1 = pose.getY() + arrowY / 2;
         double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());

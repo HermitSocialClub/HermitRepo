@@ -69,9 +69,11 @@ public class UltimateGoalConfiguration {
 
     /* local OpMode members. */
     private HardwareMap hwMap = null;
-    private ElapsedTime period = new ElapsedTime();
+    private final ElapsedTime period = new ElapsedTime();
 
-    /** Initialize standard Hardware interfaces */
+    /**
+     * Initialize standard Hardware interfaces
+     */
     public void init(HardwareMap ahwMap) {
 
         // Save reference to Hardware map
@@ -83,27 +85,26 @@ public class UltimateGoalConfiguration {
         left_drive_2 = hwMap.get(DcMotor.class, "left_drive_2");
         right_drive_2 = hwMap.get(DcMotor.class, "right_drive_2");
 
-        wobbleArm = hwMap.get(DcMotorEx.class,"wobbleArm");
-        wobbleGrab = hwMap.get(CRServo.class,"wobbleGrab");
+        wobbleArm = hwMap.get(DcMotorEx.class, "wobbleArm");
+        wobbleGrab = hwMap.get(CRServo.class, "wobbleGrab");
 
         imu = hwMap.get(BNO055IMU.class, "imu");
         leftEncoder = hwMap.get(DcMotorEx.class, "right_drive_2");
         rightEncoder = hwMap.get(DcMotorEx.class, "left_drive_2");
         frontEncoder = hwMap.get(DcMotorEx.class, "left_drive");
 
-        hopperLift = hwMap.get(Servo.class,"hopperLift");
-        color = hwMap.get(RevColorSensorV3.class,"color");
+        hopperLift = hwMap.get(Servo.class, "hopperLift");
+        color = hwMap.get(RevColorSensorV3.class, "color");
 
-        intakeThirdStage = hwMap.get(CRServo.class,"intakeThirdStage");
+        intakeThirdStage = hwMap.get(CRServo.class, "intakeThirdStage");
 
         expansionHub = hwMap.get(ExpansionHubEx.class, "Expansion Hub 2");
-        controlHub = hwMap.get(ExpansionHubEx.class,"Control Hub");
+        controlHub = hwMap.get(ExpansionHubEx.class, "Control Hub");
         motor0 = (ExpansionHubMotor) left_drive;
         motor1 = (ExpansionHubMotor) right_drive;
         motor2 = (ExpansionHubMotor) left_drive_2;
         motor3 = (ExpansionHubMotor) right_drive_2;
         outTakeBulk = (ExpansionHubMotor) hwMap.dcMotor.get("takeruFlyOut");
-
 
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors

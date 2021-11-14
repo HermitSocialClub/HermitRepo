@@ -2,14 +2,8 @@ package org.hermitsocialclub.legacy;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.hermitsocialclub.pandemicpanic.MecanumConfiguration;
 import org.hermitsocialclub.pandemicpanic.MoveUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
@@ -41,8 +35,8 @@ public class AutoUtils {
 
     public double initialAngle = 0;
 
-    private PersistantTelemetry telemetry;
-    private MecanumConfiguration robot;
+    private final PersistantTelemetry telemetry;
+    private final MecanumConfiguration robot;
 
     Supplier<AtomicInteger> left1Encoder;
     Supplier<AtomicInteger> left2Encoder;
@@ -51,7 +45,7 @@ public class AutoUtils {
 
     public volatile int[] encoders;
 
-    private ElapsedTime runtime;
+    private final ElapsedTime runtime;
     private final Supplier<Boolean> opModeIsActive;
     public boolean collisonDetected = false;
     public boolean exit = false;
@@ -75,9 +69,9 @@ public class AutoUtils {
 
     public enum SkystoneNumber {
 
-        ONE(-98, -60, -1,-1.5, 1500),
-        TWO(-86.5, -114, 8,6.5, 1500),
-        THREE(-105, -80, 15,14.5, 1800);
+        ONE(-98, -60, -1, -1.5, 1500),
+        TWO(-86.5, -114, 8, 6.5, 1500),
+        THREE(-105, -80, 15, 14.5, 1800);
         public double distance;
         public double returnBlock;
         public double secondBlockX;
@@ -271,9 +265,9 @@ public class AutoUtils {
         robot.left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        robot.left_drive.setPower(1.1*speed);
+        robot.left_drive.setPower(1.1 * speed);
         robot.left_drive_2.setPower(speed);
-        robot.right_drive.setPower(1.1*speed);
+        robot.right_drive.setPower(1.1 * speed);
         robot.right_drive_2.setPower(speed);
 
         while (robot.left_drive.isBusy() && robot.right_drive.isBusy() && robot.left_drive_2.isBusy() && robot./*Hello General Kenobi*/right_drive_2.isBusy()) {
@@ -353,9 +347,9 @@ public class AutoUtils {
                     robot.left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    robot.left_drive.setPower(1.1*speed);
+                    robot.left_drive.setPower(1.1 * speed);
                     robot.left_drive_2.setPower(speed);
-                    robot.right_drive.setPower(1.1*speed);
+                    robot.right_drive.setPower(1.1 * speed);
                     robot.right_drive_2.setPower(speed);
                     break;
                 }
@@ -372,9 +366,9 @@ public class AutoUtils {
                     robot.left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     robot.right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-                    robot.left_drive.setPower(1.1*speed);
+                    robot.left_drive.setPower(1.1 * speed);
                     robot.left_drive_2.setPower(speed);
-                    robot.right_drive.setPower(1.1*speed);
+                    robot.right_drive.setPower(1.1 * speed);
                     robot.right_drive_2.setPower(speed);
                     break;
                 }
@@ -451,7 +445,8 @@ public class AutoUtils {
             so assumes <8in is ONE, >8 and <16 is TWO and >16 is THREE.
             PROBLEM - this can fail depending on where BOT starts scanning.  is there a better
             solution?
-             */if (side == Side.BLUE) {
+             */
+            if (side == Side.BLUE) {
                 if (Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi <= 8) {
                     whichBlockIsTheSkystone = SkystoneNumber.ONE;
                 } else if (Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi >= 8 && Math.abs(robot.left_drive.getCurrentPosition() - initialposition) / cpi <= 19) {
@@ -480,6 +475,7 @@ public class AutoUtils {
         MoveUtils.setAllMotors(robot.drive_Motors, 0);
         return;
     }
+
     public void clampinator(double position) {
         robot.block_Clamper.setPosition(position);
         robot.block_Clamper_2.setPosition(Math.abs(position - 1));
@@ -601,47 +597,48 @@ public class AutoUtils {
         }
     }
 
-    public void TurnRight2(long degrees, double speed){
+    public void TurnRight2(long degrees, double speed) {
         Orientation orientation;
         orientation = robot.imu.getAngularOrientation();
         double xangle = orientation.firstAngle;
         double initialangle = xangle;
 
-            while (xangle - initialangle <= degrees) {
-                telemetry.setData("Right turn", "Yes");
-                MoveUtils.setEachMotor(robot.drive_Motors,new double[]{-speed, -speed, speed, speed});
-                orientation = robot.imu.getAngularOrientation();
-                xangle = orientation.firstAngle;
-                telemetry.setData("Degrees", xangle);
-                telemetry.setData("Initial Position", initialangle);
-                telemetry.setData("Change in Degrees", xangle - initialangle);
-            }
-            MoveUtils.setAllMotors(robot.drive_Motors, 0);
+        while (xangle - initialangle <= degrees) {
+            telemetry.setData("Right turn", "Yes");
+            MoveUtils.setEachMotor(robot.drive_Motors, new double[]{-speed, -speed, speed, speed});
+            orientation = robot.imu.getAngularOrientation();
+            xangle = orientation.firstAngle;
+            telemetry.setData("Degrees", xangle);
+            telemetry.setData("Initial Position", initialangle);
+            telemetry.setData("Change in Degrees", xangle - initialangle);
+        }
+        MoveUtils.setAllMotors(robot.drive_Motors, 0);
     }
 
-    public void gyroChecker(){
-        gyroCheck = new Thread(()->{
+    public void gyroChecker() {
+        gyroCheck = new Thread(() -> {
             try {
                 Orientation orientation = robot.imu.getAngularOrientation();
                 double angle;
                 double initialAngle = orientation.firstAngle;
                 while (!exit) {
                     angle = orientation.firstAngle - initialAngle;
-                    if (angle > angleThreshold){
-                    gyroPause.set(true);
-                    TurnRight((long)angle,.2);
+                    if (angle > angleThreshold) {
+                        gyroPause.set(true);
+                        TurnRight((long) angle, .2);
                     }
                     telemetry.setData("Angle Elapsed", angle);
-                    telemetry.setData("Pause for Gyro Adjustment?",gyroPause.get());
+                    telemetry.setData("Pause for Gyro Adjustment?", gyroPause.get());
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException("Thread " +
                         "interrupted");
-            }});
+            }
+        });
         gyroCheck.start();
     }
 
-    public void gyroSyncStrafe(double inches, double speed){
+    public void gyroSyncStrafe(double inches, double speed) {
 
         MoveUtils.resetEncoders(robot.drive_Motors);
 
@@ -657,9 +654,9 @@ public class AutoUtils {
         ElapsedTime cycleTime = new ElapsedTime();
         ElapsedTime updateTime = new ElapsedTime();
 
-        if(inches > 0){
+        if (inches > 0) {
             currentDirection = Direction.RIGHT;
-        }else currentDirection = Direction.LEFT;
+        } else currentDirection = Direction.LEFT;
 
         double P = .2;
         double I = 0.2;
@@ -689,43 +686,42 @@ public class AutoUtils {
         robot.right_drive_2.setPower(speed);
 
 
-
-        telemetry.setData("Initial Angle",initialAngle);
+        telemetry.setData("Initial Angle", initialAngle);
 
 
         while (MoveUtils.areAllMotorsBusy(robot.drive_Motors)) {
-        o = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-        currentangle = o.firstAngle;
+            o = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+            currentangle = o.firstAngle;
 
-        telemetry.setData("Current Angle",currentangle);
+            telemetry.setData("Current Angle", currentangle);
 
-        error = initialAngle - currentangle;
-        integral = (integral/3) + error * cycleTime.seconds();
-        derivative = (error - lastError)/cycleTime.seconds();
+            error = initialAngle - currentangle;
+            integral = (integral / 3) + error * cycleTime.seconds();
+            derivative = (error - lastError) / cycleTime.seconds();
 
-        telemetry.setData("Error", error);
-        telemetry.setData("Integral",integral);
-        telemetry.setData("Derivative",derivative);
+            telemetry.setData("Error", error);
+            telemetry.setData("Integral", integral);
+            telemetry.setData("Derivative", derivative);
 
-        correction = P * error + I * integral + D * derivative;
+            correction = P * error + I * integral + D * derivative;
 
-        MoveUtils.setEachMotor(robot.drive_Motors,new double[]{speed-correction,speed+correction,
-                speed-correction,speed+correction});
+            MoveUtils.setEachMotor(robot.drive_Motors, new double[]{speed - correction, speed + correction,
+                    speed - correction, speed + correction});
 
-        if(error != lastError){
-            telemetry.setData("Update Time", updateTime.milliseconds());
-            updateTime.reset();
-        }
+            if (error != lastError) {
+                telemetry.setData("Update Time", updateTime.milliseconds());
+                updateTime.reset();
+            }
 
-        if(!MoveUtils.areAllMotorsBusy(robot.drive_Motors) || !MoveUtils.areAllMotorsPowered(robot.drive_Motors)){
-            telemetry.setData("Stopping the Robot","");
-            MoveUtils.setAllMotors(robot.drive_Motors,0);
-            return;
-        }
+            if (!MoveUtils.areAllMotorsBusy(robot.drive_Motors) || !MoveUtils.areAllMotorsPowered(robot.drive_Motors)) {
+                telemetry.setData("Stopping the Robot", "");
+                MoveUtils.setAllMotors(robot.drive_Motors, 0);
+                return;
+            }
 
-        lastError = error;
-        telemetry.setData("cycle time",cycleTime.milliseconds());
-        cycleTime.reset();
+            lastError = error;
+            telemetry.setData("cycle time", cycleTime.milliseconds());
+            cycleTime.reset();
 
         }
         robot.right_drive.setPower(0);
@@ -733,24 +729,24 @@ public class AutoUtils {
         robot.right_drive_2.setPower(0);
         robot.left_drive_2.setPower(0);
         return;
-        }
+    }
 
     public void syncStrafe(double inches, double speed) {
 
-        if(inches > 0){
+        if (inches > 0) {
             currentDirection = Direction.RIGHT;
-        }else currentDirection = Direction.LEFT;
+        } else currentDirection = Direction.LEFT;
         //
         int move = (int) (Math.round(inches * cpi * meccyBias));
         //
 
-        PID pid = new PID(1.4,1.4,.8);
+        PID pid = new PID(1.4, 1.4, .8);
         pid.setOutputFilter(.2);
 
-        double[] integral = {0,0,0};
-        double[] derivative = {0,0,0};
-        double[] lastError = {0,0,0};
-        double[] finalPid = {0,0,0};
+        double[] integral = {0, 0, 0};
+        double[] derivative = {0, 0, 0};
+        double[] lastError = {0, 0, 0};
+        double[] finalPid = {0, 0, 0};
 
         double referenceSpeed;
         double lastReferenceEncoder = robot.right_drive_2.getCurrentPosition();
@@ -763,9 +759,9 @@ public class AutoUtils {
         ElapsedTime right1CycleTime = new ElapsedTime();
         ElapsedTime left2CycleTime = new ElapsedTime();
         ElapsedTime[] motorCycleTimes = {left1CycleTime, right1CycleTime, left2CycleTime};
-        int[] currentEncoders = new int[] {robot.left_drive.getCurrentPosition(),robot.right_drive.getCurrentPosition(),
+        int[] currentEncoders = new int[]{robot.left_drive.getCurrentPosition(), robot.right_drive.getCurrentPosition(),
                 robot.left_drive_2.getCurrentPosition()};
-        int[] lastEncoders = {robot.left_drive.getCurrentPosition(),robot.right_drive.getCurrentPosition(),
+        int[] lastEncoders = {robot.left_drive.getCurrentPosition(), robot.right_drive.getCurrentPosition(),
                 robot.left_drive_2.getCurrentPosition()};
 
         robot.left_drive_2.setTargetPosition(robot.left_drive_2.getCurrentPosition() - move);
@@ -786,17 +782,18 @@ public class AutoUtils {
         while (robot.left_drive.isBusy() && robot.right_drive.isBusy() && robot.left_drive_2.isBusy() && robot.right_drive_2.isBusy()) {
             referenceEncoder = robot.right_drive_2.getCurrentPosition();
             referenceEncoderDifference = referenceEncoder - lastReferenceEncoder;
-            if(referenceEncoderDifference > 0){
-                referenceSpeed = referenceEncoderDifference/referenceCycleTime.seconds();
+            if (referenceEncoderDifference > 0) {
+                referenceSpeed = referenceEncoderDifference / referenceCycleTime.seconds();
                 referenceCycleTime.reset();
                 lastReferenceEncoder = referenceEncoder;
                 for (int i = 0; i < robot.drive_Motors.length - 1; i++) {
                     finalPid[i] = pid.getOutput(Math.abs(((robot.drive_Motors[i].getCurrentPosition()
-                            - lastEncoders[i])/motorCycleTimes[i].seconds()))
-                            /robot.drive_Motors[i].getMotorType().getAchieveableMaxTicksPerSecond(), referenceEncoder);
+                            - lastEncoders[i]) / motorCycleTimes[i].seconds()))
+                            / robot.drive_Motors[i].getMotorType().getAchieveableMaxTicksPerSecond(), referenceEncoder);
                     motorCycleTimes[i].reset();
-                }}
-            MoveUtils.setEachMotor(robot.drive_Motors,new double[]{speed*finalPid[0],speed*finalPid[1],speed*finalPid[2],speed});
+                }
+            }
+            MoveUtils.setEachMotor(robot.drive_Motors, new double[]{speed * finalPid[0], speed * finalPid[1], speed * finalPid[2], speed});
         }
         robot.right_drive.setPower(0);
         robot.left_drive.setPower(0);
@@ -806,24 +803,24 @@ public class AutoUtils {
     }
 
     public void tunedSyncStrafe(double inches, double speed, double P, double I, double D) {
-        if(inches > 0){
+        if (inches > 0) {
             currentDirection = Direction.RIGHT;
-        }else currentDirection = Direction.LEFT;
+        } else currentDirection = Direction.LEFT;
         //
         int move = (int) (Math.round(inches * cpi * meccyBias));
         //
 
-        double[] integral = {0,0,0};
-        double[] derivative = {0,0,0};
-        double[] lastError = {0,0,0};
-        double[] finalPid = {0,0,0};
+        double[] integral = {0, 0, 0};
+        double[] derivative = {0, 0, 0};
+        double[] lastError = {0, 0, 0};
+        double[] finalPid = {0, 0, 0};
 
         double referenceSpeed;
         double lastReferenceEncoder = robot.right_drive_2.getCurrentPosition();
         double referenceEncoder = robot.right_drive_2.getCurrentPosition();
         double referenceEncoderDifference;
 
-        PID pid = new PID(.0,.0,.0,1);
+        PID pid = new PID(.0, .0, .0, 1);
         pid.setOutputFilter(.1);
 
         ElapsedTime referenceCycleTime = new ElapsedTime();
@@ -831,7 +828,7 @@ public class AutoUtils {
         ElapsedTime right1CycleTime = new ElapsedTime();
         ElapsedTime left2CycleTime = new ElapsedTime();
         ElapsedTime[] motorCycleTimes = {left1CycleTime, right1CycleTime, left2CycleTime};
-        double[] lastEncoders = {robot.left_drive.getCurrentPosition(),robot.right_drive.getCurrentPosition(),
+        double[] lastEncoders = {robot.left_drive.getCurrentPosition(), robot.right_drive.getCurrentPosition(),
                 robot.left_drive_2.getCurrentPosition()};
 
         robot.left_drive_2.setTargetPosition(robot.left_drive_2.getCurrentPosition() - move);
@@ -850,23 +847,26 @@ public class AutoUtils {
         robot.right_drive_2.setPower(speed);
         //
         while (robot.left_drive.isBusy() && robot.right_drive.isBusy() && robot.left_drive_2.isBusy() && robot.right_drive_2.isBusy()) {
-            try{
-            sleep(500);}catch (InterruptedException e){}
+            try {
+                sleep(500);
+            } catch (InterruptedException e) {
+            }
             referenceEncoder = robot.right_drive_2.getCurrentPosition();
             referenceEncoderDifference = referenceEncoder - lastReferenceEncoder;
-            if(referenceEncoderDifference > 0){
-                referenceSpeed = (referenceEncoderDifference/referenceCycleTime.seconds())
-                        /robot.right_drive_2.getMotorType().getAchieveableMaxTicksPerSecond();
+            if (referenceEncoderDifference > 0) {
+                referenceSpeed = (referenceEncoderDifference / referenceCycleTime.seconds())
+                        / robot.right_drive_2.getMotorType().getAchieveableMaxTicksPerSecond();
                 pid.setSetpoint(referenceSpeed);
                 referenceCycleTime.reset();
                 lastReferenceEncoder = referenceEncoder;
                 for (int i = 0; i < robot.drive_Motors.length - 1; i++) {
                     finalPid[i] = pid.getOutput(Math.abs(((robot.drive_Motors[i].getCurrentPosition()
-                            - lastEncoders[i])/motorCycleTimes[i].seconds()))
-                            /robot.drive_Motors[i].getMotorType().getAchieveableMaxTicksPerSecond(), referenceEncoder);
+                            - lastEncoders[i]) / motorCycleTimes[i].seconds()))
+                            / robot.drive_Motors[i].getMotorType().getAchieveableMaxTicksPerSecond(), referenceEncoder);
                     motorCycleTimes[i].reset();
-                }}
-            MoveUtils.setEachMotor(robot.drive_Motors,new double[]{speed+finalPid[0],speed+finalPid[1],speed+finalPid[2],speed});
+                }
+            }
+            MoveUtils.setEachMotor(robot.drive_Motors, new double[]{speed + finalPid[0], speed + finalPid[1], speed + finalPid[2], speed});
         }
         robot.right_drive.setPower(0);
         robot.left_drive.setPower(0);
@@ -874,25 +874,26 @@ public class AutoUtils {
         robot.left_drive_2.setPower(0);
         return;
     }
+
     public void syncForward(double inches, double speed) {
-        if(inches > 0){
+        if (inches > 0) {
             currentDirection = Direction.FORWARDS;
-        }else currentDirection = Direction.BACKWARDS;
+        } else currentDirection = Direction.BACKWARDS;
         //
         int move = (int) (Math.round(inches * cpi * meccyBias));
         //
 
-        double[] integral = {0,0,0};
-        double[] derivative = {0,0,0};
-        double[] lastError = {0,0,0};
-        double[] finalPid = {0,0,0};
+        double[] integral = {0, 0, 0};
+        double[] derivative = {0, 0, 0};
+        double[] lastError = {0, 0, 0};
+        double[] finalPid = {0, 0, 0};
 
         double referenceSpeed;
         double lastReferenceEncoder = robot.right_drive_2.getCurrentPosition();
         double referenceEncoder = robot.right_drive_2.getCurrentPosition();
         double referenceEncoderDifference;
 
-        PID pid = new PID(1.4,1.4,.8);
+        PID pid = new PID(1.4, 1.4, .8);
         pid.setOutputFilter(.1);
 
         ElapsedTime referenceCycleTime = new ElapsedTime();
@@ -900,7 +901,7 @@ public class AutoUtils {
         ElapsedTime right1CycleTime = new ElapsedTime();
         ElapsedTime left2CycleTime = new ElapsedTime();
         ElapsedTime[] motorCycleTimes = {left1CycleTime, right1CycleTime, left2CycleTime};
-        double[] lastEncoders = {robot.left_drive.getCurrentPosition(),robot.right_drive.getCurrentPosition(),
+        double[] lastEncoders = {robot.left_drive.getCurrentPosition(), robot.right_drive.getCurrentPosition(),
                 robot.left_drive_2.getCurrentPosition()};
 
         robot.left_drive_2.setTargetPosition(robot.left_drive_2.getCurrentPosition() + move);
@@ -921,17 +922,18 @@ public class AutoUtils {
         while (robot.left_drive.isBusy() && robot.right_drive.isBusy() && robot.left_drive_2.isBusy() && robot.right_drive_2.isBusy()) {
             referenceEncoder = robot.right_drive_2.getCurrentPosition();
             referenceEncoderDifference = referenceEncoder - lastReferenceEncoder;
-            if(referenceEncoderDifference > 0){
-                referenceSpeed = referenceEncoderDifference/referenceCycleTime.seconds();
+            if (referenceEncoderDifference > 0) {
+                referenceSpeed = referenceEncoderDifference / referenceCycleTime.seconds();
                 referenceCycleTime.reset();
                 lastReferenceEncoder = referenceEncoder;
                 for (int i = 0; i < robot.drive_Motors.length - 1; i++) {
                     finalPid[i] = pid.getOutput(Math.abs(((robot.drive_Motors[i].getCurrentPosition()
-                            - lastEncoders[i])/motorCycleTimes[i].seconds()))
-                            /robot.drive_Motors[i].getMotorType().getAchieveableMaxTicksPerSecond(), referenceEncoder);
+                            - lastEncoders[i]) / motorCycleTimes[i].seconds()))
+                            / robot.drive_Motors[i].getMotorType().getAchieveableMaxTicksPerSecond(), referenceEncoder);
                     motorCycleTimes[i].reset();
-                }}
-            MoveUtils.setEachMotor(robot.drive_Motors,new double[]{speed*finalPid[0],speed*finalPid[1],speed*finalPid[2],speed});
+                }
+            }
+            MoveUtils.setEachMotor(robot.drive_Motors, new double[]{speed * finalPid[0], speed * finalPid[1], speed * finalPid[2], speed});
         }
         robot.right_drive.setPower(0);
         robot.left_drive.setPower(0);
@@ -942,17 +944,21 @@ public class AutoUtils {
 
     }
 
-    public void startEncoderChecker(){
-        encoderCheck = new Thread(()->{
+    public void startEncoderChecker() {
+        encoderCheck = new Thread(() -> {
             try {
-            while(!encoderCheck.isInterrupted()){
-                for (int i = 0; i < encoders.length; i++) {
-                    encoders[i] = robot.drive_Motors[i].getCurrentPosition();
+                while (!encoderCheck.isInterrupted()) {
+                    for (int i = 0; i < encoders.length; i++) {
+                        encoders[i] = robot.drive_Motors[i].getCurrentPosition();
+                    }
                 }
+            } catch (Exception e) {
+                throw new RuntimeException("Encoder Thread Interrupted");
             }
-        }catch (Exception e){ throw new RuntimeException("Encoder Thread Interrupted"); }});
+        });
         encoderCheck.start();
     }
+
     Integer linearCPR = 28; //counts per rotation
     Integer LinearGearRatio = 20; //NeverRest 20
     Double linearDiameter = 2.0;
@@ -960,7 +966,7 @@ public class AutoUtils {
 
     public void Linear(double Linear_Position, double timeoutSeconds, double inches) {
 
-        int move = (int) (Math.round(inches * LinearCPI/2));
+        int move = (int) (Math.round(inches * LinearCPI / 2));
 
         //robot.arm2.setTargetPosition(robot.arm2.getCurrentPosition() + move);
         robot.arm.setTargetPosition(robot.arm.getCurrentPosition() - move);

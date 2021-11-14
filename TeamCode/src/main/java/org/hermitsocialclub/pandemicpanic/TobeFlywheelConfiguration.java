@@ -30,15 +30,8 @@
 package org.hermitsocialclub.pandemicpanic;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
@@ -73,9 +66,11 @@ public class TobeFlywheelConfiguration {
 
     /* local OpMode members. */
     private HardwareMap hwMap = null;
-    private ElapsedTime period = new ElapsedTime();
+    private final ElapsedTime period = new ElapsedTime();
 
-    /** Initialize standard Hardware interfaces */
+    /**
+     * Initialize standard Hardware interfaces
+     */
     public void init(HardwareMap ahwMap) {
 
         // Save reference to Hardware map
@@ -100,7 +95,7 @@ public class TobeFlywheelConfiguration {
         leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
         rightEncoder = hwMap.get(DcMotorEx.class, "tapeShooter");
         frontEncoder = hwMap.get(DcMotorEx.class, "arm");
-        spinner = hwMap.get(DcMotorEx.class,"tapeShooter" +
+        spinner = hwMap.get(DcMotorEx.class, "tapeShooter" +
                 "");
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors

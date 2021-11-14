@@ -5,12 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+
 @Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Mecanum Base Op", group = "Hermit")
 
 public class MecanumBaseOp extends LinearOpMode {
 
-    private PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+    private final PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     MecanumConfiguration robot = new MecanumConfiguration();
     ElapsedTime runtime = new ElapsedTime();
     private boolean lastAMash = false;
@@ -118,21 +119,21 @@ public class MecanumBaseOp extends LinearOpMode {
                 topClawPosition = 0.2;
                 robot.topClaw.setPosition(topClawPosition);
             }
-            if(gamepad1.x){
+            if (gamepad1.x) {
                 robot.spinner.setPower(1);
-            }else if(gamepad1.y){
+            } else if (gamepad1.y) {
                 robot.spinner.setPower(.75);
-            } else if(gamepad1.a){
+            } else if (gamepad1.a) {
                 robot.spinner.setPower(.5);
-            }else if(gamepad1.b){
+            } else if (gamepad1.b) {
                 robot.spinner.setPower(.25);
             }
-            pt.setDebug("leftEncoder ticks",robot.leftEncoder.getCurrentPosition()-initialLeftTicks);
-            pt.setDebug("leftEncoder velocity",robot.leftEncoder.getVelocity());
-            pt.setDebug("rightEncoder ticks",robot.rightEncoder.getCurrentPosition()-initialRightTicks);
-            pt.setDebug("rightEncoder velocity",robot.rightEncoder.getVelocity());
-            pt.setDebug("topEncoder ticks",robot.frontEncoder.getCurrentPosition()-initialTopTicks);
-            pt.setDebug("topEncoder velocity",robot.frontEncoder.getVelocity());
+            pt.setDebug("leftEncoder ticks", robot.leftEncoder.getCurrentPosition() - initialLeftTicks);
+            pt.setDebug("leftEncoder velocity", robot.leftEncoder.getVelocity());
+            pt.setDebug("rightEncoder ticks", robot.rightEncoder.getCurrentPosition() - initialRightTicks);
+            pt.setDebug("rightEncoder velocity", robot.rightEncoder.getVelocity());
+            pt.setDebug("topEncoder ticks", robot.frontEncoder.getCurrentPosition() - initialTopTicks);
+            pt.setDebug("topEncoder velocity", robot.frontEncoder.getVelocity());
         }
 
     }

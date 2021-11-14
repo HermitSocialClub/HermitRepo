@@ -7,9 +7,8 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @TeleOp(name = "Local Slam")
@@ -30,7 +29,7 @@ public class LocalSlamTestOp extends OpMode {
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.setPoseEstimate(new Pose2d(0,0));
+        drive.setPoseEstimate(new Pose2d(0, 0));
     }
 
     @Override
@@ -45,7 +44,6 @@ public class LocalSlamTestOp extends OpMode {
 
     @Override
     public void loop() {
-
 
 
         packet = new TelemetryPacket();
@@ -69,10 +67,9 @@ public class LocalSlamTestOp extends OpMode {
         telemetry.setData("heading", pose.getHeading());*/
 
 
-
-        field.strokeCircle(pose.getX(),pose.getY(),angle);
+        field.strokeCircle(pose.getX(), pose.getY(), angle);
         double arrowX = Math.cos(angle) * robotRadius, arrowY = Math.sin(angle) * robotRadius;
-        double x1 = pose.getX() + arrowX  / 2, y1 = pose.getY() + arrowY / 2;
+        double x1 = pose.getX() + arrowX / 2, y1 = pose.getY() + arrowY / 2;
         double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());

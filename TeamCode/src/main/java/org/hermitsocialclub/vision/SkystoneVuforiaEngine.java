@@ -1,7 +1,6 @@
 package org.hermitsocialclub.vision;
 
 import android.util.Pair;
-
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,23 +8,17 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.vuforia.CameraDevice;
 import com.vuforia.Vec3F;
-
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.android.util.Size;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCaptureRequest;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraException;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-
+import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.hermitsocialclub.legacy.AutoUtils;
 import org.hermitsocialclub.legacy.DataDump;
 import org.hermitsocialclub.pandemicpanic.MecanumConfiguration;
-import org.hermitsocialclub.telecat.*;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,24 +31,24 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
-import static  org.hermitsocialclub.legacy.VuforiaConfig.*;
+import static org.hermitsocialclub.legacy.VuforiaConfig.*;
 
-@SuppressWarnings(value="defaultLocale")
+@SuppressWarnings(value = "defaultLocale")
 public class SkystoneVuforiaEngine implements IVuforiaEngine {
 
     public volatile boolean hasAlreadyBeenInit = false;
 
     //Constants
-    public static final double countsPerCentimetre = (countsPerRevolution/driveGearReduction)/(wheelDiameter*Math.PI);
-    public static final float mmTargetHeight = (6) ;
-    public static final float stoneZ = 2.00f ;
-    public static final float bridgeZ = 6.42f ;
-    public static final float bridgeY = 23 ;
-    public static final float bridgeX = 5.18f ;
+    public static final double countsPerCentimetre = (countsPerRevolution / driveGearReduction) / (wheelDiameter * Math.PI);
+    public static final float mmTargetHeight = (6);
+    public static final float stoneZ = 2.00f;
+    public static final float bridgeZ = 6.42f;
+    public static final float bridgeY = 23;
+    public static final float bridgeX = 5.18f;
     public static final float bridgeRotY = 59;
     public static final float bridgeRotZ = 180;
-    public static final float halfField = 72 ;
-    public static final float quadField = 36 ;
+    public static final float halfField = 72;
+    public static final float quadField = 36;
 
     //Instance Variables
     VuforiaTrackables targetsSkyStone;
@@ -67,21 +60,21 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
     private boolean targetVisible = false;
     private float phoneXRotate = 0;
     private float phoneYRotate = 0;
-    private float phoneZRotate = -90;
+    private final float phoneZRotate = -90;
     protected Orientation orientation;
     protected double xangle;
     protected BNO055IMU imu;
-    double[] pos = {23,-halfField};
+    double[] pos = {23, -halfField};
     List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
     public double PositionPrecision = 0.5;
     private double[] angles;
-    private ElapsedTime runTime = new ElapsedTime();
+    private final ElapsedTime runTime = new ElapsedTime();
 
-    public enum setPositionConstancy{ X,Y, XY, NONE}
+    public enum setPositionConstancy {X, Y, XY, NONE}
 
 
     //Userful Variables
-    private ConcurrentHashMap<String, VuforiaTrackableDefaultListener> iSeeYou = new ConcurrentHashMap<String, VuforiaTrackableDefaultListener>(15);
+    private final ConcurrentHashMap<String, VuforiaTrackableDefaultListener> iSeeYou = new ConcurrentHashMap<String, VuforiaTrackableDefaultListener>(15);
 
 
     /*
@@ -103,7 +96,7 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
 
     @Override
     public void init(final HardwareMap ahwMap) {
-        if(!hasAlreadyBeenInit) {
+        if (!hasAlreadyBeenInit) {
             new Thread(() -> {
                 try {
                     long startTime = System.currentTimeMillis();
@@ -225,7 +218,7 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
 
                     targetsSkyStone.activate();
                     telemetry.setData("hmm", "YES! YES! YES! YES!");
-                    telemetry.setData("SVE_INIT", "Done in %.2f seconds!", ((double)(System.currentTimeMillis() - startTime))/1000D);
+                    telemetry.setData("SVE_INIT", "Done in %.2f seconds!", ((double) (System.currentTimeMillis() - startTime)) / 1000D);
                     hasAlreadyBeenInit = true;
                 } catch (Exception e) {
                     telemetry.setData("SVE_INIT", "Could not start Vuforia: " + DataDump.dump(e));
@@ -242,18 +235,18 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
     }
 
     @Override
-    @SuppressWarnings(value="unused")
+    @SuppressWarnings(value = "unused")
     public OpenGLMatrix getPose(String id) {
-        if(!iSeeYou.containsKey(id)) throw new NullPointerException("Target doesn't exist");
+        if (!iSeeYou.containsKey(id)) throw new NullPointerException("Target doesn't exist");
         OpenGLMatrix pose = iSeeYou.get(id).getVuforiaCameraFromTarget();
         return pose;
     }
 
     @Override
     public Vec3F getPosition(String id) {
-        if(!iSeeYou.containsKey(id)) throw new NullPointerException("Target doesn't exist");
+        if (!iSeeYou.containsKey(id)) throw new NullPointerException("Target doesn't exist");
         OpenGLMatrix pose = getPose(id);
-        if(pose == null) return new Vec3F(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
+        if (pose == null) return new Vec3F(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY);
         else return new Vec3F(pose.get(0, 3), pose.get(1, 3), pose.get(2, 3));
     }
 
@@ -305,7 +298,8 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         ));
         return objectY;
     }
-    public Pair<Pose2d,Boolean> scanPose() {
+
+    public Pair<Pose2d, Boolean> scanPose() {
         Pose2d pose = new Pose2d();
         VuforiaTrackable t = allTrackables.get(0);
         double heading = 0;
@@ -313,19 +307,20 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         Vec3F position = new Vec3F();
         String id = "";
         boolean foundTarget = false;
-        for(VuforiaTrackable trackable : allTrackables){
-        position = getPosition(trackable.getName());
-        heading = get_Orientation()[0];
-        if(position.getData()[2] != Double.POSITIVE_INFINITY){
-            foundTarget = true;
-            t = trackable;
-            break; }
+        for (VuforiaTrackable trackable : allTrackables) {
+            position = getPosition(trackable.getName());
+            heading = get_Orientation()[0];
+            if (position.getData()[2] != Double.POSITIVE_INFINITY) {
+                foundTarget = true;
+                t = trackable;
+                break;
+            }
         }
-        if(foundTarget){
+        if (foundTarget) {
             position.setData(
-                new float[]{position.getData()[2] + t.getLocation().get(2,3),
-                position.getData()[0] + t.getLocation().get(0,3)});
-            pose = new Pose2d(position.getData()[0],position.getData()[1],heading);
+                    new float[]{position.getData()[2] + t.getLocation().get(2, 3),
+                            position.getData()[0] + t.getLocation().get(0, 3)});
+            pose = new Pose2d(position.getData()[0], position.getData()[1], heading);
         }
         telemetry.setDebug("VUF_DEBUG0", String.format(
                 "position Vec3f: %s",
@@ -336,8 +331,9 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
                 "X coordinate of %s %.3f",
                 id, objectX
         ));
-        return new Pair<>(pose,foundTarget);
+        return new Pair<>(pose, foundTarget);
     }
+
     public void setPosition(double x2, double y2, double speed, List<VuforiaTrackable> allTrackables, setPositionConstancy c) {
         {
             robot.left_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -351,7 +347,7 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         double v4 = 0;
         double theta;
         debugFindLocation(allTrackables);
-        switch (c){
+        switch (c) {
             case X: {
                 debugFindLocation(allTrackables);
                 x2 = getPos()[0];
@@ -375,7 +371,7 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         }
         while (Math.sqrt(Math.pow((y2 - getPos()[1]), 2) + Math.pow((x2 - getPos()[0]), 2)) >= PositionPrecision) {
             debugFindLocation(allTrackables);
-            switch (c){
+            switch (c) {
                 case X: {
                     debugFindLocation(allTrackables);
                     x2 = getPos()[0];
@@ -397,7 +393,7 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
                 }
 
             }
-            if(!isTargetFound(allTrackables)){
+            if (!isTargetFound(allTrackables)) {
                 robot.left_drive.setPower(0);
                 robot.right_drive.setPower(0);
                 robot.left_drive_2.setPower(0);
@@ -406,24 +402,26 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
                 v2 = 0;
                 v3 = 0;
                 v4 = 0;
-            }else{
-            theta = Math.atan2((y2 - getPos()[1]) , (x2 - getPos()[0]));
-            v1 = cos(theta) * speed ;
-            v2 = Math.sin(theta) * speed ;
-            v3 = Math.sin(theta) * speed;
-            v4 = cos(theta) * speed;
-            robot.left_drive.setPower(0);
-            robot.right_drive.setPower(0);
-            robot.left_drive_2.setPower(0);
-            robot.right_drive_2.setPower(0);}
-            telemetry.setDebug("MOTOR_POWERS","V1: %f, V2: %f, V3: %f, V4: %f", v1, v2, v3, v4);
-            telemetry.setDebug("CURRENT_POSITION","X: %f, Y: % f",getPos()[0],getPos()[1]);
-            telemetry.setDebug("TARGET_POSITION","X: %f, Y: %f", x2,y2);
-            telemetry.setDebug("DISTANCE_REMAINING",Math.sqrt(Math.pow((y2 - getPos()[1]), 2) + Math.pow((x2 - getPos()[0]), 2)));
-            telemetry.setDebug("TARGET_VISIBLE",isTargetFound(allTrackables));
+            } else {
+                theta = Math.atan2((y2 - getPos()[1]), (x2 - getPos()[0]));
+                v1 = cos(theta) * speed;
+                v2 = Math.sin(theta) * speed;
+                v3 = Math.sin(theta) * speed;
+                v4 = cos(theta) * speed;
+                robot.left_drive.setPower(0);
+                robot.right_drive.setPower(0);
+                robot.left_drive_2.setPower(0);
+                robot.right_drive_2.setPower(0);
+            }
+            telemetry.setDebug("MOTOR_POWERS", "V1: %f, V2: %f, V3: %f, V4: %f", v1, v2, v3, v4);
+            telemetry.setDebug("CURRENT_POSITION", "X: %f, Y: % f", getPos()[0], getPos()[1]);
+            telemetry.setDebug("TARGET_POSITION", "X: %f, Y: %f", x2, y2);
+            telemetry.setDebug("DISTANCE_REMAINING", Math.sqrt(Math.pow((y2 - getPos()[1]), 2) + Math.pow((x2 - getPos()[0]), 2)));
+            telemetry.setDebug("TARGET_VISIBLE", isTargetFound(allTrackables));
 
         }
     }
+
     public void setPositionColor(double x2, double y2, double speed, List<VuforiaTrackable> allTrackables, setPositionConstancy c) {
         {
             robot.left_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -436,7 +434,7 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         double v3;
         double v4;
         double theta;
-        switch (c){
+        switch (c) {
             case X: {
                 debugFindLocation(allTrackables);
                 x2 = getPos()[0];
@@ -459,9 +457,9 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
 
         }
         while (Math.sqrt(Math.pow((y2 - getPos()[1]), 2) + Math.pow((x2 - getPos()[0]), 2)) >= PositionPrecision
-                &&robot.colorSensor.green() >=50) {
+                && robot.colorSensor.green() >= 50) {
             debugFindLocation(allTrackables);
-            switch (c){
+            switch (c) {
                 case X: {
                     debugFindLocation(allTrackables);
                     x2 = getPos()[0];
@@ -483,21 +481,21 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
                 }
 
             }
-            theta = Math.atan2((y2 - getPos()[1]) , (x2 - getPos()[0]));
-            v1 = cos(theta) * speed ;
-            v2 = Math.sin(theta) * speed ;
+            theta = Math.atan2((y2 - getPos()[1]), (x2 - getPos()[0]));
+            v1 = cos(theta) * speed;
+            v2 = Math.sin(theta) * speed;
             v3 = Math.sin(theta) * speed;
             v4 = cos(theta) * speed;
             robot.left_drive.setPower(v1);
             robot.right_drive.setPower(v2);
             robot.left_drive_2.setPower(v3);
             robot.right_drive_2.setPower(v4);
-            telemetry.setDebug("CURRENT_POSITION","X: %f, Y: % f",getPos()[0],getPos()[1]);
-            telemetry.setDebug("TARGET_POSITION","X: %f, Y: %f", x2,y2);
-            telemetry.setDebug("DISTANCE_REMAINING",Math.sqrt(Math.pow((y2 - getPos()[1]), 2) + Math.pow((x2 - getPos()[0]), 2)));
-            telemetry.setDebug("RGB_DETECTION","RED: %f, ");
+            telemetry.setDebug("CURRENT_POSITION", "X: %f, Y: % f", getPos()[0], getPos()[1]);
+            telemetry.setDebug("TARGET_POSITION", "X: %f, Y: %f", x2, y2);
+            telemetry.setDebug("DISTANCE_REMAINING", Math.sqrt(Math.pow((y2 - getPos()[1]), 2) + Math.pow((x2 - getPos()[0]), 2)));
+            telemetry.setDebug("RGB_DETECTION", "RED: %f, ");
         }
-        telemetry.setData("Movement","Finished");
+        telemetry.setData("Movement", "Finished");
     }
 
     public void debugFindLocation(List<VuforiaTrackable> allTrackables) {
@@ -525,18 +523,19 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
                 // express position (translation) of robot in inches.
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.setData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        -translation.get(0)/mmPerInch , translation.get(1)/mmPerInch , -translation.get(2)/mmPerInch );
-                setPos(new double[]{-translation.get(0)/mmPerInch, translation.get(1)/mmPerInch});
+                        -translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, -translation.get(2) / mmPerInch);
+                setPos(new double[]{-translation.get(0) / mmPerInch, translation.get(1) / mmPerInch});
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.setData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-            done = true;
+                done = true;
             } else {
                 telemetry.setData("Visible Target", "none");
                 done = true;
             }
         }
     }
+
     public boolean isTargetFound(List<VuforiaTrackable> allTrackables) {
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
@@ -559,12 +558,13 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
             }
             targetVisible = false;
             done = true;
-            telemetry.setData("Continuously" ,"Looping");
+            telemetry.setData("Continuously", "Looping");
             // Provide feedback as to where the robot is located (if we know).
         }
         return targetVisible;
     }
-    public double[] positionAverage(long sampleDuration){
+
+    public double[] positionAverage(long sampleDuration) {
         debugFindLocation(getallTrackables());
         Double[] xPos = {getPos()[0]};
         Double[] yPos = {getPos()[1]};
@@ -573,20 +573,20 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         List<Double> yPosList = new ArrayList<Double>(Arrays.asList(yPos));
 
         runTime.reset();
-        while(runTime.milliseconds()<=sampleDuration){
-        debugFindLocation(getallTrackables());
-        xPosList.add(getPos()[0]);
-        yPosList.add(getPos()[1]);
+        while (runTime.milliseconds() <= sampleDuration) {
+            debugFindLocation(getallTrackables());
+            xPosList.add(getPos()[0]);
+            yPosList.add(getPos()[1]);
         }
         xPosList.toArray();
         yPosList.toArray();
         double xPosSum = 0;
         double yPosSum = 0;
-        for(int i = 0; i < xPos.length; i++){
+        for (int i = 0; i < xPos.length; i++) {
             xPosSum += xPos[i];
             yPosSum += yPos[i];
         }
-        positionAverage = new double[] {xPosSum/xPos.length, yPosSum/yPos.length};
+        positionAverage = new double[]{xPosSum / xPos.length, yPosSum / yPos.length};
         return positionAverage;
     }
     /* public void find_Stone_Target(List<VuforiaTrackable> allTrackables){
@@ -605,7 +605,7 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
          setPosition(acquisitionLocationX,acquisitionLocationY,.4,allTrackables);
      }*/
 
-    public void getLocation (List<VuforiaTrackable> allTrackables){
+    public void getLocation(List<VuforiaTrackable> allTrackables) {
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
@@ -628,8 +628,8 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
             // express position (translation) of robot in inches.
             VectorF translation = lastLocation.getTranslation();
             telemetry.setData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                    translation.get(0) , translation.get(1) , translation.get(2) );
-            setPos(new double[]{translation.get(0) , translation.get(1) });
+                    translation.get(0), translation.get(1), translation.get(2));
+            setPos(new double[]{translation.get(0), translation.get(1)});
 
             // express the rotation of the robot in degrees.
             Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
@@ -639,7 +639,8 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         }
 
     }
-    public double[] get_Orientation(){
+
+    public double[] get_Orientation() {
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         boolean done = false;
@@ -664,12 +665,12 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
                 // express position (translation) of robot in inches.
                 VectorF translation = lastLocation.getTranslation();
                 telemetry.setData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        -translation.get(0)/mmPerInch , -translation.get(1)/mmPerInch , -translation.get(2)/mmPerInch );
-                setPos(new double[]{-translation.get(0)/mmPerInch, translation.get(1)/mmPerInch});
+                        -translation.get(0) / mmPerInch, -translation.get(1) / mmPerInch, -translation.get(2) / mmPerInch);
+                setPos(new double[]{-translation.get(0) / mmPerInch, translation.get(1) / mmPerInch});
                 // express the rotation of the robot in degrees.
                 Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
                 telemetry.setData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-                angles = new double[] {rotation.firstAngle,rotation.secondAngle,rotation.thirdAngle};
+                angles = new double[]{rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle};
                 done = true;
             } else {
                 telemetry.setData("Visible Target", "none");
@@ -690,16 +691,16 @@ public class SkystoneVuforiaEngine implements IVuforiaEngine {
         return this.allTrackables;
     }
 
-    public AutoUtils.SkystoneNumber findBlock(){
-        Size size = new Size(3266,2450);
+    public AutoUtils.SkystoneNumber findBlock() {
+        Size size = new Size(3266, 2450);
         CameraCaptureRequest c;
         AutoUtils.SkystoneNumber block = null;
         VuforiaTrackableDefaultListener v = (VuforiaTrackableDefaultListener) allTrackables.get(0).getListener();
         OpenGLMatrix locationOnScreen = v.getPose();
         try {
-            c = vuforia.getCamera().createCaptureRequest(1,size,24);
-        }catch (CameraException e){
-            telemetry.setDebug("No","You");
+            c = vuforia.getCamera().createCaptureRequest(1, size, 24);
+        } catch (CameraException e) {
+            telemetry.setDebug("No", "You");
         }
         locationOnScreen.getData();
         return block;

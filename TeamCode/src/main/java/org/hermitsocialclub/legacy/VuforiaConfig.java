@@ -8,12 +8,12 @@ public class VuforiaConfig {
     /* DO NOT STEAL */
     public static final String VUFORIA_KEY =
             "AQdDh+P/////AAAAGYG4khX9T0Mai5pYz9oTllp2KuZI24ZwM9ostcBXs2A90ddi/" +
-            "sJDOAabZEVM/5jhWNRN40BJ32nrSkbKTnqMnZ10v1A/PjDvnKwLG7zpA/" +
-            "wATnngFrhODfBwaHvP1WouKc+9f8QPOfLJnoGAlohWpfNWmdSe0UiyAeV" +
-            "oNCRW6TlLHECp85fs/acyk0eOy3qvUmJSFOTIsa5sJHVHscqpofheFgzh" +
-            "fmC7c+VUHGB8fIDiFBLdJBK9My1B2BBsJhblTZWgeVjOFI28qEHiEm7AD" +
-            "igF4zkH890YMfBRDr70ajPRJfOuzPAQA2QmOatQyL3tO/s9VmiIkcPDir" +
-            "MkTdwPbfBxUYkkCBGUDQMtYstBS58G";
+                    "sJDOAabZEVM/5jhWNRN40BJ32nrSkbKTnqMnZ10v1A/PjDvnKwLG7zpA/" +
+                    "wATnngFrhODfBwaHvP1WouKc+9f8QPOfLJnoGAlohWpfNWmdSe0UiyAeV" +
+                    "oNCRW6TlLHECp85fs/acyk0eOy3qvUmJSFOTIsa5sJHVHscqpofheFgzh" +
+                    "fmC7c+VUHGB8fIDiFBLdJBK9My1B2BBsJhblTZWgeVjOFI28qEHiEm7AD" +
+                    "igF4zkH890YMfBRDr70ajPRJfOuzPAQA2QmOatQyL3tO/s9VmiIkcPDir" +
+                    "MkTdwPbfBxUYkkCBGUDQMtYstBS58G";
 
     public static final double countsPerRevolution = 560; //France was 1120 - 40 gear ratio, Visigoths - 20 gear ratio
     public static final double driveGearReduction = 1; //set to 1 if motor is France

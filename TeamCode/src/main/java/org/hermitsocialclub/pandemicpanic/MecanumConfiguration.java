@@ -66,9 +66,11 @@ public class MecanumConfiguration {
 
     /* local OpMode members. */
     private HardwareMap hwMap = null;
-    private ElapsedTime period = new ElapsedTime();
+    private final ElapsedTime period = new ElapsedTime();
 
-    /** Initialize standard Hardware interfaces */
+    /**
+     * Initialize standard Hardware interfaces
+     */
     public void init(HardwareMap ahwMap) {
 
         // Save reference to Hardware map
@@ -93,7 +95,7 @@ public class MecanumConfiguration {
         leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
         rightEncoder = hwMap.get(DcMotorEx.class, "tapeShooter");
         frontEncoder = hwMap.get(DcMotorEx.class, "arm");
-        spinner = hwMap.get(DcMotorEx.class,"tapeShooter" +
+        spinner = hwMap.get(DcMotorEx.class, "tapeShooter" +
                 "");
 
         left_drive.setDirection(DcMotor.Direction.FORWARD);    // Set to REVERSE if using AndyMark motors

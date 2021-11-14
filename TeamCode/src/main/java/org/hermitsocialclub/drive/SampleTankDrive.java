@@ -2,7 +2,6 @@ package org.hermitsocialclub.drive;
 
 
 import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -29,7 +28,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
 
@@ -37,15 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hermitsocialclub.util.Meet0Bot.BASE_CONSTRAINTS;
-import static org.hermitsocialclub.util.Meet0Bot.MOTOR_VELO_PID;
-import static org.hermitsocialclub.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.hermitsocialclub.util.Meet0Bot.TRACK_WIDTH;
-import static org.hermitsocialclub.util.Meet0Bot.encoderTicksToInches;
-import static org.hermitsocialclub.util.Meet0Bot.getMotorVelocityF;
-import static org.hermitsocialclub.util.Meet0Bot.kA;
-import static org.hermitsocialclub.util.Meet0Bot.kStatic;
-import static org.hermitsocialclub.util.Meet0Bot.kV;
+import static org.hermitsocialclub.util.Meet0Bot.*;
 
 /*
  * Simple tank drive hardware implementation for REV hardware.
@@ -63,22 +53,24 @@ public class SampleTankDrive extends TankDrive {
         FOLLOW_TRAJECTORY
     }
 
-    private FtcDashboard dashboard;
-    private NanoClock clock;
+    private final FtcDashboard dashboard;
+    private final NanoClock clock;
 
     private Mode mode;
 
-    private PIDFController turnController;
+    private final PIDFController turnController;
     private MotionProfile turnProfile;
     private double turnStart;
 
-    private DriveConstraints constraints;
-    private TrajectoryFollower follower;
+    private final DriveConstraints constraints;
+    private final TrajectoryFollower follower;
 
-    private List<Pose2d> poseHistory;
+    private final List<Pose2d> poseHistory;
 
-    private List<DcMotorEx> motors, leftMotors, rightMotors;
-    private BNO055IMU imu;
+    private final List<DcMotorEx> motors;
+    private final List<DcMotorEx> leftMotors;
+    private final List<DcMotorEx> rightMotors;
+    private final BNO055IMU imu;
 
     public SampleTankDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH);

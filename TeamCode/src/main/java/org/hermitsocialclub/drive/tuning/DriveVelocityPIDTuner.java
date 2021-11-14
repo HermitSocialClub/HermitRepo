@@ -1,9 +1,5 @@
 package org.hermitsocialclub.drive.tuning;
 
-import static org.hermitsocialclub.util.Meet0Bot.BASE_CONSTRAINTS;
-import static org.hermitsocialclub.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.hermitsocialclub.util.Meet0Bot.kV;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.config.ValueProvider;
@@ -20,12 +16,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
-
 import org.hermitsocialclub.drive.SampleMecanumDrive;
-import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.vision.SkystoneVuforiaEngine;
 
 import java.util.List;
+
+import static org.hermitsocialclub.util.Meet0Bot.*;
 
 /*
  * This routine is designed to tune the PID coefficients used by the REV Expansion Hubs for closed-
@@ -45,7 +42,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
     private static final String PID_VAR_NAME = "VELO_PID";
 
-    private FtcDashboard dashboard = FtcDashboard.getInstance();
+    private final FtcDashboard dashboard = FtcDashboard.getInstance();
     private String catName;
     private CustomVariable catVar;
 
@@ -135,7 +132,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
         SkystoneVuforiaEngine vuforiaEngine = SkystoneVuforiaEngine.get(pt);
-        drive = new SampleMecanumDrive(hardwareMap,vuforiaEngine);
+        drive = new SampleMecanumDrive(hardwareMap, vuforiaEngine);
 
         addPidVariable();
 

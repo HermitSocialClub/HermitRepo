@@ -2,7 +2,6 @@ package org.hermitsocialclub.util;
 
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryConfig;
 import com.acmerobotics.roadrunner.trajectory.config.TrajectoryConfigManager;
-
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 
 import java.io.IOException;

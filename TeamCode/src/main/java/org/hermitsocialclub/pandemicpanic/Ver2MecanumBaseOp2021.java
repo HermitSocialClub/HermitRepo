@@ -1,7 +1,5 @@
 package org.hermitsocialclub.pandemicpanic;
 
-import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
-
 import com.acmerobotics.roadrunner.control.PIDFController;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -19,8 +17,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.drive.opmode.PoseStorage;
-import org.hermitsocialclub.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.util.UltimateGoalConfiguration;
+
+import static org.hermitsocialclub.util.Meet0Bot.HEADING_PID;
 
 @Disabled
 @TeleOp(name = "Version 2 2021 Mecanum Base Op", group = "Hermit")
@@ -47,7 +47,7 @@ public class Ver2MecanumBaseOp2021 extends LinearOpMode {
     public static double POWER_PERCENT = 0.595;
     private final double ticksPerRevolution = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getTicksPerRev();
     private final double tobeMaxEncoder = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getAchieveableMaxTicksPerSecond();
-    private Vector2d powerLaunchVector = new Vector2d(-14,12.50);
+    private final Vector2d powerLaunchVector = new Vector2d(-14, 12.50);
 
     private final double tobeSpeedThreeEncoder = tobeMaxEncoder * 0.5;
     private final double tobeSpeedTwoEncoder = 0.6 * tobeMaxEncoder;
@@ -69,14 +69,14 @@ public class Ver2MecanumBaseOp2021 extends LinearOpMode {
         NORMAL_CONTROL, ALIGN_TO_POINT
     }
 
-    private Mode mode = Mode.NORMAL_CONTROL;
-    private PIDFController headingController = new PIDFController(HEADING_PID);
+    private final Mode mode = Mode.NORMAL_CONTROL;
+    private final PIDFController headingController = new PIDFController(HEADING_PID);
 
-private boolean wobbleGrabLock = false;
-private  boolean lastXMash = false;
-private boolean kickStarting = false;
-private boolean lastYMash = false;
-private boolean alwaysOn = false;
+    private boolean wobbleGrabLock = false;
+    private boolean lastXMash = false;
+    private boolean kickStarting = false;
+    private boolean lastYMash = false;
+    private boolean alwaysOn = false;
 
     //private DistanceSensor sonicHedgehogSensor;
     private DcMotorEx intake;
@@ -99,13 +99,13 @@ private boolean alwaysOn = false;
         double outTake75Speed = -((SPEED_PERCENT * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction()) / 60);
         powerShotSpeed = -((POWER_PERCENT * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction()) / 60);
 
-        headingController.setInputBounds(-Math.PI,Math.PI);
+        headingController.setInputBounds(-Math.PI, Math.PI);
         kicker.setPosition(0.3);
-        Trajectory constantLaunchSpline2 = drive.trajectoryBuilder(new Pose2d(powerLaunchVector,0))
-                .splineToConstantHeading(new Vector2d(-3,-24.50),0)
-                .addSpatialMarker(new Vector2d(0,-2.50), () -> launchRing(1,powerShotSpeed))
-                .addSpatialMarker(new Vector2d(0,-14.50), () -> launchRing(1,powerShotSpeed))
-                .addSpatialMarker(new Vector2d(0,-20.50), () -> launchRing(1,powerShotSpeed))
+        Trajectory constantLaunchSpline2 = drive.trajectoryBuilder(new Pose2d(powerLaunchVector, 0))
+                .splineToConstantHeading(new Vector2d(-3, -24.50), 0)
+                .addSpatialMarker(new Vector2d(0, -2.50), () -> launchRing(1, powerShotSpeed))
+                .addSpatialMarker(new Vector2d(0, -14.50), () -> launchRing(1, powerShotSpeed))
+                .addSpatialMarker(new Vector2d(0, -20.50), () -> launchRing(1, powerShotSpeed))
                 .build();
         Trajectory[] trajectories = {
                 drive.trajectoryBuilder(new Pose2d(48, 48, 0), 0)// 0
@@ -270,8 +270,8 @@ private boolean alwaysOn = false;
             if (!lastXMash && gamepad1.square) {
                 if (!wobbleGrabLock) {
                     wobbleGrabLock = true;
-                    pt.setData("Wobble Grabber","LOCKED");
-                }else {
+                    pt.setData("Wobble Grabber", "LOCKED");
+                } else {
                     wobbleGrabLock = false;
                     pt.setData("Wobble Grabber", "UNLOCKED");
                 }
@@ -292,10 +292,10 @@ private boolean alwaysOn = false;
             } else if (gamepad1.left_bumper) {
                 intake.setPower(0);
             }
-            if(!hopperMash && gamepad1.left_stick_button){
-                if(Math.abs(robot.hopperLift.getPosition() - .25) < .01) {
+            if (!hopperMash && gamepad1.left_stick_button) {
+                if (Math.abs(robot.hopperLift.getPosition() - .25) < .01) {
                     robot.hopperLift.setPosition(0);
-                }else if(Math.abs(robot.hopperLift.getPosition()) <.01 ){
+                } else if (Math.abs(robot.hopperLift.getPosition()) < .01) {
                     robot.hopperLift.setPosition(.25);
                 }
             }
@@ -304,29 +304,31 @@ private boolean alwaysOn = false;
             if (gamepad1.right_trigger > 0.02 && kickFinished) {
                 kickFinished = false;
                 kickTime.reset();
-                if(runtime.seconds() > 90){outtake.setVelocity(-powerShotSpeed,AngleUnit.RADIANS);}
-                else{
-                outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);}
+                if (runtime.seconds() > 90) {
+                    outtake.setVelocity(-powerShotSpeed, AngleUnit.RADIANS);
+                } else {
+                    outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);
+                }
             }
 
             if (gamepad1.right_trigger > 0.02 && !kickFinished && kickTime.milliseconds() >= 200) {
                 if (runtime.seconds() > 90) {
                     maxKicks = 2;
-                }else {
+                } else {
                     maxKicks = 5;
                 }
                 kickStarting = true;
             }
 
             if (kickStarting && !kickFinished &&
-                    Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < Math.pow(10, -1)
+                    Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed : outTake75Speed)) < Math.pow(10, -1)
                     /*&& drive.getPoseVelocity().getX() < 0.005  && drive.getPoseVelocity().getY() < 0.005
                     && drive.getPoseVelocity().getHeading() < 0.005*/) {
 
                 if (kicks >= maxKicks && kickTime.milliseconds() >= kickInterval
-                        && Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed :outTake75Speed)) < Math.pow(10, -1)) {
+                        && Math.abs(outtake.getVelocity(AngleUnit.RADIANS) + ((runtime.seconds() > 90) ? powerShotSpeed : outTake75Speed)) < Math.pow(10, -1)) {
                     kicker.setPosition(.1);
-                    if(!alwaysOn  && runtime.seconds() > 90) {
+                    if (!alwaysOn && runtime.seconds() > 90) {
                         outtake.setVelocity(0);
                     }
                     kicks = 0;
@@ -335,10 +337,10 @@ private boolean alwaysOn = false;
                 }
 
                 if (kickTime.milliseconds() >= kickInterval) {
-                    if(kickDirection){
+                    if (kickDirection) {
                         kickDirection = false;
                         kicker.setPosition(.9);
-                    }else {
+                    } else {
                         kickDirection = true;
                         kicker.setPosition(.1);
                     }
@@ -398,10 +400,10 @@ private boolean alwaysOn = false;
                 HOPPER_POSITION -= WOBBLE_GRAB_INCREMENT;
                 robot.hopperLift.setPosition(HOPPER_POSITION);
             }
-            pt.setDebug("Hopper Position",HOPPER_POSITION);
-            if(Math.abs(gamepad2.left_stick_y) > .02){
+            pt.setDebug("Hopper Position", HOPPER_POSITION);
+            if (Math.abs(gamepad2.left_stick_y) > .02) {
                 robot.wobbleArm.setPower(antiDeadzone(gamepad2.left_stick_y) * .35);
-            }else if(Math.abs(gamepad2.left_stick_y) < -.02){
+            } else if (Math.abs(gamepad2.left_stick_y) < -.02) {
                 robot.wobbleArm.setPower(0);
             }
             if (gamepad2.right_bumper) {
@@ -439,10 +441,12 @@ private boolean alwaysOn = false;
         }
 
     }
-    public double antiDeadzone (double input){
-        return (Math.copySign(Math.max(Math.abs(input) * (1.0/.8) - .2,0),input));
+
+    public double antiDeadzone(double input) {
+        return (Math.copySign(Math.max(Math.abs(input) * (1.0 / .8) - .2, 0), input));
     }
-    private void launchRing(int ringsToFire, double speed){
+
+    private void launchRing(int ringsToFire, double speed) {
 
         drive.outtake.setVelocity(speed, AngleUnit.RADIANS);
         while (opModeIsActive() && Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - speed) > Math.pow(10, -1)) {
@@ -456,7 +460,7 @@ private boolean alwaysOn = false;
             drive.kicker.setPosition(.7);
             sleep(200);
             drive.kicker.setPosition(.3);
-            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - speed ) > Math.pow(10, -1)) {
+            while (Math.abs(drive.outtake.getVelocity(AngleUnit.RADIANS) - speed) > Math.pow(10, -1)) {
                 pt.setDebug("Outtake Velocity", drive.outtake.getVelocity(AngleUnit.RADIANS));
             }
             ringsFired++;

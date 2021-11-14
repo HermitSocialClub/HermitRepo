@@ -15,13 +15,14 @@ public class LibTomato {
 
     /**
      * The LibTomato init function.
+     *
      * @throws UnsatisfiedLinkError if the library could not be loaded.
-     * @throws AssertionError if {@link #splat} did not return a funny number.
+     * @throws AssertionError       if {@link #splat} did not return a funny number.
      */
     @OpModeRegistrar
     public static void init(Context context, AnnotatedOpModeManager manager) {
         // prevent double initializations
-        if(INIT_YET) return;
+        if (INIT_YET) return;
 
         try {
             // make sure TensorFlowLite and OpenCV are loaded first
@@ -29,7 +30,7 @@ public class LibTomato {
             DynamicOpenCvNativeLibLoader.loadNativeLibOnStartRobot(context, manager);
             // load Tomato
             System.loadLibrary("tomato");
-        } catch(UnsatisfiedLinkError e) {
+        } catch (UnsatisfiedLinkError e) {
             StringWriter writer = new StringWriter();
             e.printStackTrace(new PrintWriter(writer));
             RobotLog.ee("LibTomato", e, "Tomato init failed!");
@@ -37,7 +38,7 @@ public class LibTomato {
             throw e;
         }
 
-        if(splat() != 69) {
+        if (splat() != 69) {
             throw new AssertionError("Library init failed: splat() was not nice!");
         }
 

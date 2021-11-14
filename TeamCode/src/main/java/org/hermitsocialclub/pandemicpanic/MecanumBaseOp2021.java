@@ -9,17 +9,16 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.hermitsocialclub.util.UltimateGoalConfiguration;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.util.UltimateGoalConfiguration;
 
 @Disabled
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "2021 Mecanum Base Op", group = "Hermit")
 
 public class MecanumBaseOp2021 extends LinearOpMode {
 
-    private PersistantTelemetry pt = new PersistantTelemetry(telemetry);
+    private final PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     UltimateGoalConfiguration robot = new UltimateGoalConfiguration();
     ElapsedTime runtime = new ElapsedTime();
     ElapsedTime kickTime = new ElapsedTime();
@@ -30,27 +29,27 @@ public class MecanumBaseOp2021 extends LinearOpMode {
     public double invertedControls = 1;
     public static double SPEED_PERCENT = .615;
     //private double initialLeftTicks, initialRightTicks, initialTopTicks;
-    private double ticksPerRevolution = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getTicksPerRev();
-    private double tobeMaxEncoder = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getAchieveableMaxTicksPerSecond();;
-    private double tobeSpeedThreeEncoder = tobeMaxEncoder * .5;
-    private double tobeSpeedTwoEncoder = 0.6 * tobeMaxEncoder ;
-    private double tobeSpeedOneEncoder = 0.25 * tobeMaxEncoder;
-    private double tobeDistanceRatio = 0.0625; //based off observed distance of ring at max rpm
+    private final double ticksPerRevolution = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getTicksPerRev();
+    private final double tobeMaxEncoder = MotorConfigurationType.getMotorType(GoBILDA5201Series.class).getAchieveableMaxTicksPerSecond();
+    private final double tobeSpeedThreeEncoder = tobeMaxEncoder * .5;
+    private final double tobeSpeedTwoEncoder = 0.6 * tobeMaxEncoder;
+    private final double tobeSpeedOneEncoder = 0.25 * tobeMaxEncoder;
+    private final double tobeDistanceRatio = 0.0625; //based off observed distance of ring at max rpm
     private double tobePowerRatio;
 
     private boolean kickFinished = true;
-    private long kickInterval = 200;
+    private final long kickInterval = 200;
     private int kickDirection = -1;
     private int kicks = 0;
 
 
-    MotorConfigurationType goBildaOuttake =  MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
+    MotorConfigurationType goBildaOuttake = MotorConfigurationType.getMotorType(GoBILDA5202Series.class);
     private double outTake75Speed;
 
     private final double WOBBLE_GRAB_INCREMENT = .02;
 
-private boolean wobbleGrabLock = false;
-private boolean lastXMash = false;
+    private boolean wobbleGrabLock = false;
+    private final boolean lastXMash = false;
 
     //private DistanceSensor sonicHedgehogSensor;
     private DcMotorEx intake;
@@ -59,17 +58,16 @@ private boolean lastXMash = false;
     private CRServo kicker;
 
 
-
     @Override
     public void runOpMode() throws InterruptedException {
 
         intake = hardwareMap.get(DcMotorEx.class, "tobeFlywheel");
-        kicker = hardwareMap.get(CRServo.class,"kicker");
-        outtake = hardwareMap.get(DcMotorEx.class,"takeruFlyOut");
+        kicker = hardwareMap.get(CRServo.class, "kicker");
+        outtake = hardwareMap.get(DcMotorEx.class, "takeruFlyOut");
         outtake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.init(hardwareMap);
 
-        outTake75Speed = ((SPEED_PERCENT * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction())/60);
+        outTake75Speed = ((SPEED_PERCENT * 2 * Math.PI * goBildaOuttake.getMaxRPM() * goBildaOuttake.getAchieveableMaxRPMFraction()) / 60);
 
 
         //sonicHedgehogSensor = hardwareMap.get(DistanceSensor.class,"Sonic the Hedgehog");
@@ -114,13 +112,13 @@ private boolean lastXMash = false;
                 }
             }
             lastBMash = gamepad1.b;
-            if (!lastXMash && gamepad1.x){
-                if(!wobbleGrabLock){
+            if (!lastXMash && gamepad1.x) {
+                if (!wobbleGrabLock) {
                     wobbleGrabLock = true;
-                    pt.setData("Wobble Grabber","LOCKED");
-                }else {
+                    pt.setData("Wobble Grabber", "LOCKED");
+                } else {
                     wobbleGrabLock = false;
-                    pt.setData("Wobble Grabber","UNLOCKED");
+                    pt.setData("Wobble Grabber", "UNLOCKED");
                 }
             }
 
@@ -143,9 +141,9 @@ private boolean lastXMash = false;
                 //tobeFlywheel.setVelocity(2 * Math.PI * -tobeSpeedOneEncoder / ticksPerRevolution, AngleUnit.RADIANS);
             }*/
 
-            if (gamepad1.right_trigger > 0.2){
+            if (gamepad1.right_trigger > 0.2) {
                 kickFinished = false;
-                outtake.setVelocity(-outTake75Speed,AngleUnit.RADIANS);
+                outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);
             }
             /*if(gamepad1.right_bumper){
                 kicker.setPower(1);
@@ -153,68 +151,69 @@ private boolean lastXMash = false;
                 kicker.setPower(-1);
             }else kicker.setPower(0);*/
 
-            if(!kickFinished  && Math.abs(-outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed) < Math.pow(10,-2)*5){
-                if(kicks == 0){
+            if (!kickFinished && Math.abs(-outtake.getVelocity(AngleUnit.RADIANS) - outTake75Speed) < Math.pow(10, -2) * 5) {
+                if (kicks == 0) {
                     kickTime.reset();
                 }
-                if(kicks >= 5 && kickTime.milliseconds() >= kickInterval){
+                if (kicks >= 5 && kickTime.milliseconds() >= kickInterval) {
                     kicker.setPower(0);
                     outtake.setVelocity(0);
                     kicks = 0;
                     kickFinished = true;
                 }
-                if(kickTime.milliseconds() >= kickInterval){
+                if (kickTime.milliseconds() >= kickInterval) {
                     kickDirection = kickDirection * -1;
                     kicker.setPower(kickDirection);
                     kickTime.reset();
                 }
-                if(kickDirection == -1){
+                if (kickDirection == -1) {
                     kicks++;
                 }
 
             }
-            if(gamepad1.left_trigger > .3){
+            if (gamepad1.left_trigger > .3) {
                 outtake.setVelocity(0);
                 kicker.setPower(0);
                 kickFinished = true;
             }
 
             //if (gamepad2.x){
-                //tobeFlywheel.setPower(-tobePowerRatio);
-           // }
+            //tobeFlywheel.setPower(-tobePowerRatio);
+            // }
 
-            if(gamepad2.right_trigger > .05){
+            if (gamepad2.right_trigger > .05) {
                 robot.wobbleArm.setPower(gamepad2.right_trigger);
-            }else if(gamepad2.left_trigger > .05){
-                robot.wobbleArm.setPower( -gamepad2.left_trigger);
+            } else if (gamepad2.left_trigger > .05) {
+                robot.wobbleArm.setPower(-gamepad2.left_trigger);
             } else robot.wobbleArm.setPower(0);
-            if(gamepad2.right_bumper){
+            if (gamepad2.right_bumper) {
                 robot.wobbleGrab.setPower(1);
-            } else if(gamepad2.left_bumper){
+            } else if (gamepad2.left_bumper) {
                 robot.wobbleGrab.setPower(-1);
-            }else if(!wobbleGrabLock) robot.wobbleGrab.setPower(0);
+            } else if (!wobbleGrabLock) robot.wobbleGrab.setPower(0);
 
             //pt.setData("raw ultrasonic", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
             //pt.setData("cm", "%.2f cm", sonicHedgehogSensor.getDistance(DistanceUnit.CM));
-            pt.setDebug("Outtake Actual Speed",outtake.getVelocity(AngleUnit.RADIANS));
+            pt.setDebug("Outtake Actual Speed", outtake.getVelocity(AngleUnit.RADIANS));
             pt.setDebug("Outtake Intended Speed", outTake75Speed);
-            pt.setDebug("Kick Speed",kicker.getPower());
-            pt.setDebug("Kicks Completed",kicks);
+            pt.setDebug("Kick Speed", kicker.getPower());
+            pt.setDebug("Kicks Completed", kicks);
             pt.setDebug("Kicking?", !kickFinished);
-            pt.setDebug("kick interval",kickInterval);
-            pt.setDebug("kickTime",kickTime);
-            pt.setDebug("outtake error",Math.abs(outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed));
-            pt.setDebug("error threshhold",Math.pow(10,-1)*3);
-            pt.setDebug("error difference", Math.pow(10,-1) - Math.abs(outtake.getVelocity(AngleUnit.RADIANS)-outTake75Speed));
+            pt.setDebug("kick interval", kickInterval);
+            pt.setDebug("kickTime", kickTime);
+            pt.setDebug("outtake error", Math.abs(outtake.getVelocity(AngleUnit.RADIANS) - outTake75Speed));
+            pt.setDebug("error threshhold", Math.pow(10, -1) * 3);
+            pt.setDebug("error difference", Math.pow(10, -1) - Math.abs(outtake.getVelocity(AngleUnit.RADIANS) - outTake75Speed));
         }
 
     }
-public void kickerTime (long time, double power){
-    long beginning = System.currentTimeMillis();
-    long end = beginning + time;
-    while ( end > System.currentTimeMillis()){
-        kicker.setPower(power);
-    }
+
+    public void kickerTime(long time, double power) {
+        long beginning = System.currentTimeMillis();
+        long end = beginning + time;
+        while (end > System.currentTimeMillis()) {
+            kicker.setPower(power);
+        }
     }
 
 

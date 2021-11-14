@@ -36,14 +36,14 @@ public class MoveUtils {
      * @return an array of 4 doubles, in the form [left_motor, right_motor, left_motor_2, right_motor_2]
      */
     public static double[] theAlgorithm(double power, double angle, double turnOffset, double speedModifier) {
-         double v1;
-         double v2;
-        if(angle != atan2(-0, 1) - Math.PI / 4){
+        double v1;
+        double v2;
+        if (angle != atan2(-0, 1) - Math.PI / 4) {
 
             v1 = (power * .7 * Math.cos(-angle) + turnOffset) * speedModifier;
 
             v2 = (power * .7 * Math.sin(angle) - turnOffset) * speedModifier;
-        }else{
+        } else {
             v1 = (power * Math.cos(-angle) + turnOffset) * speedModifier;
 
             v2 = (power * Math.sin(angle) - turnOffset) * speedModifier;

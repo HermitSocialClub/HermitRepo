@@ -10,28 +10,25 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 @DeviceProperties(name = "HC-SR04 Ultrasonic Sensor", description = "Speedy Ultrasonic Sensor from Adafruit", xmlTag = "HCSR04")
 public class SensorUltraSonicHedgehogButBetter extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     final I2cAddr ADDRESS_I2C_DEFAULT = new I2cAddr(0x57);
+
     @Override
-    public Manufacturer getManufacturer()
-    {
+    public Manufacturer getManufacturer() {
 
         return Manufacturer.Adafruit;
     }
 
     @Override
-    protected synchronized boolean doInitialize()
-    {
+    protected synchronized boolean doInitialize() {
         return true;
     }
 
     @Override
-    public String getDeviceName()
-    {
+    public String getDeviceName() {
 
         return "Adafruit MCP9808 Temperature Sensor";
     }
 
-    public SensorUltraSonicHedgehogButBetter(I2cDeviceSynch deviceClient)
-    {
+    public SensorUltraSonicHedgehogButBetter(I2cDeviceSynch deviceClient) {
         super(deviceClient, true);
 
         this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
