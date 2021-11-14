@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
-public class DriveConstants {
+public abstract class DriveConstants {
     public static double TICKS_PER_REV;
     public static double MAX_RPM;
     public static boolean RUN_USING_ENCODER;
@@ -41,6 +43,9 @@ public class DriveConstants {
     public static double slamraY;
 
     public static DcMotorSimple.Direction[] DIRECTIONS;
+
+    public static DcMotorEx[] driveMotors;
+    public static DcMotorEx[] otherMotors;
 
 
     public DriveConstants(double TICKS_PER_REV, boolean RUN_USING_ENCODER,
@@ -96,5 +101,10 @@ public class DriveConstants {
         return 32767 / ticksPerSecond;
     }
 
+    public static void init (HardwareMap hardwareMap){
 
+    }
+
+
+    public abstract void initialize(HardwareMap hardwareMap);
 }

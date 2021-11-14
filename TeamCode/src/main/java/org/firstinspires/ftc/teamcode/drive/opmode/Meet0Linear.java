@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
-import static java.lang.Thread.sleep;
-
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,8 +16,8 @@ import org.hermitsocialclub.tomato.BarcodeDetect;
 
 //m() is just Math.toRadians, I'm just lazy
 
-@Autonomous(name = "MainAutoBlue")
-public class BasicallyJustAnOutlineAuto extends OpMode {
+@Autonomous(name = "Meet0Linear")
+public class Meet0Linear extends LinearOpMode {
 
     Trajectory longBoi; //Main drag between the carousel to the team element to the hub to the freight zone
     Trajectory shortBoi;
@@ -41,7 +40,7 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
 
 
     //Robot Poses
-    Pose2d startPose = new Pose2d(-58,58,m(-35));
+    Pose2d startPose = new Pose2d(-48,-63,m(-90));
     Pose2d teamElementGrab = new Pose2d(-30,46,0);
     Pose2d dropFreight = new Pose2d(-12,42,m(-90));
     Pose2d goToBarrier = new Pose2d(20,42,0);
@@ -49,7 +48,7 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
     private VisionSemaphore semaphore;
 
     @Override
-    public void init() {
+    public void runOpMode() throws InterruptedException {
         drive = new BaselineMecanumDrive(hardwareMap,telemetry);
 
         dashboard = FtcDashboard.getInstance();
@@ -67,50 +66,27 @@ public class BasicallyJustAnOutlineAuto extends OpMode {
                 //.addDisplacementMarker(()->{/*TODO: Intake the Freight*/})
                 .build();
         shortBoi = drive.trajectoryBuilder(startPose,0)
-                .strafeRight(1)
+                .lineToConstantHeading(new Vector2d(-53,-63))
                 .build();
         strafe = drive.trajectoryBuilder(shortBoi.end(),0)
-                .strafeLeft(108)
+                .lineToConstantHeading(new Vector2d(53,-63))
                 .build();
 
         //barcodeDetect = new BarcodeDetect(true);
         //semaphore = new VisionSemaphore();
         //visionPipeline = new VisionPipeline(hardwareMap, telemetry, barcodeDetect, semaphore);
         //TODO: Initialize trajectory grid for tele-op
-    }
-
-    @Override
-    public void init_loop() {
-        super.init_loop();
-
-        //TODO: Continually scan for the team element
-        //code = barCode();
-    }
-
-    @Override
-    public void start() {
-        super.start();
-    }
-
-    @Override
-
-    public void loop() {
         //TODO: Turn the Carousel
+        waitForStart();
         time.reset();
-        drive.lift.setPower(.2);
-        while (time.milliseconds() < 300){}
+        drive.lift.setPower(.4);
+        sleep(500);
         drive.lift.setPower(.000005);
         drive.followTrajectory(shortBoi);
         drive.duck_wheel.setPower(.5);
-        while (time.milliseconds() < 400){}
+        sleep(500);
         drive.duck_wheel.setPower(0);
         drive.followTrajectory(strafe);
-        return;
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
     }
 
     private double m(double heading){

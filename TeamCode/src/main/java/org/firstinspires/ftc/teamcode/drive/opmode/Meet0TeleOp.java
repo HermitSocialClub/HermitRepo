@@ -13,13 +13,13 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.drive.T265LocalizerRR;
+import org.hermitsocialclub.pandemicpanic.MoveUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @TeleOp(name = "Meet0Tele")
 public class Meet0TeleOp extends OpMode {
     Canvas field;
     TelemetryPacket packet;
-    DcMotor duck_wheel;
 
     private PersistantTelemetry telemetry;
 
@@ -55,23 +55,23 @@ public class Meet0TeleOp extends OpMode {
     @Override
     public void loop() {
 
-        trigVal = gamepad1.left_trigger > 0.05 ? gamepad1.left_trigger :
-                gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0;
+        trigVal = gamepad1.left_trigger > 0.05 ? -gamepad1.left_trigger/10 :
+                gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0.000005;
 
         drive.lift.setVelocity(liftType
-                .getAchieveableMaxTicksPerSecond() * .65 *
+                .getAchieveableMaxTicksPerSecond() * .15 *
                 trigVal, AngleUnit.RADIANS);
 
         if (gamepad1.right_bumper) {
-            drive.intake.setPower(.85);
+            drive.intake.setPower(-.75);
         } else if (gamepad1.left_bumper) {
-            drive.intake.setPower(-.85);
+            drive.intake.setPower(.45);
         } else drive.intake.setPower(0);
 
-        if (gamepad1.x) {
-            duck_wheel.setPower(0.3);
+        if (gamepad1.right_stick_button) {
+            drive.duck_wheel.setPower(-0.3);
         }else{
-            duck_wheel.setPower(0);
+            drive.duck_wheel.setPower(0);
         }
        /* drive.duck_wheel.setVelocity(liftType
                 .getAchieveableMaxTicksPerSecond() * .65 *
@@ -81,13 +81,13 @@ public class Meet0TeleOp extends OpMode {
 
         field = packet.fieldOverlay();
 
-        drive.setWeightedDrivePower(
-                new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
-                        -gamepad1.right_stick_x
-                )
-        );
+
+        double r = MoveUtils.joystickXYToRadius(gamepad1.right_stick_x, -gamepad1.left_stick_y);
+        double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.right_stick_x, gamepad1.left_stick_y);
+
+        double[] powers = MoveUtils.theAlgorithm(r, robotAngle, gamepad1.left_stick_x, 1);
+        MoveUtils.setEachMotor(new DcMotor[]{drive.leftFront,drive.rightFront,drive.leftRear,drive.rightRear},
+                powers);
 
         drive.update();
 

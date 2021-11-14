@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /*
@@ -79,7 +80,7 @@ public class Meet0Bot extends DriveConstants {
     public static PIDCoefficients TRANSLATIONAL_PID_IMPL = new PIDCoefficients(/*8.3*/8, 8, /*1.1*/.1);
     public static PIDCoefficients HEADING_PID_IMPL = new PIDCoefficients(/*10.4*/8, 1, /*1.5*/0);
 
-    public static double LATERAL_MULTIPLIER_IMPL = (51.767278876441985/52.5);//(60/45.75) * 1.0434782608695652173913043478261 ;
+    public static double LATERAL_MULTIPLIER_IMPL = 1;//(51.767278876441985/52.5);//(60/45.75) * 1.0434782608695652173913043478261 ;
 
     public static double VX_WEIGHT_IMPL = 1;
     public static double VY_WEIGHT_IMPL = 1;
@@ -90,9 +91,10 @@ public class Meet0Bot extends DriveConstants {
     public static double slamraX_IMPL = 6;
     public static double slamraY_IMPL = -.4;
 
+    //leftFront, leftRear, rightRear, rightFront
     public static DcMotorSimple.Direction[] DIRECTIONS_IMPL
-            = {DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-               DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
+            = {DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,
+               DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD};
 
     public Meet0Bot(){
         super(TICKS_PER_REV_IMPL,RUN_USING_ENCODER_IMPL,MOTOR_VELO_PID_IMPL,
@@ -105,4 +107,9 @@ public class Meet0Bot extends DriveConstants {
                 DIRECTIONS_IMPL);
     }
 
+
+    @Override
+    public void initialize(HardwareMap hardwareMap) {
+
+    }
 }

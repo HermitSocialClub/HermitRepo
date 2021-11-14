@@ -35,7 +35,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.exception.NullArgumentException;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.drive.BotSwitch;
 import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.drive.Meet0Bot;
 import org.firstinspires.ftc.teamcode.drive.Meet3Bot;
@@ -95,7 +97,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     private LinkedList<Pose2d> poseHistory;
 
     public DcMotorEx leftFront, leftRear, rightRear, rightFront, outtake, intake, wobbleArm, lift;
-    private List<DcMotorEx> motors;
+    public List<DcMotorEx> motors;
     private BNO055IMU imu;
 
     public Servo wobbleGrab;
@@ -116,11 +118,13 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     DriveConstants constant;
 
+    BotSwitch botSwitch = new BotSwitch();
     {
         try {
-            constant = bot.constants.getClass().getConstructor().newInstance();
-        }catch (ReflectiveOperationException e){
-            constant = new Meet3Bot();
+            bot.constants = bot.constants.getClass().getConstructor().newInstance();
+            constant = bot.constants;
+        }catch (ReflectiveOperationException | NullPointerException e){
+            constant = new Meet0Bot();
         }
     }
 
@@ -174,7 +178,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         lift = hardwareMap.get(DcMotorEx.class,"lift");
         intake = hardwareMap.get(DcMotorEx.class,"intake");
-        duck_wheel = hardwareMap.dcMotor.get("duckweel");
+        duck_wheel = hardwareMap.dcMotor.get("duckwheel");
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -204,6 +208,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         setLocalizer(new T265LocalizerRR(hardwareMap,true));
         telemetry.setData("Pose Estimatlocae",getPoseEstimate());
         telemetry.setData("Pose",T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
+        //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {

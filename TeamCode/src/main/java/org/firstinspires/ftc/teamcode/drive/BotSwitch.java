@@ -13,7 +13,9 @@ public class BotSwitch {
             this.constants = constants;
         }
     }
+    public static BOT bot;
 
-    public static BOT bot = BOT.MEET0BOT;
-
+    public BotSwitch() {
+        bot = BOT.MEET0BOT;
+    }
 }
