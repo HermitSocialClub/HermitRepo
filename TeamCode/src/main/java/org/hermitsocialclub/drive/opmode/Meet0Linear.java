@@ -13,7 +13,7 @@ import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.tomato.BarcodeDetect;
 
-//m() is just Math.toRadians, I'm just lazy
+import static org.hermitsocialclub.util.MoveUtils.m;
 
 @Autonomous(name = "Meet0Linear")
 public class Meet0Linear extends LinearOpMode {
@@ -86,13 +86,8 @@ public class Meet0Linear extends LinearOpMode {
         drive.followTrajectory(strafe);
     }
 
-    private double m(double heading) {
-        return Math.toRadians(heading);
-    }
-
     private int barCode() {
         semaphore.waitForFrame();
         return barcodeDetect.getResult();
     }
-
 }

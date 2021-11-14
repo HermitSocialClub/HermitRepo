@@ -11,7 +11,7 @@ import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-//m() is just Math.toRadians, I'm just lazy
+import static org.hermitsocialclub.util.MoveUtils.m;
 
 @Autonomous(name = "MainAutoBlue")
 public class BasicallyJustAnOutlineAuto extends LinearOpMode {
@@ -100,10 +100,4 @@ public class BasicallyJustAnOutlineAuto extends LinearOpMode {
         drive.intake.setPower(0);
         drive.followTrajectory(longBoi);*/
     }
-
-    private double m(double heading) {
-        return Math.toRadians(heading);
-    }
-
-
 }

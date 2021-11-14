@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
+import static org.hermitsocialclub.util.MoveUtils.m;
+
 @Autonomous(name = "AutoBlue")
 public class LinearOutlineAuto extends LinearOpMode {
 
@@ -60,10 +62,4 @@ public class LinearOutlineAuto extends LinearOpMode {
 
         }
     }
-
-    private double m(double heading) {
-        return Math.toRadians(heading);
-    }
-
-
 }

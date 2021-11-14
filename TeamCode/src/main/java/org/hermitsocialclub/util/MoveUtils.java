@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.util;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -91,44 +91,10 @@ public class MoveUtils {
         }
     }
 
-    public static void useEncoders(final DcMotor[] motors, boolean use) {
-        if (use) {
-            for (int i = 0; i < motors.length; i++) {
-                motors[i].setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-        } else {
-            for (int i = 0; i < motors.length; i++) {
-                motors[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            }
-        }
-    }
-
     public static void resetEncoders(final DcMotor[] motors) {
         for (int i = 0; i < motors.length; i++) {
             motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
-    }
-
-    public static void runToPosition(final DcMotor[] motors) {
-        for (int i = 0; i < motors.length; i++) {
-            motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }
-
-    public static void setEachPosition(final DcMotor[] motors, final Integer[] positions) {
-        for (int i = 0; i < motors.length; i++) {
-            motors[i].setTargetPosition(positions[i]);
-        }
-    }
-
-    public static Integer[] getEachPosition(DcMotor[] motors) {
-        List<Integer> positions = new ArrayList<>();
-        for (int i = 0; i < motors.length; i++) {
-            positions.add(motors[i].getCurrentPosition());
-        }
-        Integer[] posi = new Integer[positions.size()];
-        posi = positions.toArray(posi);
-        return posi;
     }
 
     public static boolean areAllMotorsBusy(DcMotor[] motors) {
@@ -148,35 +114,11 @@ public class MoveUtils {
     }
 
     /**
-     * Thanks to
-     * <a href="https://stackoverflow.com/questions/15022630/how-to-calculate-the-angle-from-rotation-matrix#:~:targetText=If%20R%20is%20the%20(3x3,sum%20of%20the%20diagonal%20elements).">
-     * this question answer
-     * </a><br />
-     * NOTE THAT OPENGLMATRICES ARE 0-INDEXED, UNLIKE NORMAL MATH
+     * m() is just Math.toRadians, I'm just lazy
+     * @author Cayden
      */
-    public static float[] poseToRotations(OpenGLMatrix toTarget) {
-        double thetaX = atan2(toTarget.get(2, 1), toTarget.get(2, 2));
-        double thetaY = atan2(-toTarget.get(2, 0), sqrt(
-                pow(toTarget.get(2, 1), 2) + pow(toTarget.get(2, 2), 2)
-        ));
-        double thetaZ = atan2(toTarget.get(1, 0), toTarget.get(0, 0));
-        return new float[]{(float) thetaX, (float) thetaY, (float) thetaZ};
-    }
-
-    public static boolean areApproxEqual(double uno, double dos, double threshold) {
-        return Math.abs(uno - dos) <= threshold;
-    }
-
-    public static double[] multiplyArrays(double[] factor1, double[] factor2) {
-        List<Double> product = new ArrayList<>();
-        for (int i = 0; i < factor1.length; i++) {
-            product.add(factor1[i] * factor2[i]);
-        }
-        double[] products = new double[product.size()];
-        for (int i = 0; i < products.length; i++) {
-            products[i] = product.get(i);
-        }
-        return products;
+    public static double m(double heading) {
+        return Math.toRadians(heading);
     }
 
 }

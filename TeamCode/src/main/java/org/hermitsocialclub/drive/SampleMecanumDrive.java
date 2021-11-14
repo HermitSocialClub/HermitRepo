@@ -27,7 +27,7 @@ import com.qualcomm.robotcore.hardware.*;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.hermitsocialclub.localizers.StandardTrackingWheelLocalizer;
-import org.hermitsocialclub.pandemicpanic.MoveUtils;
+import org.hermitsocialclub.util.MoveUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;

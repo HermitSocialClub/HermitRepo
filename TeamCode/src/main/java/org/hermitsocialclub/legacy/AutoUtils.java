@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.hermitsocialclub.pandemicpanic.MecanumConfiguration;
-import org.hermitsocialclub.pandemicpanic.MoveUtils;
+import org.hermitsocialclub.util.MoveUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.ArrayList;
