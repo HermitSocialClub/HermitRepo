@@ -49,7 +49,7 @@ public class PushBotConfiguration {
     public DcMotor right_drive = null;
     public DcMotor right_drive_2 = null;
     public DcMotor[] drive_Motors;
-    public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
+   // public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
     /*public DcMotor tapeShooter;
     public Servo foundation_Mover = null;
     public Servo foundation_Mover_2 = null;
@@ -97,9 +97,9 @@ public class PushBotConfiguration {
         tapeShooter = hwMap.get(DcMotor.class, "tapeShooter");
         capSlinger = hwMap.get(Servo.class, "capSlinger");
         topClaw = hwMap.get(Servo.class, "topClaw"); */
-        leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
+     /*   leftEncoder = hwMap.get(DcMotorEx.class, "leftEncoder");
         rightEncoder = hwMap.get(DcMotorEx.class, "tapeShooter");
-        frontEncoder = hwMap.get(DcMotorEx.class, "arm");
+        frontEncoder = hwMap.get(DcMotorEx.class, "arm"); */
       /*  spinner = hwMap.get(DcMotorEx.class,"tapeShooter" +
                 "");
 */

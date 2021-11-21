@@ -33,9 +33,9 @@ public class MecPushBotBaseOp extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
-        initialLeftTicks = robot.leftEncoder.getCurrentPosition();
+       /* initialLeftTicks = robot.leftEncoder.getCurrentPosition();
         initialRightTicks = robot.rightEncoder.getCurrentPosition();
-        initialTopTicks = robot.frontEncoder.getCurrentPosition();
+        initialTopTicks = robot.frontEncoder.getCurrentPosition();*/
 
 
         telemetry.speak("Hola. Cómo estás?", "spa", "mx");

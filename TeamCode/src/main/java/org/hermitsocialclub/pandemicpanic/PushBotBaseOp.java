@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 //@Disabled
-@TeleOp(name = "Mecanum Pushbot Base Op", group = "Hermit")
+@TeleOp(name = "Pushbot Base Op", group = "Hermit")
 
 public class PushBotBaseOp extends LinearOpMode {
 
@@ -31,9 +31,9 @@ public class PushBotBaseOp extends LinearOpMode {
         robot.init(hardwareMap);
 
         waitForStart();
-        initialLeftTicks = robot.leftEncoder.getCurrentPosition();
+      /*  initialLeftTicks = robot.leftEncoder.getCurrentPosition();
         initialRightTicks = robot.rightEncoder.getCurrentPosition();
-        initialTopTicks = robot.frontEncoder.getCurrentPosition();
+        initialTopTicks = robot.frontEncoder.getCurrentPosition(); */
 
 
         telemetry.speak("Hola. Cómo estás?", "spa", "mx");
@@ -69,15 +69,15 @@ public class PushBotBaseOp extends LinearOpMode {
             }
             lastBMash = gamepad1.b;
 
-            robot.left_drive.setPower(gamepad1.left_stick_y);
-            robot.left_drive_2.setPower(gamepad1.left_stick_y);
-            robot.right_drive.setPower(gamepad1.left_stick_y);
-            robot.right_drive_2.setPower(gamepad1.left_stick_y);
+            robot.left_drive.setPower(gamepad1.left_stick_y + 0.15);
+            robot.left_drive_2.setPower(gamepad1.left_stick_y + 0.15);
+            robot.right_drive.setPower(gamepad1.left_stick_y + 0.15);
+            robot.right_drive_2.setPower(gamepad1.left_stick_y + 0.15);
 
-            robot.left_drive.setPower(gamepad1.right_stick_x);
-            robot.left_drive_2.setPower(gamepad1.right_stick_x);
-            robot.right_drive.setPower(-gamepad1.right_stick_x);
-            robot.right_drive_2.setPower(-gamepad1.right_stick_x);
+            robot.left_drive.setPower(gamepad1.right_stick_x + 0.1);
+            robot.left_drive_2.setPower(gamepad1.right_stick_x + 0.1);
+            robot.right_drive.setPower(-gamepad1.right_stick_x - 0.1);
+            robot.right_drive_2.setPower(-gamepad1.right_stick_x - 0.1);
 
           /*  double r = MoveUtils.joystickXYToRadius(gamepad1.left_stick_x, -gamepad1.left_stick_y);
             double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.left_stick_x, gamepad1.left_stick_y);
