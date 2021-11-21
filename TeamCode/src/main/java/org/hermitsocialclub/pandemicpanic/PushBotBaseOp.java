@@ -69,15 +69,51 @@ public class PushBotBaseOp extends LinearOpMode {
             }
             lastBMash = gamepad1.b;
 
-            robot.left_drive.setPower(gamepad1.left_stick_y + 0.15);
-            robot.left_drive_2.setPower(gamepad1.left_stick_y + 0.15);
-            robot.right_drive.setPower(gamepad1.left_stick_y + 0.15);
-            robot.right_drive_2.setPower(gamepad1.left_stick_y + 0.15);
+            if (gamepad1.left_stick_y > 0){
+                robot.left_drive.setPower(gamepad1.left_stick_y + 0.15);
+                robot.left_drive_2.setPower(gamepad1.left_stick_y + 0.15);
+                robot.right_drive.setPower(gamepad1.left_stick_y + 0.15);
+                robot.right_drive_2.setPower(gamepad1.left_stick_y + 0.15);
 
-            robot.left_drive.setPower(gamepad1.right_stick_x + 0.1);
-            robot.left_drive_2.setPower(gamepad1.right_stick_x + 0.1);
-            robot.right_drive.setPower(-gamepad1.right_stick_x - 0.1);
-            robot.right_drive_2.setPower(-gamepad1.right_stick_x - 0.1);
+                robot.left_drive.setPower(gamepad1.right_stick_x + 0.15);
+                robot.left_drive_2.setPower(gamepad1.right_stick_x + 0.15);
+                robot.right_drive.setPower(-gamepad1.right_stick_x - 0.15);
+                robot.right_drive_2.setPower(-gamepad1.right_stick_x - 0.15);
+            }
+
+            if (gamepad1.left_stick_y < 0){
+                robot.left_drive.setPower(gamepad1.left_stick_y - 0.15);
+                robot.left_drive_2.setPower(gamepad1.left_stick_y - 0.15);
+                robot.right_drive.setPower(gamepad1.left_stick_y - 0.15);
+                robot.right_drive_2.setPower(gamepad1.left_stick_y - 0.15);
+
+                robot.left_drive.setPower(gamepad1.right_stick_x - 0.15);
+                robot.left_drive_2.setPower(gamepad1.right_stick_x - 0.15);
+                robot.right_drive.setPower(-gamepad1.right_stick_x + 0.15);
+                robot.right_drive_2.setPower(-gamepad1.right_stick_x + 0.15);
+            }
+
+            if (gamepad1.left_stick_y == 0){
+                robot.left_drive.setPower(0);
+                robot.left_drive_2.setPower(0);
+                robot.right_drive.setPower(0);
+                robot.right_drive_2.setPower(0);
+
+                robot.left_drive.setPower(0);
+                robot.left_drive_2.setPower(0);
+                robot.right_drive.setPower(0);
+                robot.right_drive_2.setPower(0);
+            }
+
+           /* robot.left_drive.setPower(gamepad1.left_stick_y);
+            robot.left_drive_2.setPower(gamepad1.left_stick_y);
+            robot.right_drive.setPower(gamepad1.left_stick_y);
+            robot.right_drive_2.setPower(gamepad1.left_stick_y);
+
+            robot.left_drive.setPower(gamepad1.right_stick_x);
+            robot.left_drive_2.setPower(gamepad1.right_stick_x);
+            robot.right_drive.setPower(-gamepad1.right_stick_x);
+            robot.right_drive_2.setPower(-gamepad1.right_stick_x); */
 
           /*  double r = MoveUtils.joystickXYToRadius(gamepad1.left_stick_x, -gamepad1.left_stick_y);
             double robotAngle = MoveUtils.joystickXYToAngle(gamepad1.left_stick_x, gamepad1.left_stick_y);
