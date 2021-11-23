@@ -105,6 +105,12 @@ public class PushBotBaseOp extends LinearOpMode {
                 robot.right_drive_2.setPower(0);
             }
 
+            if(gamepad1.x){
+                robot.duck_wheel.setPower(0.3);
+            }else {
+                robot.duck_wheel.setPower(0);
+            }
+
            /* robot.left_drive.setPower(gamepad1.left_stick_y);
             robot.left_drive_2.setPower(gamepad1.left_stick_y);
             robot.right_drive.setPower(gamepad1.left_stick_y);
