@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.tuning;
+package org.hermitsocialclub.drive.tuning;
 
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.GEAR_RATIO;
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.TICKS_PER_REV;
@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;

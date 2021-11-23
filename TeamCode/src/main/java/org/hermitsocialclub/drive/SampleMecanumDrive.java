@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.hermitsocialclub.drive;
 
 
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.BASE_CONSTRAINTS;
@@ -42,12 +42,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.localizers.StandardTrackingWheelLocalizer;
-import org.firstinspires.ftc.teamcode.util.DashboardUtil;
-import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
-import org.hermitsocialclub.pandemicpanic.MoveUtils;
+import org.hermitsocialclub.legacy.SkystoneVuforiaEngine;
+import org.hermitsocialclub.localizers.StandardTrackingWheelLocalizer;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.util.DashboardUtil;
+import org.hermitsocialclub.util.LynxModuleUtil;
+import org.hermitsocialclub.util.MoveUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;

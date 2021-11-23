@@ -106,7 +106,7 @@ public class DriveConstants {
     public static DcMotorSimple.Direction[] DIRECTIONS;
 
     //Meet0Bot
-    static {
+    /*static {
         TICKS_PER_REV = 537.6;
 
         MAX_RPM = 340;
@@ -141,9 +141,9 @@ public class DriveConstants {
             MAX_VELO, MAX_ACCEL, 0.0,
             MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
         );
-        TRANSLATIONAL_PID = new PIDCoefficients(/*8.3*/8, 8, /*1.1*/.1);
+        TRANSLATIONAL_PID = new PIDCoefficients(8, 8, .1);
 
-        HEADING_PID = new PIDCoefficients(/*10.4*/8, 1, /*1.5*/0);
+        HEADING_PID = new PIDCoefficients(8, 1, 0);
 
         LATERAL_MULTIPLIER = 1;
 
@@ -161,7 +161,7 @@ public class DriveConstants {
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
-    }
+    }*/
 
     //BigBoy
     /*static {
@@ -235,9 +235,9 @@ public class DriveConstants {
 
         GEAR_RATIO = 1;
 
-        TRACK_WIDTH = 10.15;
+        TRACK_WIDTH = 0;
 
-        WHEEL_BASE = 13.25;
+        WHEEL_BASE = 0;
 
         MAX_VELO = 32;
 
@@ -247,19 +247,19 @@ public class DriveConstants {
 
         MAX_ANG_ACCEL = Math.toRadians(180);
 
-        kV = 0.03025;
+        kV = 0;
 
-        kA = 0.004;
+        kA = 0;
 
-        kStatic = .03;
+        kStatic = 0;
 
         BASE_CONSTRAINTS = new DriveConstraints(
                 MAX_VELO, MAX_ACCEL, 0.0,
                 MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
         );
-        TRANSLATIONAL_PID = new PIDCoefficients(/*8.3*/8, 8, /*1.1*/.1);
+        TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
 
-        HEADING_PID = new PIDCoefficients(/*10.4*/8, 1, /*1.5*/0);
+        HEADING_PID = new PIDCoefficients(0, 0, 0);
 
         LATERAL_MULTIPLIER = 1;
 
@@ -271,9 +271,9 @@ public class DriveConstants {
 
         POSE_HISTORY_LIMIT = 200;
 
-        slamraX = 2.75;
+        slamraX = 0;
 
-        slamraY = 2.375;
+        slamraY = 0;
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};

@@ -1,5 +1,8 @@
 package org.hermitsocialclub.localizers;
 
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.WHEEL_BASE;
+
 import android.util.Pair;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -15,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.hermitsocialclub.drive.config.Meet0BotConstants.TRACK_WIDTH;
-import static org.hermitsocialclub.drive.config.Meet0BotConstants.WHEEL_BASE;
 
 public class MecanumLocalizerEVI implements Localizer {
     MecanumDrive drive;

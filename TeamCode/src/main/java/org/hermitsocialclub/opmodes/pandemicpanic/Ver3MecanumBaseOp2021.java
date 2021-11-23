@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.HEADING_PID;
 
@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
+import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.opmodes.freightfrenzy.PoseStorage;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 

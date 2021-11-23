@@ -14,7 +14,7 @@ import com.acmerobotics.dashboard.config.Config;
  * and op modes themselves.
  */
 @Config
-public class Meet3Bot{
+public class Meet3BotConstants {
 /*
 
     public static double TICKS_PER_REV = 537.6;

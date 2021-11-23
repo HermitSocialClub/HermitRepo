@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.tuning;
+package org.hermitsocialclub.drive.tuning;
 
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.BASE_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.RUN_USING_ENCODER;
@@ -21,8 +21,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.vision.SkystoneVuforiaEngine;
+import org.hermitsocialclub.drive.SampleMecanumDrive;
+import org.hermitsocialclub.legacy.SkystoneVuforiaEngine;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.List;

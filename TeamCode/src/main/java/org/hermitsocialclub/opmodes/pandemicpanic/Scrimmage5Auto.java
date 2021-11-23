@@ -1,4 +1,4 @@
-package org.hermitsocialclub.pandemicpanic;
+package org.hermitsocialclub.opmodes.pandemicpanic;
 
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.MAX_ANG_ACCEL;
@@ -20,13 +20,13 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
-import org.firstinspires.ftc.teamcode.drive.BaselineMecanumDrive;
-import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
+import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.hydra.opmodes.SubmatSetupOp;
 import org.hermitsocialclub.hydra.vision.StaccDetecc;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.hydra.vision.util.VisionUtils;
-import org.hermitsocialclub.opmodes.SubmatSetupOp;
+import org.hermitsocialclub.opmodes.freightfrenzy.PoseStorage;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @Disabled

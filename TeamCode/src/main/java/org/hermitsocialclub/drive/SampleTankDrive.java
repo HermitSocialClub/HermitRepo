@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive;
+package org.hermitsocialclub.drive;
 
 
 import androidx.annotation.NonNull;
@@ -30,9 +30,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.util.DashboardUtil;
-import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +43,9 @@ import static org.firstinspires.ftc.teamcode.util.DriveConstants.getMotorVelocit
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.util.DriveConstants.kV;
+
+import org.hermitsocialclub.util.DashboardUtil;
+import org.hermitsocialclub.util.LynxModuleUtil;
 
 /*
  * Simple tank drive hardware implementation for REV hardware.
