@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.WHEEL_BASE;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.getMotorVelocityF;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.WHEEL_BASE;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.getMotorVelocityF;
 
 import androidx.annotation.NonNull;
 
@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.*;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.*;
 
 /*
  * Simple mecanum drive hardware implementation for REV hardware.

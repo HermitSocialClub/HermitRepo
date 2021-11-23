@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.drive.tuning;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

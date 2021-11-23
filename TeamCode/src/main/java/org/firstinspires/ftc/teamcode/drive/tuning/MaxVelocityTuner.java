@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.drive.tuning;
 
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.GEAR_RATIO;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TICKS_PER_REV;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.WHEEL_RADIUS;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.getMotorVelocityF;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.GEAR_RATIO;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TICKS_PER_REV;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.WHEEL_RADIUS;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.getMotorVelocityF;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

@@ -1,14 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.control.PIDCoefficients;
-import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 
 /*
  * Constants shared between multiple drive types.
@@ -22,7 +14,7 @@ import org.firstinspires.ftc.teamcode.drive.DriveConstants;
  * and op modes themselves.
  */
 @Config
-public class Meet3Bot extends DriveConstants {
+public class Meet3Bot{
 /*
 
     public static double TICKS_PER_REV = 537.6;

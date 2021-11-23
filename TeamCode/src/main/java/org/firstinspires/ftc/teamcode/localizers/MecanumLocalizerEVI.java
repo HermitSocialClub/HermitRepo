@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Collections.emptyList;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.WHEEL_BASE;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.WHEEL_BASE;
 
 public class MecanumLocalizerEVI implements Localizer {
     MecanumDrive drive;

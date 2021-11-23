@@ -1,9 +1,9 @@
 package org.hermitsocialclub.pandemicpanic;
 
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MAX_ACCEL;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MAX_ANG_ACCEL;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MAX_ANG_VELO;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.MAX_ACCEL;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.MAX_ANG_ACCEL;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.MAX_ANG_VELO;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;

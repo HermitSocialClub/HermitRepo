@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.drive.tuning;
 
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.kV;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

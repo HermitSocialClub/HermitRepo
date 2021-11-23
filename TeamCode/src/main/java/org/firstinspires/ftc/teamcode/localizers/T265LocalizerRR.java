@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.localizers;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.slamraX;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.slamraY;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.slamraX;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.slamraY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;

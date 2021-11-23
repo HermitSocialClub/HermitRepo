@@ -1,19 +1,19 @@
 package org.firstinspires.ftc.teamcode.drive;
 
 
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.DIRECTIONS;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.HEADING_PID;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.LATERAL_MULTIPLIER;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.OMEGA_WEIGHT;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.POSE_HISTORY_LIMIT;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.TRANSLATIONAL_PID;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.VX_WEIGHT;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.VY_WEIGHT;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.util.Meet0Bot.encoderTicksToInches;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.BASE_CONSTRAINTS;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.DIRECTIONS;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.HEADING_PID;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.LATERAL_MULTIPLIER;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.MOTOR_VELO_PID;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.OMEGA_WEIGHT;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.POSE_HISTORY_LIMIT;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRANSLATIONAL_PID;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.VX_WEIGHT;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.VY_WEIGHT;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.RUN_USING_ENCODER;
+import static org.firstinspires.ftc.teamcode.util.DriveConstants.encoderTicksToInches;
 
 import androidx.annotation.NonNull;
 
@@ -27,6 +27,8 @@ import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower;
 import com.acmerobotics.roadrunner.followers.TrajectoryFollower;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.kinematics.Kinematics;
+import com.acmerobotics.roadrunner.kinematics.MecanumKinematics;
 import com.acmerobotics.roadrunner.profile.MotionProfile;
 import com.acmerobotics.roadrunner.profile.MotionProfileGenerator;
 import com.acmerobotics.roadrunner.profile.MotionState;
@@ -37,6 +39,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -51,8 +54,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.localizers.T265LocalizerRR;
-import org.firstinspires.ftc.teamcode.util.BotSwitch;
-import org.firstinspires.ftc.teamcode.util.Meet0Bot;
+import org.firstinspires.ftc.teamcode.util.DriveConstants;
 import org.firstinspires.ftc.teamcode.util.DashboardUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
@@ -99,7 +101,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public RevColorSensorV3 color;
     public Servo hopperLift;
     public CRServo intakeThirdStage;
-   public DcMotor duck_wheel;
+   public DcMotorEx duck_wheel;
 
 
     private VoltageSensor batteryVoltageSensor;
@@ -108,18 +110,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private PersistantTelemetry telemetry;
 
-    DriveConstants constant;
-
-    BotSwitch botSwitch = new BotSwitch();
-    {
-        constant = new Meet0Bot();
-    }
-
     public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
 
 
 
-        super(Meet0Bot.kV, Meet0Bot.kA, Meet0Bot.kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
 
         this.telemetry = pt;
 
@@ -164,7 +159,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         lift = hardwareMap.get(DcMotorEx.class,"lift");
         intake = hardwareMap.get(DcMotorEx.class,"intake");
-        duck_wheel = hardwareMap.dcMotor.get("duckwheel");
+        duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
@@ -179,7 +174,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         if (RUN_USING_ENCODER) {
-            //setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             //setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID_IMPL);
@@ -373,7 +368,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
-        Pose2d vel = drivePower;
+        Pose2d targetvel = drivePower;
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
@@ -382,14 +377,89 @@ public class BaselineMecanumDrive extends MecanumDrive {
                     + VY_WEIGHT * Math.abs(drivePower.getY())
                     + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
 
-            vel = new Pose2d(
+            targetvel = new Pose2d(
                     VX_WEIGHT * drivePower.getX(),
                     VY_WEIGHT * drivePower.getY(),
                     OMEGA_WEIGHT * drivePower.getHeading()
             ).div(denom);
-        }
 
-        setDrivePower(vel);
+        }
+        List<Double> powers = MecanumKinematics.robotToWheelVelocities(
+                drivePower, 1.0, 1.0, LATERAL_MULTIPLIER);
+        telemetry.setData("motor powers",powers.toString());
+        setRelativeMotorVelocities(powers);
+
+        telemetry.setData("Wheel Velocities",getWheelVelocities().toString());
+        //setDrivePower(vel);
+    }
+
+    public void setWeightedDrivePowerPID(Pose2d drivePower) {
+        DriveSignal signal;
+        PIDFController lateralController = new PIDFController(TRANSLATIONAL_PID);
+        PIDFController axialController = new PIDFController(TRANSLATIONAL_PID);
+        PIDFController headingController = new PIDFController(HEADING_PID);
+        Pose2d curPose = getPoseEstimate();
+        telemetry.setData("curPose",curPose);
+        Pose2d currentRobotVel = getPoseVelocity();
+        telemetry.setData("currentRobotVel",currentRobotVel);
+        Pose2d targetPose = new Pose2d(curPose.getX() + drivePower.getX()/10,
+                curPose.getY() + drivePower.getY()/10, curPose.getHeading());
+        Pose2d targetVel = drivePower;
+        Pose2d targetAccel = drivePower.minus(currentRobotVel);
+        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
+                + Math.abs(drivePower.getHeading()) > 1) {
+            // re-normalize the powers according to the weights
+            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
+                    + VY_WEIGHT * Math.abs(drivePower.getY())
+                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
+
+            targetVel = new Pose2d(
+                    VX_WEIGHT * drivePower.getX(),
+                    VY_WEIGHT * drivePower.getY(),
+                    OMEGA_WEIGHT * drivePower.getHeading()
+            ).div(denom);
+            telemetry.setData("targetVel",targetVel);
+            targetPose = new Pose2d(curPose.getX() + drivePower.getX(),
+                    curPose.getY() + drivePower.getY(), curPose.getHeading());
+            telemetry.setData("Target Pose",targetPose);
+            targetAccel = drivePower.minus(getPoseVelocity());
+            telemetry.setData("targetAccel",targetAccel);
+
+        }
+        Pose2d poseError = Kinematics.calculatePoseError(targetPose, curPose);
+        telemetry.setData("poseError",poseError);
+        Pose2d targetRobotVel = Kinematics.fieldToRobotVelocity(targetPose, targetVel);
+        telemetry.setData("targetRobotVel",targetRobotVel);
+        Pose2d targetRobotAccel = Kinematics.fieldToRobotAcceleration(targetPose, targetVel, targetAccel);
+        telemetry.setData("targetRobotAccel",targetRobotAccel);
+
+        // you can pass the error directly to PIDFController by setting setpoint = error and measurement = 0
+        axialController.setTargetPosition(poseError.getX());
+        lateralController.setTargetPosition(poseError.getX());
+        headingController.setTargetPosition(poseError.getHeading());
+
+        axialController.setTargetVelocity(targetRobotVel.getX());
+        lateralController.setTargetVelocity(targetRobotVel.getY());
+        headingController.setTargetVelocity(targetRobotVel.getHeading());
+
+        // note: feedforward is processed at the wheel level
+        double axialCorrection = axialController.update(0.0, currentRobotVel.getX());
+        telemetry.setData("axialCorrection",axialCorrection);
+        double lateralCorrection = lateralController.update(0.0, currentRobotVel.getY());
+        telemetry.setData("lateralCorrection",lateralCorrection);
+        double headingCorrection = headingController.update(0.0, currentRobotVel.getHeading());
+        telemetry.setData("headingCorrection",headingCorrection);
+
+        Pose2d correctedVelocity = targetRobotVel.plus( new Pose2d(
+                axialCorrection,
+                lateralCorrection,
+                headingCorrection
+        ));
+        telemetry.setData("correctedVelocity",correctedVelocity.toString());
+
+        signal = new DriveSignal(correctedVelocity,targetRobotAccel);
+
+        setDriveSignal(signal);
     }
 
     @NonNull
@@ -417,6 +487,22 @@ public class BaselineMecanumDrive extends MecanumDrive {
         leftRear.setPower(v1);
         rightRear.setPower(v2);
         rightFront.setPower(v3);
+    }
+
+    public void setRelativeMotorVelocities(List<Double> powers){
+        MotorConfigurationType type = MotorConfigurationType.getMotorType(
+            NeveRest20Gearmotor.class
+    );
+        telemetry.setData("RPM Fraction", type.getAchieveableMaxRPMFraction());
+        telemetry.setData("Max RPM",type.getMaxRPM());
+        int i = 0;
+        for (double power:
+             powers) {
+            motors.get(i)
+                    .setVelocity(power * type.getAchieveableMaxRPMFraction()
+                    * 2 * Math.PI * type.getMaxRPM()/60,AngleUnit.RADIANS);
+            i++;
+        }
     }
 
     public void setMotorDirections (DcMotorSimple.Direction[] directions){
