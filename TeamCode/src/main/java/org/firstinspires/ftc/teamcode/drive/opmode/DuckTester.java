@@ -26,10 +26,29 @@ public class DuckTester extends LinearOpMode {
 
           //  double duck_wheel;
             if (gamepad1.a){
-                duck_wheel.setPower(-0.3);
+                duck_wheel.setPower(0.7);
             }else {
                 duck_wheel.setPower(0);
             }
+
+            if (gamepad1.b){
+                duck_wheel.setPower(0.75);
+            }else {
+                duck_wheel.setPower(0);
+            }
+
+            if (gamepad1.x){
+                duck_wheel.setPower(0.6);
+            }else {
+                duck_wheel.setPower(0);
+            }
+
+            if (gamepad1.y){
+                duck_wheel.setPower(0.65);
+            }else {
+                duck_wheel.setPower(0);
+            }
+
 
         }
 
