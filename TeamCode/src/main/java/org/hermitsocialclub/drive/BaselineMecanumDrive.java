@@ -1,19 +1,22 @@
 package org.hermitsocialclub.drive;
 
 
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.DIRECTIONS;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.HEADING_PID;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.LATERAL_MULTIPLIER;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.MOTOR_VELO_PID;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.OMEGA_WEIGHT;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.POSE_HISTORY_LIMIT;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRANSLATIONAL_PID;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.VX_WEIGHT;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.VY_WEIGHT;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.encoderTicksToInches;
+import static org.hermitsocialclub.drive.config.DriveConstants.BASE_CONSTRAINTS;
+import static org.hermitsocialclub.drive.config.DriveConstants.DIRECTIONS;
+import static org.hermitsocialclub.drive.config.DriveConstants.HEADING_PID;
+import static org.hermitsocialclub.drive.config.DriveConstants.LATERAL_MULTIPLIER;
+import static org.hermitsocialclub.drive.config.DriveConstants.MOTOR_VELO_PID;
+import static org.hermitsocialclub.drive.config.DriveConstants.OMEGA_WEIGHT;
+import static org.hermitsocialclub.drive.config.DriveConstants.POSE_HISTORY_LIMIT;
+import static org.hermitsocialclub.drive.config.DriveConstants.RUN_USING_ENCODER;
+import static org.hermitsocialclub.drive.config.DriveConstants.TRACK_WIDTH;
+import static org.hermitsocialclub.drive.config.DriveConstants.TRANSLATIONAL_PID;
+import static org.hermitsocialclub.drive.config.DriveConstants.VX_WEIGHT;
+import static org.hermitsocialclub.drive.config.DriveConstants.VY_WEIGHT;
+import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInches;
+
+import org.hermitsocialclub.drive.config.DriveConstants;
+import org.hermitsocialclub.drive.config.DriveConstants.*;
 
 import androidx.annotation.NonNull;
 
@@ -53,8 +56,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.localizers.T265LocalizerRR;
-import org.firstinspires.ftc.teamcode.util.DriveConstants;
+import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
@@ -188,7 +190,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new T265LocalizerRR(hardwareMap,true));
         telemetry.setData("Pose Estimatlocae",getPoseEstimate());
-        telemetry.setData("Pose",T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
+        telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }
 

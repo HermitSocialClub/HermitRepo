@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.localizers;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.slamraX;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.slamraY;
+package org.hermitsocialclub.localizers;
+
+
+import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
+import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;

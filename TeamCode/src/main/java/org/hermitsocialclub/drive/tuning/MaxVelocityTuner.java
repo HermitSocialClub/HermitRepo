@@ -1,9 +1,9 @@
 package org.hermitsocialclub.drive.tuning;
 
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.GEAR_RATIO;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.TICKS_PER_REV;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.WHEEL_RADIUS;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.getMotorVelocityF;
+import static org.hermitsocialclub.drive.config.DriveConstants.GEAR_RATIO;
+import static org.hermitsocialclub.drive.config.DriveConstants.TICKS_PER_REV;
+import static org.hermitsocialclub.drive.config.DriveConstants.WHEEL_RADIUS;
+import static org.hermitsocialclub.drive.config.DriveConstants.getMotorVelocityF;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

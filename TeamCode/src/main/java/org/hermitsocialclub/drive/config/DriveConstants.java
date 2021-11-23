@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.hermitsocialclub.drive.config;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
@@ -105,7 +105,8 @@ public class DriveConstants {
     //leftFront, leftRear, rightRear, rightFront
     public static DcMotorSimple.Direction[] DIRECTIONS;
 
-    //Meet0Bot
+    //The Loser to Clueless
+
     /*static {
         TICKS_PER_REV = 537.6;
 
@@ -163,7 +164,7 @@ public class DriveConstants {
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
     }*/
 
-    //BigBoy
+    //The Toe Crusher
     /*static {
         TICKS_PER_REV = 537.6;
 
@@ -221,7 +222,7 @@ public class DriveConstants {
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
     }*/
 
-    //ThinBot
+    //The OSHA Enemy
     static {
         TICKS_PER_REV = 537.6;
 

@@ -1,5 +1,6 @@
-package org.firstinspires.ftc.teamcode.drive.tuning;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
+package org.hermitsocialclub.drive.tuning;
+
+import static org.hermitsocialclub.drive.config.DriveConstants.TRACK_WIDTH;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;

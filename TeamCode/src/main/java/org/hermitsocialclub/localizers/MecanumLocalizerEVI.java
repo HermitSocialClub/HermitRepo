@@ -1,7 +1,7 @@
 package org.hermitsocialclub.localizers;
 
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.TRACK_WIDTH;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.WHEEL_BASE;
+import static org.hermitsocialclub.drive.config.DriveConstants.TRACK_WIDTH;
+import static org.hermitsocialclub.drive.config.DriveConstants.WHEEL_BASE;
 
 import android.util.Pair;
 import com.acmerobotics.roadrunner.drive.MecanumDrive;

@@ -1,5 +1,9 @@
 package org.hermitsocialclub.drive.tuning;
 
+import static org.hermitsocialclub.drive.config.DriveConstants.MAX_RPM;
+import static org.hermitsocialclub.drive.config.DriveConstants.RUN_USING_ENCODER;
+import static org.hermitsocialclub.drive.config.DriveConstants.rpmToVelocity;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -18,9 +22,6 @@ import org.hermitsocialclub.util.RegressionUtil;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.MAX_RPM;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.rpmToVelocity;
 
 /*
  * Op mode for computing kV, kStatic, and kA from various drive routines. For the curious, here's an

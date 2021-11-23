@@ -1,8 +1,8 @@
 package org.hermitsocialclub.drive.tuning;
 
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.BASE_CONSTRAINTS;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.RUN_USING_ENCODER;
-import static org.firstinspires.ftc.teamcode.util.DriveConstants.kV;
+import static org.hermitsocialclub.drive.config.DriveConstants.BASE_CONSTRAINTS;
+import static org.hermitsocialclub.drive.config.DriveConstants.RUN_USING_ENCODER;
+import static org.hermitsocialclub.drive.config.DriveConstants.kV;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
