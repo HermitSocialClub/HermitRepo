@@ -105,7 +105,7 @@ public class DriveConstants {
     //leftFront, leftRear, rightRear, rightFront
     public static DcMotorSimple.Direction[] DIRECTIONS;
 
-    //The Loser to Clueless
+    //The Literal Joystick
 
     /*static {
         TICKS_PER_REV = 537.6;
@@ -230,25 +230,26 @@ public class DriveConstants {
 
         RUN_USING_ENCODER = false;
 
-        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 22.259453425873854);
+        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
+                getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
         WHEEL_RADIUS = 1.9685;
 
-        GEAR_RATIO = 1;
+        GEAR_RATIO = 4.0/3.0;
 
-        TRACK_WIDTH = 0;
+        TRACK_WIDTH = 6.5;
 
-        WHEEL_BASE = 0;
+        WHEEL_BASE = 6.5;
 
-        MAX_VELO = 32;
+        MAX_VELO = 79;
 
-        MAX_ACCEL = 30;
+        MAX_ACCEL = 79;
 
-        MAX_ANG_VELO = 3402.608;
+        MAX_ANG_VELO = Math.toRadians(360);
 
-        MAX_ANG_ACCEL = Math.toRadians(180);
+        MAX_ANG_ACCEL = Math.toRadians(360);
 
-        kV = 0;
+        kV = 1.0 / rpmToVelocity(MAX_RPM);
 
         kA = 0;
 
@@ -272,9 +273,9 @@ public class DriveConstants {
 
         POSE_HISTORY_LIMIT = 200;
 
-        slamraX = 0;
+        slamraX = 1.25;//Robot Length is 15.5 inches, slamra is 6.5 inches from the front
 
-        slamraY = 0;
+        slamraY = 3.875;//Robot Width is 12.25 inches, slamra is 2.25 inches from the right
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
