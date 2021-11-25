@@ -5,6 +5,8 @@ import static org.hermitsocialclub.drive.config.DriveConstants.BASE_CONSTRAINTS;
 import static org.hermitsocialclub.drive.config.DriveConstants.DIRECTIONS;
 import static org.hermitsocialclub.drive.config.DriveConstants.HEADING_PID;
 import static org.hermitsocialclub.drive.config.DriveConstants.LATERAL_MULTIPLIER;
+import static org.hermitsocialclub.drive.config.DriveConstants.MAX_ANG_VELO;
+import static org.hermitsocialclub.drive.config.DriveConstants.MAX_VELO;
 import static org.hermitsocialclub.drive.config.DriveConstants.MOTOR_VELO_PID;
 import static org.hermitsocialclub.drive.config.DriveConstants.OMEGA_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.POSE_HISTORY_LIMIT;
@@ -89,7 +91,14 @@ public class BaselineMecanumDrive extends MecanumDrive {
     private double turnStart;
 
     private DriveConstraints constraints;
+
+    /*
+        First follower is the standard one used for autonomous,
+     second one is a custom accessible one used to allow PID and FeedForward
+     use in Teleop
+    */
     private TrajectoryFollower follower;
+    private HolonomicPIDVAFollowerAccessible followerAccessible;
 
     private LinkedList<Pose2d> poseHistory;
 
@@ -135,6 +144,10 @@ public class BaselineMecanumDrive extends MecanumDrive {
         follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
                 new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
 
+        followerAccessible = new HolonomicPIDVAFollowerAccessible(
+                TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5
+        );
         poseHistory = new LinkedList<>();
 
         LynxModuleUtil.ensureMinimumFirmwareVersion(hardwareMap);
@@ -466,10 +479,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     }
 
     public void setWeightedDrivePowerFollower(Pose2d drivePower) {
-        HolonomicPIDVAFollowerAccessible followerAccessible = new HolonomicPIDVAFollowerAccessible(
-                TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5
-        );
+
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
             // re-normalize the powers according to the weights
@@ -478,9 +488,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
                     + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
 
             drivePower = new Pose2d(
-                    VX_WEIGHT * drivePower.getX(),
-                    VY_WEIGHT * drivePower.getY(),
-                    OMEGA_WEIGHT * drivePower.getHeading()
+                    VX_WEIGHT * drivePower.getX() * MAX_VELO/2.0,
+                    VY_WEIGHT * drivePower.getY() * MAX_VELO/2.0,
+                    OMEGA_WEIGHT * drivePower.getHeading() * MAX_ANG_VELO/2.0
             ).div(denom);
         }
         setDriveSignal(followerAccessible.internalUpdateTeleop(

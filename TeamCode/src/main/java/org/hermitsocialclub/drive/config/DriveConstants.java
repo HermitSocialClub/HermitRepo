@@ -106,7 +106,6 @@ public class DriveConstants {
     public static DcMotorSimple.Direction[] DIRECTIONS;
 
     //The Literal Joystick
-
     /*static {
         TICKS_PER_REV = 537.6;
 
@@ -164,7 +163,7 @@ public class DriveConstants {
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
     }*/
 
-    //The Toe Crusher
+    //Big Bertha
     /*static {
         TICKS_PER_REV = 537.6;
 
@@ -222,7 +221,7 @@ public class DriveConstants {
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
     }*/
 
-    //The OSHA Enemy
+    //The OSHA Offender
     static {
         TICKS_PER_REV = 537.6;
 
@@ -265,11 +264,11 @@ public class DriveConstants {
 
         LATERAL_MULTIPLIER = 1;
 
-        VX_WEIGHT = MAX_VELO/2.0;
+        VX_WEIGHT = 1;
 
-        VY_WEIGHT = MAX_VELO/2.0;
+        VY_WEIGHT = 1;
 
-        OMEGA_WEIGHT = MAX_ANG_VELO/2.0;
+        OMEGA_WEIGHT = 1;
 
         POSE_HISTORY_LIMIT = 200;
 
