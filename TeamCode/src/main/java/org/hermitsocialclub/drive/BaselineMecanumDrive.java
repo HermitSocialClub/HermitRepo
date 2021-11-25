@@ -15,6 +15,7 @@ import static org.hermitsocialclub.drive.config.DriveConstants.VX_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.VY_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInches;
 
+import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
 import org.hermitsocialclub.drive.config.DriveConstants;
 import org.hermitsocialclub.drive.config.DriveConstants.*;
 
@@ -391,7 +392,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         telemetry.setData("motor powers",powers.toString());
         setRelativeMotorVelocities(powers);
 
-        telemetry.setData("Wheel Velocities",getWheelVelocities().toString());
+        telemetry.setData("Wheel Velocities",this.getWheelVelocities().toString());
         //setDrivePower(vel);
     }
 
@@ -464,6 +465,28 @@ public class BaselineMecanumDrive extends MecanumDrive {
         setDriveSignal(signal);
     }
 
+    public void setWeightedDrivePowerFollower(Pose2d drivePower) {
+        HolonomicPIDVAFollowerAccessible followerAccessible = new HolonomicPIDVAFollowerAccessible(
+                TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5
+        );
+        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
+                + Math.abs(drivePower.getHeading()) > 1) {
+            // re-normalize the powers according to the weights
+            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
+                    + VY_WEIGHT * Math.abs(drivePower.getY())
+                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
+
+            drivePower = new Pose2d(
+                    VX_WEIGHT * drivePower.getX(),
+                    VY_WEIGHT * drivePower.getY(),
+                    OMEGA_WEIGHT * drivePower.getHeading()
+            ).div(denom);
+        }
+        setDriveSignal(followerAccessible.internalUpdateTeleop(
+                getPoseEstimate(),getPoseVelocity(),drivePower
+        ));
+    }
     @NonNull
     @Override
     public List<Double> getWheelPositions() {

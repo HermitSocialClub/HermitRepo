@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-@Autonomous(name = "PushBotAutonomousBlue", group = "Hermit")
+@Autonomous(name = "PushBotAutonomousRed", group = "Hermit")
 class PushBotAutoRed extends LinearOpMode {
 
     private PersistantTelemetry pt = new PersistantTelemetry(telemetry);

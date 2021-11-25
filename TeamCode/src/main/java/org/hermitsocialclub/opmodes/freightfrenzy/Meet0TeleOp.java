@@ -60,9 +60,9 @@ public class Meet0TeleOp extends OpMode {
                 trigVal, AngleUnit.RADIANS);
 
         if (gamepad1.right_bumper) {
-            drive.intake.setPower(.85);
+            drive.intake.setPower(.95);
         } else if (gamepad1.left_bumper) {
-            drive.intake.setPower(-.85);
+            drive.intake.setPower(-.95);
         } else drive.intake.setPower(0);
 
         if (gamepad1.right_stick_button) {

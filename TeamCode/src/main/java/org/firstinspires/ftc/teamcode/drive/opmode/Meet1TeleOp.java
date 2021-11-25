@@ -87,7 +87,7 @@ public class Meet1TeleOp extends OpMode {
         } else drive.duck_wheel.setVelocity(0);
 
         if (gamepad1.b) {
-            drive.setWeightedDrivePower(new Pose2d(
+            drive.setWeightedDrivePowerFollower(new Pose2d(
                     0, -1, 0
             ));
         }
@@ -98,7 +98,7 @@ public class Meet1TeleOp extends OpMode {
         packet = new TelemetryPacket();
 
         field = packet.fieldOverlay();
-        if (!gamepad1.b) drive.setWeightedDrivePowerPID(
+        if (!gamepad1.b) drive.setWeightedDrivePowerFollower(
                 new Pose2d(
                         -gamepad1.left_stick_y,
                         -gamepad1.left_stick_x,

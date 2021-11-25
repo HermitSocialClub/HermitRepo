@@ -265,11 +265,11 @@ public class DriveConstants {
 
         LATERAL_MULTIPLIER = 1;
 
-        VX_WEIGHT = 1;
+        VX_WEIGHT = MAX_VELO/2.0;
 
-        VY_WEIGHT = 1;
+        VY_WEIGHT = MAX_VELO/2.0;
 
-        OMEGA_WEIGHT = 1;
+        OMEGA_WEIGHT = MAX_ANG_VELO/2.0;
 
         POSE_HISTORY_LIMIT = 200;
 
