@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.motors.NeveRest40Gearmotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
@@ -27,9 +28,10 @@ public class Meet0TeleOp extends OpMode {
     private final int robotRadius = 7;
 
     private double trigVal = 0;
+    //in ticks
+    private double liftSpeed = 3;
+    private MotorConfigurationType liftType;
 
-    MotorConfigurationType liftType = MotorConfigurationType
-            .getMotorType(NeveRest40Gearmotor.class);
 
     @Override
 
@@ -37,6 +39,8 @@ public class Meet0TeleOp extends OpMode {
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
         drive.setPoseEstimate(new Pose2d(0, 0));
+        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftType = drive.lift.getMotorType();
     }
 
     @Override
@@ -52,12 +56,13 @@ public class Meet0TeleOp extends OpMode {
     @Override
     public void loop() {
 
-        trigVal = gamepad1.left_trigger > 0.05 ? -gamepad1.left_trigger / 10 :
-                gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0.000005;
-
-        drive.lift.setVelocity(liftType
-                .getAchieveableMaxTicksPerSecond() * .15 *
-                trigVal, AngleUnit.RADIANS);
+        drive.lift.setTargetPosition(drive.lift.getCurrentPosition() +
+                (int)(liftSpeed * ((gamepad1.left_trigger > 0.05)?
+                        -gamepad1.left_trigger : (gamepad1.right_trigger > 0.05)
+                        ? gamepad1.right_trigger : 0)));
+        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction() * liftType.getMaxRPM()
+         * 1/60 * Math.PI * 2 * ((gamepad1.right_trigger > .05 || gamepad1.left_trigger > .05)
+        ? .45 : 0));
 
         if (gamepad1.right_bumper) {
             drive.intake.setPower(.95);

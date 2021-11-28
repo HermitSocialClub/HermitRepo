@@ -164,7 +164,7 @@ public class DriveConstants {
     }*/
 
     //Big Bertha
-    /*static {
+    static {
         TICKS_PER_REV = 537.6;
 
         MAX_RPM = 340;
@@ -219,10 +219,10 @@ public class DriveConstants {
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
-    }*/
+    }
 
     //The OSHA Offender
-    static {
+    /*static {
         TICKS_PER_REV = 537.6;
 
         MAX_RPM = 340;
@@ -278,7 +278,7 @@ public class DriveConstants {
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
-    }
+    }*/
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

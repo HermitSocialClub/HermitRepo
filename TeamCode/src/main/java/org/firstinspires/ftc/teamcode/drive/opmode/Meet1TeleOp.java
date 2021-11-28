@@ -21,8 +21,6 @@ public class Meet1TeleOp extends OpMode {
     private final int robotRadius = 7;
     Canvas field;
     TelemetryPacket packet;
-    MotorConfigurationType liftType = MotorConfigurationType
-            .getMotorType(NeveRest40Gearmotor.class);
     private PersistantTelemetry telemetry;
     private BaselineMecanumDrive drive;
     private double trigVal = 0;
@@ -33,6 +31,10 @@ public class Meet1TeleOp extends OpMode {
     private double duckSlow;
     private double duckFast;
 
+    MotorConfigurationType liftType;
+    private double liftSpeed = 3;
+
+
     @Override
 
     public void init() {
@@ -42,6 +44,8 @@ public class Meet1TeleOp extends OpMode {
 
         duckType = drive.duck_wheel.getMotorType();
         duckSpeedRadians = duckType.getAchieveableMaxRPMFraction() / 60 * duckType.getMaxRPM() * 2 * Math.PI;
+
+        liftType = drive.lift.getMotorType();
     }
 
     @Override
@@ -56,14 +60,21 @@ public class Meet1TeleOp extends OpMode {
 
     @Override
     public void loop() {
-
+        /*
         trigVal = gamepad1.left_trigger > 0.05 ? -gamepad1.left_trigger / 10 :
                 gamepad1.right_trigger > 0.05 ? gamepad1.right_trigger : 0.000005;
 
         drive.lift.setVelocity(liftType
                 .getAchieveableMaxTicksPerSecond() * .15 *
                 trigVal, AngleUnit.RADIANS);
-
+        */
+        drive.lift.setTargetPosition(drive.lift.getCurrentPosition() +
+                (int)(liftSpeed * ((gamepad1.left_trigger > 0.05)?
+                        -gamepad1.left_trigger : (gamepad1.right_trigger > 0.05)
+                        ? gamepad1.right_trigger : 0)));
+        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction() * liftType.getMaxRPM()
+                * 1/60 * Math.PI * 2 * ((gamepad1.right_trigger > .05 || gamepad1.left_trigger > .05)
+                ? .45 : 0));
         if (gamepad1.right_bumper) {
             drive.intake.setPower(.85);
         } else if (gamepad1.left_bumper) {

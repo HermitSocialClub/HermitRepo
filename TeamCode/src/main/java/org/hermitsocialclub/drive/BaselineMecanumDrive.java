@@ -112,6 +112,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public CRServo friend;
     public RevColorSensorV3 color;
     public Servo hopperLift;
+    public Servo outtakeArm;
     public CRServo intakeThirdStage;
    public DcMotorEx duck_wheel;
 
@@ -177,6 +178,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotorEx.class,"intake");
         duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
+        outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -188,6 +190,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        outtakeArm.setPosition(0);
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
