@@ -35,6 +35,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class PushBotConfiguration {
@@ -45,6 +46,8 @@ public class PushBotConfiguration {
     public DcMotor right_drive_2 = null;
     public DcMotor[] drive_Motors;
     public DcMotor duck_wheel = null;
+    public DcMotor arm = null;
+    public Servo claw = null;
    // public DcMotorEx leftEncoder, frontEncoder, rightEncoder;
     /*public DcMotor tapeShooter;
     public Servo foundation_Mover = null;
@@ -83,6 +86,8 @@ public class PushBotConfiguration {
         left_drive_2 = hwMap.get(DcMotor.class, "left_drive_2");
         right_drive_2 = hwMap.get(DcMotor.class, "right_drive_2");
         duck_wheel = hwMap.get(DcMotor.class, "duck_wheel");
+        arm = hwMap.get(DcMotor.class,"arm");
+        claw = hwMap.get(Servo.class,"claw");
      /*   foundation_Mover = hwMap.get(Servo.class, "Foundation_Mover");
         foundation_Mover_2 = hwMap.get(Servo.class, "Foundation_Mover_2");
         block_Clamper = hwMap.get(Servo.class, "Block_Clamper");
@@ -105,6 +110,8 @@ public class PushBotConfiguration {
         left_drive_2.setDirection(DcMotor.Direction.FORWARD);  // Set to REVERSE if using AndyMark motors
         right_drive_2.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
         duck_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
+        arm.setDirection(DcMotorSimple.Direction.FORWARD);
+        claw.setDirection(Servo.Direction.FORWARD);
       /*  arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm2.setDirection(DcMotorSimple.Direction.REVERSE); */
 
@@ -114,6 +121,7 @@ public class PushBotConfiguration {
         left_drive_2.setPower(0);
         right_drive_2.setPower(0);
         duck_wheel.setPower(0);
+        arm.setPower(0);
        // arm.setPower(0);
         //arm2.setPower(0);
         drive_Motors = new DcMotor[]{left_drive, right_drive, left_drive_2, right_drive_2};
@@ -129,6 +137,7 @@ public class PushBotConfiguration {
         left_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         right_drive_2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         duck_wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //arm2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 

@@ -74,7 +74,9 @@ public class PushBotBaseOp extends LinearOpMode {
                 robot.left_drive_2.setPower(gamepad1.left_stick_y + 0.15);
                 robot.right_drive.setPower(gamepad1.left_stick_y + 0.15);
                 robot.right_drive_2.setPower(gamepad1.left_stick_y + 0.15);
+            }
 
+            if (gamepad1.right_stick_x > 0) {
                 robot.left_drive.setPower(gamepad1.right_stick_x + 0.15);
                 robot.left_drive_2.setPower(gamepad1.right_stick_x + 0.15);
                 robot.right_drive.setPower(-gamepad1.right_stick_x - 0.15);
@@ -86,7 +88,9 @@ public class PushBotBaseOp extends LinearOpMode {
                 robot.left_drive_2.setPower(gamepad1.left_stick_y - 0.15);
                 robot.right_drive.setPower(gamepad1.left_stick_y - 0.15);
                 robot.right_drive_2.setPower(gamepad1.left_stick_y - 0.15);
+            }
 
+            if (gamepad1.right_stick_x < 0){
                 robot.left_drive.setPower(gamepad1.right_stick_x - 0.15);
                 robot.left_drive_2.setPower(gamepad1.right_stick_x - 0.15);
                 robot.right_drive.setPower(-gamepad1.right_stick_x + 0.15);
@@ -98,7 +102,9 @@ public class PushBotBaseOp extends LinearOpMode {
                 robot.left_drive_2.setPower(0);
                 robot.right_drive.setPower(0);
                 robot.right_drive_2.setPower(0);
+            }
 
+            if (gamepad1.right_stick_x == 0){
                 robot.left_drive.setPower(0);
                 robot.left_drive_2.setPower(0);
                 robot.right_drive.setPower(0);
@@ -109,6 +115,24 @@ public class PushBotBaseOp extends LinearOpMode {
                 robot.duck_wheel.setPower(0.3);
             }else {
                 robot.duck_wheel.setPower(0);
+            }
+
+            if (gamepad1.right_bumper){
+                robot.arm.setPower(0.4);
+            }else {
+                robot.arm.setPower(0);
+            }
+
+            if (gamepad1.right_bumper){
+                robot.arm.setPower(-0.4);
+            }else {
+                robot.arm.setPower(0);
+            }
+
+            if (gamepad1.left_trigger >= 0.05){
+                robot.claw.setPosition(0.75);
+            }if (gamepad1.right_trigger >= 0.05){
+                robot.claw.setPosition(0);
             }
 
            /* robot.left_drive.setPower(gamepad1.left_stick_y);
