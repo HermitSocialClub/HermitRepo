@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
-import org.hermitsocialclub.hydra.vision.VisionSemaphore;
+import org.hermitsocialclub.hydra.vision.FirstFrameSemaphore;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.tomato.BarcodeDetect;
 
@@ -75,7 +75,7 @@ public class Meet1Auto extends LinearOpMode {
     //Vision
     private VisionPipeline visionPipeline;
     private BarcodeDetect barcodeDetect;
-    private VisionSemaphore semaphore;
+    private FirstFrameSemaphore semaphore;
     private int code = -1;
 
     @Override
@@ -119,6 +119,11 @@ public class Meet1Auto extends LinearOpMode {
                 .build();
 
         telemetry.setData("Trajectories:", "Initialized");
+
+        // init vision
+        barcodeDetect = new BarcodeDetect(true);
+        semaphore = new FirstFrameSemaphore();
+        visionPipeline = new VisionPipeline(hardwareMap, telemetry, barcodeDetect, semaphore);
 
         while (!isStarted()){
             code = barCode();
@@ -236,7 +241,7 @@ public class Meet1Auto extends LinearOpMode {
         }
     }
     private int barCode() {
-        semaphore.waitForFrame();
+        semaphore.waitForFirstFrame();
         return barcodeDetect.getResult();
     }
 }
