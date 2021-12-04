@@ -111,7 +111,7 @@ public class PushBotConfiguration {
         right_drive_2.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
         duck_wheel.setDirection(DcMotorSimple.Direction.REVERSE);
         arm.setDirection(DcMotorSimple.Direction.FORWARD);
-        claw.setDirection(Servo.Direction.FORWARD);
+       // claw.setDirection(Servo.Direction.FORWARD);
       /*  arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm2.setDirection(DcMotorSimple.Direction.REVERSE); */
 

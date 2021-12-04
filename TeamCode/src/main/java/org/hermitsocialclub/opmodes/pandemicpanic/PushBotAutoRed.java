@@ -13,7 +13,7 @@ import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @Autonomous(name = "PushBotAutonomousRed", group = "Hermit")
-class PushBotAutoRed extends LinearOpMode {
+public class PushBotAutoRed extends LinearOpMode {
 
     private PersistantTelemetry pt = new PersistantTelemetry(telemetry);
     //PushBotConfiguration drive = new PushBotConfiguration();

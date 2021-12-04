@@ -10,8 +10,7 @@ import org.opencv.core.Mat
  */
 class FirstFrameSemaphore : IVisionPipelineComponent {
 
-    @Volatile
-    private val firstFramePassed = false
+    private var firstFramePassed = false
     private val lock = Object()
 
     override fun apply(t: Mat, u: VisionPipeline): Mat {
