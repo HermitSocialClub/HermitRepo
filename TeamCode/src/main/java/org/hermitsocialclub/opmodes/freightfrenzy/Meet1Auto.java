@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
@@ -27,6 +28,9 @@ public class Meet1Auto extends LinearOpMode {
     //Linear Lift
     MotorConfigurationType liftType;
     static double liftSpeed = .45;
+    static double secondInches = 11.5;
+    static double thirdInches = 17.75;
+    static int liftTimeout = 2000;
 
     //Duck Wheel
     MotorConfigurationType duckType;
@@ -108,6 +112,9 @@ public class Meet1Auto extends LinearOpMode {
                 .build();
         toWarehouseRed = drive.trajectoryBuilder(toHubRed.end(),0)
                 .splineToSplineHeading(redBarrier,0)
+                .addDisplacementMarker(() -> {drive.intake.setPower(
+                        .85
+                );})
                 .splineToSplineHeading(redWarehouse,m(20))
                 .build();
 
@@ -135,8 +142,95 @@ public class Meet1Auto extends LinearOpMode {
                 drive.duck_wheel.setVelocity(0);
                 drive.followTrajectory(toHubRed);
                 switch (code){
-                    case -1: drive.outtakeArm.setPosition(.5);
+                    case -1:
+                    case  1:
+                        drive.outtakeArm.setPosition(.5); break;
+                    case  2:{
+                        ElapsedTime timer = new ElapsedTime();
+                        drive.lift.setTargetPosition((int) (liftType.getTicksPerRev()
+                        * secondInches / (2.5 * Math.PI)));
+                        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction()
+                                * liftType.getMaxRPM() * 1/60 * Math.PI * 2
+                                * liftSpeed);
+                        timer.reset();
+                        while (drive.lift.isBusy() && timer.milliseconds() < liftTimeout){
+                            telemetry.setData("Lift Position:",
+                                    drive.lift.getCurrentPosition());
+                        }
+                        drive.lift.setVelocity(0);
+                        drive.outtakeArm.setPosition(.5);
+                        break;
+                    }
+                    case  3:{
+                        ElapsedTime timer = new ElapsedTime();
+                        drive.lift.setTargetPosition((int) (liftType.getTicksPerRev()
+                                * thirdInches / (2.5 * Math.PI)));
+                        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction()
+                                * liftType.getMaxRPM() * 1/60 * Math.PI * 2
+                                * liftSpeed);
+                        timer.reset();
+                        while (drive.lift.isBusy() && timer.milliseconds() < liftTimeout){
+                            telemetry.setData("Lift Position:",
+                                    drive.lift.getCurrentPosition());
+                        }
+                        drive.lift.setVelocity(0);
+                        drive.outtakeArm.setPosition(.5);
+                        break;
+                    }
                 }
+                drive.followTrajectory(toWarehouseRed);
+                sleep(500);
+                drive.intake.setPower(0);
+                break;
+            }
+            case BLUE: {
+                drive.followTrajectory(toCarouselBlue);
+                drive.duck_wheel.setVelocity(duckSpeed * duckType.getMaxRPM()/60
+                                * duckType.getAchieveableMaxRPMFraction() * 2 * Math.PI,
+                        AngleUnit.RADIANS);
+                sleep(500);
+                drive.duck_wheel.setVelocity(0);
+                drive.followTrajectory(toHubBlue);
+                switch (code){
+                    case -1:
+                    case  1:
+                        drive.outtakeArm.setPosition(.5); break;
+                    case  2:{
+                        ElapsedTime timer = new ElapsedTime();
+                        drive.lift.setTargetPosition((int) (liftType.getTicksPerRev()
+                                * secondInches / (2.5 * Math.PI)));
+                        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction()
+                                * liftType.getMaxRPM() * 1/60 * Math.PI * 2
+                                * liftSpeed);
+                        timer.reset();
+                        while (drive.lift.isBusy() && timer.milliseconds() < liftTimeout){
+                            telemetry.setData("Lift Position:",
+                                    drive.lift.getCurrentPosition());
+                        }
+                        drive.lift.setVelocity(0);
+                        drive.outtakeArm.setPosition(.5);
+                        break;
+                    }
+                    case  3:{
+                        ElapsedTime timer = new ElapsedTime();
+                        drive.lift.setTargetPosition((int) (liftType.getTicksPerRev()
+                                * thirdInches / (2.5 * Math.PI)));
+                        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction()
+                                * liftType.getMaxRPM() * 1/60 * Math.PI * 2
+                                * liftSpeed);
+                        timer.reset();
+                        while (drive.lift.isBusy() && timer.milliseconds() < liftTimeout){
+                            telemetry.setData("Lift Position:",
+                                    drive.lift.getCurrentPosition());
+                        }
+                        drive.lift.setVelocity(0);
+                        drive.outtakeArm.setPosition(.5);
+                        break;
+                    }
+                }
+                drive.followTrajectory(toWarehouseBlue);
+                sleep(500);
+                drive.intake.setPower(0);
                 break;
             }
         }

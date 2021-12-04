@@ -23,7 +23,7 @@ public class LocalSlamTestOp extends OpMode {
 
     private final FtcDashboard dash = FtcDashboard.getInstance();
 
-    private final int robotRadius = 7;
+    private final int robotRadius = 8;
 
     @Override
     public void init() {
@@ -75,6 +75,7 @@ public class LocalSlamTestOp extends OpMode {
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());
         packet.put("Pose Confidence", ((T265LocalizerRR) (drive.getLocalizer())).getConfidence());
+        packet.put("Pose Estimate", pose);
 
         dash.sendTelemetryPacket(packet);
 

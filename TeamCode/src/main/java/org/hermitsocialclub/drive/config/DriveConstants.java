@@ -102,6 +102,8 @@ public class DriveConstants {
 
     public static double slamraY;
 
+    public static double MAX_TELE_VELO;
+
     //leftFront, leftRear, rightRear, rightFront
     public static DcMotorSimple.Direction[] DIRECTIONS;
 
@@ -177,7 +179,7 @@ public class DriveConstants {
 
         GEAR_RATIO = 1;
 
-        TRACK_WIDTH = 16.3;
+        TRACK_WIDTH = 17.2;
 
         WHEEL_BASE = 16.5;
 
@@ -185,21 +187,21 @@ public class DriveConstants {
 
         MAX_ACCEL = 30;
 
-        MAX_ANG_VELO = 6;
+        MAX_ANG_VELO = 5.45464229;
 
         MAX_ANG_ACCEL = Math.toRadians(180);
 
-        kV = 0.011962055475993843;
+        kV = 0.012962055475993843;
 
-        kA = 0.0026;
+        kA = 0.003;
 
-        kStatic = 0.01;
+        kStatic = 0.015;
 
         BASE_CONSTRAINTS = new DriveConstraints(
                 MAX_VELO, MAX_ACCEL, 0.0,
                 MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
         );
-        TRANSLATIONAL_PID = new PIDCoefficients(0,0,0);
+        TRANSLATIONAL_PID = new PIDCoefficients(10,0,0);
 
         HEADING_PID = new PIDCoefficients(0,0,0);
 
@@ -213,12 +215,14 @@ public class DriveConstants {
 
         POSE_HISTORY_LIMIT = 200;
 
-        slamraX = 7.5;
+        slamraX = 1.4;
 
-        slamraY = -0.5;
+        slamraY = -0.15;
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
+
+        MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
     }
 
     //The OSHA Offender

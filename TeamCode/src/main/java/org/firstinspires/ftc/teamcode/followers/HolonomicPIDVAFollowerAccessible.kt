@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.trajectory.Trajectory
 import com.acmerobotics.roadrunner.util.NanoClock
+import org.hermitsocialclub.drive.config.DriveConstants.MAX_TELE_VELO
 
 class HolonomicPIDVAFollowerAccessible @JvmOverloads constructor(
     axialCoeffs: PIDCoefficients,
@@ -82,6 +83,11 @@ class HolonomicPIDVAFollowerAccessible @JvmOverloads constructor(
         val targetRobotVel = Kinematics.fieldToRobotVelocity(targetPose, targetVel)
         val targetRobotAccel = Kinematics.fieldToRobotAcceleration(targetPose, targetVel, targetAccel)
 
+        val hypotTargetVel = Math.hypot(targetRobotVel.x,targetRobotVel.y)
+        val hypotMaxVel = Math.signum(hypotTargetVel) * Math.min(Math.abs(hypotTargetVel),MAX_TELE_VELO)
+        val velMod = hypotMaxVel/hypotTargetVel;
+        val adjustedTargetRobotVel = Pose2d(targetRobotVel.x * velMod, targetRobotVel.y * velMod)
+
         val poseError = Kinematics.calculatePoseError(targetPose, currentPose)
 
         // you can pass the error directly to PIDFController by setting setpoint = error and measurement = 0
@@ -89,9 +95,9 @@ class HolonomicPIDVAFollowerAccessible @JvmOverloads constructor(
         lateralController.targetPosition = poseError.y
         headingController.targetPosition = poseError.heading
 
-        axialController.targetVelocity = targetRobotVel.x
-        lateralController.targetVelocity = targetRobotVel.y
-        headingController.targetVelocity = targetRobotVel.heading
+        axialController.targetVelocity = adjustedTargetRobotVel.x
+        lateralController.targetVelocity = adjustedTargetRobotVel.y
+        headingController.targetVelocity = adjustedTargetRobotVel.heading
 
         // note: feedforward is processed at the wheel level
         val axialCorrection = axialController.update(0.0, currentRobotVel?.x)

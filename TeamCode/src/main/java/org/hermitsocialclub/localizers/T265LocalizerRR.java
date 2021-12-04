@@ -81,15 +81,16 @@ public class T265LocalizerRR implements Localizer {
         update();
         //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
-            Translation2d curPose = up.pose.getTranslation();
+            Translation2d curPose = up.pose.getTranslation().times(-1);
            RobotLog.v("CurPose: " + curPose.toString());
            RobotLog.v("Original Pose: " + originalPose.toString());
             Rotation2d curRot = up.pose.getRotation();
-            Translation2d newPose = curPose.minus(originalPose.getTranslation());
+            Translation2d newPose = curPose.minus
+                    (originalPose.getTranslation().times(-1));
             RobotLog.v("New Pose: " + newPose.toString());
             Rotation2d newRot = curRot.minus(originalPose.getRotation());
             //The T265's unit of measurement is meters.  dividing it by .0254 converts meters to inches.
-            rawPose = new Pose2d(-newPose.getX() / .0254, -newPose.getY() / .0254, norm(newRot.getRadians() + angleModifer)); //raw pos
+            rawPose = new Pose2d(newPose.getX() / .0254, newPose.getY() / .0254, norm(newRot.getRadians() + angleModifer)); //raw pos
             RobotLog.v("Raw Pose: " + rawPose.toString());
             mPoseEstimate = rawPose.plus(poseOffset); //offsets the pose to be what the pose estimate is;
 
@@ -116,10 +117,10 @@ public class T265LocalizerRR implements Localizer {
         update();
         originalPose = up.pose;
         RobotLog.v("Set Pose to " + pose2d.toString());
-        pose2d = new Pose2d(pose2d.getX(),pose2d.getY(),0);
+        pose2d = new Pose2d(pose2d.getX(),pose2d.getY(),pose2d.getHeading());
 
         RobotLog.v("SETTING POSE ESTIMATE TO " + pose2d.toString());
-        poseOffset = pose2d.minus(rawPose);
+        poseOffset = pose2d.minus(rawPose).minus((Pose2d) convertPose(slamFormPose));
         poseOffset = new Pose2d(poseOffset.getX(), poseOffset.getY(), Math.toRadians(0));
         RobotLog.v("SET POSE OFFSET TO " + poseOffset.toString());
         Pose2d newPos = new Pose2d(pose2d.getX() * .0254, pose2d.getY() * .0254, pose2d.getHeading());
@@ -168,7 +169,7 @@ public class T265LocalizerRR implements Localizer {
         //variable up is updated in update()
 
         ChassisSpeeds velocity = up.velocity;
-        return new Pose2d(velocity.vxMetersPerSecond /.0254,velocity.vyMetersPerSecond /.0254,velocity.omegaRadiansPerSecond);
+        return new Pose2d(-velocity.vxMetersPerSecond /.0254,velocity.vyMetersPerSecond /.0254,velocity.omegaRadiansPerSecond);
     }
 
     /**

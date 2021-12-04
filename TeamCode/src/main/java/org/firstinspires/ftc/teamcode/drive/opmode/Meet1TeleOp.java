@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.hardware.motors.NeveRest40Gearmotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -32,7 +33,7 @@ public class Meet1TeleOp extends OpMode {
     private double duckFast;
 
     MotorConfigurationType liftType;
-    private double liftSpeed = 3;
+    private double liftSpeed = 10;
 
 
     @Override
@@ -46,6 +47,7 @@ public class Meet1TeleOp extends OpMode {
         duckSpeedRadians = duckType.getAchieveableMaxRPMFraction() / 60 * duckType.getMaxRPM() * 2 * Math.PI;
 
         liftType = drive.lift.getMotorType();
+        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     @Override
@@ -69,12 +71,8 @@ public class Meet1TeleOp extends OpMode {
                 trigVal, AngleUnit.RADIANS);
         */
         drive.lift.setTargetPosition(drive.lift.getCurrentPosition() +
-                (int)(liftSpeed * ((gamepad1.left_trigger > 0.05)?
-                        -gamepad1.left_trigger : (gamepad1.right_trigger > 0.05)
-                        ? gamepad1.right_trigger : 0)));
-        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction() * liftType.getMaxRPM()
-                * 1/60 * Math.PI * 2 * ((gamepad1.right_trigger > .05 || gamepad1.left_trigger > .05)
-                ? .45 : 0));
+                (int)(liftSpeed * gamepad1.right_stick_y));
+        drive.lift.setPower(.45);
         if (gamepad1.right_bumper) {
             drive.intake.setPower(.85);
         } else if (gamepad1.left_bumper) {

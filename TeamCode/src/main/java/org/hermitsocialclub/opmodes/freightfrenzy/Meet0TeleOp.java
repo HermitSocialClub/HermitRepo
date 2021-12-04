@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import static org.hermitsocialclub.drive.config.DriveConstants.*;
 
 @TeleOp(name = "Meet0Tele")
 public class Meet0TeleOp extends OpMode {
@@ -25,22 +26,29 @@ public class Meet0TeleOp extends OpMode {
 
     private final FtcDashboard dash = FtcDashboard.getInstance();
 
-    private final int robotRadius = 7;
+    private final int robotRadius = 8;
 
     private double trigVal = 0;
     //in ticks
-    private double liftSpeed = 3;
+    private double liftSpeed = 5;
     private MotorConfigurationType liftType;
+
+    private double intakeSpeed = .85;
+    private MotorConfigurationType intakeType;
 
 
     @Override
 
     public void init() {
         telemetry = new PersistantTelemetry(super.telemetry);
+        RUN_USING_ENCODER = true;
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
         drive.setPoseEstimate(new Pose2d(0, 0));
-        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        drive.duck_wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         liftType = drive.lift.getMotorType();
+        intakeType = drive.intake.getMotorType();
+        telemetry.setData("Lift Pos",drive.lift.getCurrentPosition());
     }
 
     @Override
@@ -57,29 +65,31 @@ public class Meet0TeleOp extends OpMode {
     public void loop() {
 
         drive.lift.setTargetPosition(drive.lift.getCurrentPosition() +
-                (int)(liftSpeed * ((gamepad1.left_trigger > 0.05)?
-                        -gamepad1.left_trigger : (gamepad1.right_trigger > 0.05)
-                        ? gamepad1.right_trigger : 0)));
-        drive.lift.setVelocity(liftType.getAchieveableMaxRPMFraction() * liftType.getMaxRPM()
-         * 1/60 * Math.PI * 2 * ((gamepad1.right_trigger > .05 || gamepad1.left_trigger > .05)
-        ? .45 : 0));
+                (int)(liftSpeed * gamepad2.right_stick_y));
+        drive.lift.setPower(.45);
 
-        if (gamepad1.right_bumper) {
-            drive.intake.setPower(.95);
-        } else if (gamepad1.left_bumper) {
-            drive.intake.setPower(-.95);
+
+
+        if (gamepad2.right_trigger > 0.05) {
+            drive.intake.setVelocity(intakeSpeed
+                    * intakeType.getAchieveableMaxRPMFraction() *
+                    intakeType.getMaxRPM()/60 * Math.PI * 2, AngleUnit.RADIANS);
+        } else if (gamepad2.left_trigger > .05) {
+            drive.intake.setVelocity(-intakeSpeed
+                    * intakeType.getAchieveableMaxRPMFraction() *
+                    intakeType.getMaxRPM()/60 * Math.PI * 2, AngleUnit.RADIANS);
         } else drive.intake.setPower(0);
 
-        if (gamepad1.right_stick_button) {
-            drive.duck_wheel.setPower(-0.3);
+        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
+            drive.duck_wheel.setPower(0.6);
         } else {
             drive.duck_wheel.setPower(0);
         }
 
-        if(gamepad1.b){
-            drive.setWeightedDrivePower(new Pose2d(
-                    0,-1,0
-            ));
+        if(gamepad2.left_bumper){
+            drive.outtakeArm.setPosition(0);
+        }else if (gamepad2.right_bumper){
+            drive.outtakeArm.setPosition(1);
         }
        /* drive.duck_wheel.setVelocity(liftType
                 .getAchieveableMaxTicksPerSecond() * .65 *
