@@ -140,7 +140,7 @@ public class Meet1Auto extends LinearOpMode {
         waitForStart();
 
         switch (colorSide){
-            case RED: /*{
+            case RED:      /*{
                 drive.setPoseEstimate(redStart);
                 drive.followTrajectory(toCarouselRed);
                 drive.duck_wheel.setVelocity(duckSpeed * duckType.getMaxRPM()/60
@@ -195,7 +195,7 @@ public class Meet1Auto extends LinearOpMode {
                 drive.setPoseEstimate(blueStart);
                 drive.followTrajectory(toCarouselBlue1);
                 drive.turn(m(90));
-                drive.followTrajectory(toCarouselBlue2);
+//                drive.followTrajectory(toCarouselBlue2);
                 drive.duck_wheel.setPower(duckSpeed);
                 sleep(500);
                 drive.duck_wheel.setVelocity(0);
