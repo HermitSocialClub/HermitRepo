@@ -18,6 +18,8 @@ import com.spartronics4915.lib.T265Camera;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 /**
  * a Road Runner localizer that uses the Intel T265 Realsense
  */
@@ -103,8 +105,10 @@ public class T265LocalizerRR implements Localizer {
         RobotLog.v("Set Pose to " + pose2d);
         pose2d = new Pose2d(pose2d.getX(), pose2d.getY(), pose2d.getHeading());
 
-        RobotLog.v("SETTING POSE ESTIMATE TO " + pose2d);
-        poseOffset = pose2d.minus(rawPose).minus(convertPose(slamFormPose));
+        RobotLog.v("SETTING POSE ESTIMATE TO " + pose2d.toString());
+        poseOffset = pose2d.minus(rawPose)
+                .minus(new Pose2d(slamFormPose.getTranslation().getX(),
+                                slamFormPose.getTranslation().getY(),0));
         poseOffset = new Pose2d(poseOffset.getX(), poseOffset.getY(), Math.toRadians(0));
         RobotLog.v("SET POSE OFFSET TO " + poseOffset);
         mPoseEstimate = new Pose2d(pose2d.getX() * .0254, pose2d.getY() * .0254, pose2d.getHeading());

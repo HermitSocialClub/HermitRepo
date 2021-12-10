@@ -8,9 +8,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.FirstFrameSemaphore;
@@ -34,11 +32,11 @@ public class Meet1Auto extends LinearOpMode {
 
     //Duck Wheel
     MotorConfigurationType duckType;
-    static double duckSpeed;
+    static double duckSpeed = .3;
 
     //Key Positions for Blue
-    Pose2d blueStart = new Pose2d(-38,63,m(-90));
-    Pose2d blueCarouselPrep = new Pose2d(-48.5,48.5,m(-45));
+    Pose2d blueStart = new Pose2d(-38,63,m(90));
+    Vector2d blueCarouselPrep = new Vector2d(-48.5,48.5);
     Vector2d blueCarousel = new Vector2d(-53.5,53.5);
     Pose2d blueElementDrag = new Pose2d(-30,43,m(-90));
     Vector2d blueHub = new Vector2d(-12,44);
@@ -46,7 +44,8 @@ public class Meet1Auto extends LinearOpMode {
     Pose2d blueWarehouse = new Pose2d(48,48,m(45));
 
     //Blue Trajectories
-    Trajectory toCarouselBlue;
+    Trajectory toCarouselBlue1;
+    Trajectory toCarouselBlue2;
     Trajectory toHubBlue;
     Trajectory toWarehouseBlue;
 
@@ -88,11 +87,14 @@ public class Meet1Auto extends LinearOpMode {
         liftType = drive.lift.getMotorType();
 
         //Blue Trajectory Initialization
-         toCarouselBlue = drive.trajectoryBuilder(blueStart,m(-90))
-                .splineToSplineHeading(blueCarouselPrep,m(135))
-                .splineTo(blueCarousel,m(-45))
+         toCarouselBlue1 = drive.trajectoryBuilder(blueStart,m(-90))
+                .back(15.5)
                 .build();
-         toHubBlue = drive.trajectoryBuilder(toCarouselBlue.end(),m(-45))
+         toCarouselBlue2 = drive.trajectoryBuilder(toCarouselBlue1.end()
+                 .plus(new Pose2d(0,0,m(90))))
+                 .lineTo(blueCarousel)
+                .build();
+         toHubBlue = drive.trajectoryBuilder(toCarouselBlue1.end(),m(-45))
                 .splineToSplineHeading(blueElementDrag,m(0))
                 .splineToConstantHeading(blueHub,m(0))
                 .build();
@@ -138,7 +140,8 @@ public class Meet1Auto extends LinearOpMode {
         waitForStart();
 
         switch (colorSide){
-            case RED: {
+            case RED: /*{
+                drive.setPoseEstimate(redStart);
                 drive.followTrajectory(toCarouselRed);
                 drive.duck_wheel.setVelocity(duckSpeed * duckType.getMaxRPM()/60
                         * duckType.getAchieveableMaxRPMFraction() * 2 * Math.PI,
@@ -187,15 +190,16 @@ public class Meet1Auto extends LinearOpMode {
                 sleep(500);
                 drive.intake.setPower(0);
                 break;
-            }
+            }*/
             case BLUE: {
-                drive.followTrajectory(toCarouselBlue);
-                drive.duck_wheel.setVelocity(duckSpeed * duckType.getMaxRPM()/60
-                                * duckType.getAchieveableMaxRPMFraction() * 2 * Math.PI,
-                        AngleUnit.RADIANS);
+                drive.setPoseEstimate(blueStart);
+                drive.followTrajectory(toCarouselBlue1);
+                drive.turn(m(90));
+                drive.followTrajectory(toCarouselBlue2);
+                drive.duck_wheel.setPower(duckSpeed);
                 sleep(500);
                 drive.duck_wheel.setVelocity(0);
-                drive.followTrajectory(toHubBlue);
+                /*drive.followTrajectory(toHubBlue);
                 switch (code){
                     case -1:
                     case  1:
@@ -235,7 +239,7 @@ public class Meet1Auto extends LinearOpMode {
                 }
                 drive.followTrajectory(toWarehouseBlue);
                 sleep(500);
-                drive.intake.setPower(0);
+                drive.intake.setPower(0);*/
                 break;
             }
         }

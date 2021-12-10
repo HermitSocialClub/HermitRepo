@@ -191,7 +191,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        outtakeArm.setPosition(0);
+        outtakeArm.setPosition(1.0);
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);

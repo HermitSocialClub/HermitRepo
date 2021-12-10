@@ -179,11 +179,11 @@ public class DriveConstants {
 
         GEAR_RATIO = 1;
 
-        TRACK_WIDTH = 17.2;
+        TRACK_WIDTH = 18.2;
 
         WHEEL_BASE = 16.5;
 
-        MAX_VELO = 32;
+        MAX_VELO = 16;
 
         MAX_ACCEL = 30;
 
@@ -201,9 +201,9 @@ public class DriveConstants {
                 MAX_VELO, MAX_ACCEL, 0.0,
                 MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
         );
-        TRANSLATIONAL_PID = new PIDCoefficients(10,0,0);
+        TRANSLATIONAL_PID = new PIDCoefficients(6,1,0.1);
 
-        HEADING_PID = new PIDCoefficients(0,0,0);
+        HEADING_PID = new PIDCoefficients(4,1,0.1);
 
         LATERAL_MULTIPLIER = 1;
 
@@ -215,9 +215,9 @@ public class DriveConstants {
 
         POSE_HISTORY_LIMIT = 200;
 
-        slamraX = 1.4;
+        slamraX = 0;
 
-        slamraY = -0.15;
+        slamraY = 0;
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
