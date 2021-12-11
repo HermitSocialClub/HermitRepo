@@ -160,31 +160,6 @@ public class T265LocalizerRR implements Localizer {
     }
 
     /**
-     * Converts from FTCLib Pose to Roadrunner Pose or vice-versa
-     *
-     * @throws ClassCastException if you violate the sacred Java commandments
-     */
-    @SuppressWarnings("unchecked")
-    private <T, U> U convertPose(T pose) {
-        double x, y, heading;
-        if (pose.getClass().equals(Pose2d.class)) {
-            // Converts Roadrunner to FTCLib
-            x = ((Pose2d) pose).getX() * .0254;
-            y = ((Pose2d) pose).getY() * .0254;
-            heading = ((Pose2d) pose).getHeading();
-            return (U) new com.arcrobotics.ftclib.geometry.Pose2d(x, y, new Rotation2d(heading));
-        } else if (pose.getClass().equals(com.arcrobotics.ftclib.geometry.Pose2d.class)) {
-            // Converts FTCLib to Roadrunner
-            x = ((com.arcrobotics.ftclib.geometry.Pose2d) pose).getX() / .0254;
-            y = ((com.arcrobotics.ftclib.geometry.Pose2d) pose).getY() / .0254;
-            heading = ((com.arcrobotics.ftclib.geometry.Pose2d) pose).getHeading();
-            return (U) new Pose2d(x, y, heading);
-        } else {
-            throw new ClassCastException("imposter pose");
-        }
-    }
-
-    /**
      * Stops the realsense
      */
     public static void stopRealsense() {
