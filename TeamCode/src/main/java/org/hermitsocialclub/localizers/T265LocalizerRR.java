@@ -80,11 +80,11 @@ public class T265LocalizerRR implements Localizer {
         //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
             Translation2d curPose = up.pose.getTranslation();
-            curPose = new Translation2d(-curPose.getX(), curPose.getY());
+            curPose = new Translation2d(-curPose.getX(), -curPose.getY());
             RobotLog.v("CurPose: " + curPose.toString());
             RobotLog.v("Original Pose: " + resetPose.toString());
             Rotation2d curRot = up.pose.getRotation();
-            Translation2d newPose = curPose.minus(new Translation2d(-resetPose.getX(), resetPose.getY()));
+            Translation2d newPose = curPose.minus(new Translation2d(-resetPose.getX(), -resetPose.getY()));
             RobotLog.v("New Pose: " + newPose.toString());
             Rotation2d newRot = curRot.minus(resetPose.getRotation());
             //The T265's unit of measurement is meters.  dividing it by .0254 converts meters to inches.

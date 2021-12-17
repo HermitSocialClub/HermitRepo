@@ -50,7 +50,7 @@ public class Meet0TeleOp extends OpMode {
         telemetry = new PersistantTelemetry(super.telemetry);
         RUN_USING_ENCODER = true;
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        drive.setPoseEstimate(new Pose2d(0, 0));
+        drive.setPoseEstimate(new Pose2d(0, 0,0));
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         drive.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
