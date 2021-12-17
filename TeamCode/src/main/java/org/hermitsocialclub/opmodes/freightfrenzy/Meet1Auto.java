@@ -13,6 +13,7 @@ import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.FirstFrameSemaphore;
 import org.hermitsocialclub.localizers.T265LocalizerPro;
+import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.tomato.BarcodeDetect;
 
@@ -80,10 +81,8 @@ public class Meet1Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        // TODO REVERT IF THINGS BREAK
-        drive.setLocalizer(new T265LocalizerPro(this.hardwareMap));
+        drive.setLocalizer(new T265LocalizerRR(this.hardwareMap));
 
         duckType = drive.duck_wheel.getMotorType();
 
