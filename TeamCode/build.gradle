@@ -41,7 +41,9 @@ dependencies {
 
     implementation "com.noahbres.jotai:jotai:1.0.2"
 
-    implementation "com.spartronics4915.lib:ftc265:2.1.9"
+    implementation 'com.spartronics4915.lib:ftc265:3.0.0'
+    implementation files('lib/ftc265-3.0.0-pre.5.aar')
+    implementation 'com.intel.realsense:librealsense:2.41.1-ftc265@aar'
     // ftc265Headers "com.intel.realsense:librealsense:2.41.1-ftc265@zip"
 }
 

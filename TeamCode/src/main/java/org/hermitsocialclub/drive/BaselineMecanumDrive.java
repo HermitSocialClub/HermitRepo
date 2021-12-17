@@ -57,6 +57,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.spartronics4915.lib.T265Camera;
+import com.spartronics4915.lib.T265Localizer;
+//import static com.spartronics4915.lib.T265Camera.slam
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
@@ -206,7 +210,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerRR(hardwareMap,true));
+        T265Camera slamera;
+        setLocalizer(new T265Localizer(slamera));
         telemetry.setData("Pose Estimatlocae",getPoseEstimate());
         telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
