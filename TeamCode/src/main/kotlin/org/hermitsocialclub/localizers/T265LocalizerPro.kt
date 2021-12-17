@@ -46,17 +46,9 @@ class T265LocalizerPro(hardwareMap: HardwareMap) : Localizer {
         }
     }
 
-    /**
-     * The offset between what the camera reports and
-     * where RoadRunner says the robot should be.
-     */
-    private var offset = Pose2d()
-
     override var poseEstimate: Pose2d
-        get() = SLAMRA!!.lastReceivedCameraUpdate.pose.toRRPose2d() + offset
-        set(value) {
-            offset = value - poseEstimate
-        }
+        get() = SLAMRA!!.lastReceivedCameraUpdate.pose.toRRPose2d()
+        set(_) = Unit
 
     override val poseVelocity: Pose2d
         get() = SLAMRA!!.lastReceivedCameraUpdate.velocity.toRRPose2d()
