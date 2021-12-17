@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.hardware.motors.NeveRest40Gearmotor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
-import org.hermitsocialclub.localizers.T265LocalizerRR;
+import org.hermitsocialclub.localizers.T265LocalizerPro;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @TeleOp(name = "Meet1Tele")
@@ -129,7 +128,7 @@ public class Meet1TeleOp extends OpMode {
         double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());
-        packet.put("Pose Confidence", ((T265LocalizerRR) (drive.getLocalizer())).getConfidence());
+        packet.put("Pose Confidence", ((T265LocalizerPro) (drive.getLocalizer())).getPoseConfidence());
 
         dash.sendTelemetryPacket(packet);
 

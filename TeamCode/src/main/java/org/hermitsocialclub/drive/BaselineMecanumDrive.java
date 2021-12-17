@@ -19,7 +19,6 @@ import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInc
 
 import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
 import org.hermitsocialclub.drive.config.DriveConstants;
-import org.hermitsocialclub.drive.config.DriveConstants.*;
 
 import androidx.annotation.NonNull;
 
@@ -59,7 +58,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.hermitsocialclub.localizers.T265LocalizerRR;
+import org.hermitsocialclub.localizers.T265LocalizerPro;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
@@ -206,9 +205,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerRR(hardwareMap,true));
+        setLocalizer(new T265LocalizerPro(hardwareMap));
         telemetry.setData("Pose Estimatlocae",getPoseEstimate());
-        telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
+        //telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }
 

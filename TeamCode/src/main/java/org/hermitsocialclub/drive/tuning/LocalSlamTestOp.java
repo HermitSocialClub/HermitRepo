@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
-import org.hermitsocialclub.localizers.T265LocalizerRR;
+import org.hermitsocialclub.localizers.T265LocalizerPro;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @TeleOp(name = "Local Slam")
@@ -74,7 +74,7 @@ public class LocalSlamTestOp extends OpMode {
         double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());
-        packet.put("Pose Confidence", ((T265LocalizerRR) (drive.getLocalizer())).getConfidence());
+        packet.put("Pose Confidence", ((T265LocalizerPro) (drive.getLocalizer())).getPoseConfidence());
         packet.put("Pose Estimate", pose);
 
         dash.sendTelemetryPacket(packet);

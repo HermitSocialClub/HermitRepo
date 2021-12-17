@@ -30,5 +30,4 @@ apply from: '../build.dependencies.gradle'
 
 dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.3'
-    implementation 'com.spartronics4915.lib:ftc265:2.1.9'
 }

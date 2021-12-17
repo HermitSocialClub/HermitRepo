@@ -13,6 +13,15 @@ repositories {
     // For com.spartronics4915.lib:ftc265
     maven { url = "https://maven.0x778.tk" }
     maven { url = 'https://maven.brott.dev/' }
+    ivy {
+        url 'https://github.com/'
+        patternLayout {
+            artifact '/[organisation]/[module]/releases/download/v[revision]/[module]-[revision].[ext]'
+        }
+        metadataSources {
+            artifact()
+        }
+    }
 }
 
 dependencies {
