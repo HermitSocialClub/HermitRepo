@@ -18,8 +18,6 @@ import com.spartronics4915.lib.T265Camera;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 /**
  * a Road Runner localizer that uses the Intel T265 Realsense
  */
@@ -30,7 +28,7 @@ public class T265LocalizerRR implements Localizer {
 
     private Pose2d poseOffset = new Pose2d();
     private Pose2d mPoseEstimate = new Pose2d();
-    private com.arcrobotics.ftclib.geometry.Pose2d poseLastFrame;
+    private com.arcrobotics.ftclib.geometry.Pose2d resetPose;
     private Pose2d rawPose = new Pose2d();
     private T265Camera.CameraUpdate up;
 
@@ -71,7 +69,7 @@ public class T265LocalizerRR implements Localizer {
         if (slamra.getLastReceivedCameraUpdate().confidence == T265Camera.PoseConfidence.Failed) {
             RobotLog.e("Realsense Failed to get Position");
         }
-        poseLastFrame = slamra.getLastReceivedCameraUpdate().pose;
+        resetPose = slamra.getLastReceivedCameraUpdate().pose;
     }
 
     @NotNull
@@ -81,13 +79,14 @@ public class T265LocalizerRR implements Localizer {
         update();
         //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
-            Translation2d curPose = up.pose.getTranslation().times(-1);
+            Translation2d curPose = up.pose.getTranslation();
+            curPose = new Translation2d(-curPose.getX(), curPose.getY());
             RobotLog.v("CurPose: " + curPose.toString());
-            RobotLog.v("Original Pose: " + poseLastFrame.toString());
+            RobotLog.v("Original Pose: " + resetPose.toString());
             Rotation2d curRot = up.pose.getRotation();
-            Translation2d newPose = curPose.minus(poseLastFrame.getTranslation().times(-1));
+            Translation2d newPose = curPose.minus(new Translation2d(-resetPose.getX(), resetPose.getY()));
             RobotLog.v("New Pose: " + newPose.toString());
-            Rotation2d newRot = curRot.minus(poseLastFrame.getRotation());
+            Rotation2d newRot = curRot.minus(resetPose.getRotation());
             //The T265's unit of measurement is meters.  dividing it by .0254 converts meters to inches.
             rawPose = new Pose2d(newPose.getX() / .0254, newPose.getY() / .0254, norm(newRot.getRadians() + angleModifer)); //raw pos
             RobotLog.v("Raw Pose: " + rawPose);
@@ -101,7 +100,7 @@ public class T265LocalizerRR implements Localizer {
     @Override
     public void setPoseEstimate(@NotNull Pose2d pose2d) {
         update();
-        poseLastFrame = up.pose;
+        resetPose = up.pose;
         RobotLog.v("Set Pose to " + pose2d);
         pose2d = new Pose2d(pose2d.getX(), pose2d.getY(), pose2d.getHeading());
 
@@ -112,7 +111,7 @@ public class T265LocalizerRR implements Localizer {
         poseOffset = new Pose2d(poseOffset.getX(), poseOffset.getY(), Math.toRadians(0));
         RobotLog.v("SET POSE OFFSET TO " + poseOffset);
         mPoseEstimate = new Pose2d(pose2d.getX() * .0254, pose2d.getY() * .0254, pose2d.getHeading());
-        poseOffset = new Pose2d(pose2d.getX(), pose2d.getY(), pose2d.getHeading());
+        poseOffset = new Pose2d(pose2d.getX(), pose2d.getY(), pose2d.getHeading()); //?
     }
 
     public T265Camera.PoseConfidence getConfidence() {
