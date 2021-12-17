@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.RobotLog
 import com.spartronics4915.lib.T265Camera
 import org.hermitsocialclub.drive.config.DriveConstants
 import org.hermitsocialclub.util.ConvUtils.in2m
+import org.hermitsocialclub.util.ConvUtils.toFLPose2d
 import org.hermitsocialclub.util.ConvUtils.toRRPose2d
 
 /**
@@ -48,7 +49,7 @@ class T265LocalizerPro(hardwareMap: HardwareMap) : Localizer {
 
     override var poseEstimate: Pose2d
         get() = SLAMRA!!.lastReceivedCameraUpdate.pose.toRRPose2d()
-        set(_) = Unit
+        set(value) = SLAMRA!!.setPose(value.toFLPose2d())
 
     override val poseVelocity: Pose2d
         get() = SLAMRA!!.lastReceivedCameraUpdate.velocity.toRRPose2d()
