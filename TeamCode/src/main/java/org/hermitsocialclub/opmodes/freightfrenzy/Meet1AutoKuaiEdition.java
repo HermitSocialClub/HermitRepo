@@ -18,7 +18,7 @@ public class Meet1AutoKuaiEdition extends LinearOpMode {
 
     BaselineMecanumDrive drive;
     PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
-    Pose2d blueStart = new Pose2d(-38, 63, m(90));
+    Pose2d blueStart = new Pose2d(0, 0, m(-90));
     Trajectory toCarouselBlue1;
 
     @Override
