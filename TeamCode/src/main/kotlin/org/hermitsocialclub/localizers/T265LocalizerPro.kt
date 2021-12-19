@@ -16,4 +16,10 @@ class T265LocalizerPro(hardwareMap: HardwareMap) : T265Localizer(
             it.start()
         }
     }
-)
+) {
+    init {
+        // Force an update here even if the camera is not
+        // ready yet to prevent NullPointerExceptions
+        update()
+    }
+}
