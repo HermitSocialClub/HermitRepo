@@ -11,5 +11,9 @@ class T265LocalizerPro(hardwareMap: HardwareMap) : T265Localizer(
     T265Helper.getCamera(
         T265Camera.OdometryInfo(Pose2d(DriveConstants.slamraX, DriveConstants.slamraY), 0.0),
         hardwareMap.appContext
-    )
+    ).also {
+        if(!it.isStarted) {
+            it.start()
+        }
+    }
 )
