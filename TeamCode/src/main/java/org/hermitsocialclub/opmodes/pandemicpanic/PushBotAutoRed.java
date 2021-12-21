@@ -27,11 +27,11 @@ public class PushBotAutoRed extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        arm = hardwareMap.dcMotor.get("arm");
-        claw = hardwareMap.servo.get("claw");
+       // arm = hardwareMap.dcMotor.get("arm");
+        //claw = hardwareMap.servo.get("claw");
         duck_wheel = hardwareMap.dcMotor.get("duck_wheel");
 
-        Trajectory m1 = duck.trajectoryBuilder(new Pose2d(-40.00, 62.00, 0.00))
+        Trajectory m1 = duck.trajectoryBuilder(new Pose2d(-40.00, -62.00, 0.00))
                 .splineTo(new Vector2d(-55, -62), 0)
                 /*.addDisplacementMarker(() -> {
 
@@ -40,11 +40,11 @@ public class PushBotAutoRed extends LinearOpMode {
 
 
         Trajectory m2 = duck.trajectoryBuilder(m1.end())
-                .addDisplacementMarker(() -> {
+               /* .addDisplacementMarker(() -> {
 
                     moveArm(0.3, 4);
 
-                })
+                })*/
                 .splineTo(new Vector2d(-15, -40), 75)
                 //.addDisplacementMarker()
                 /*.addDisplacementMarker(() -> {
@@ -65,7 +65,7 @@ public class PushBotAutoRed extends LinearOpMode {
         moveDuckWheel(0.7, 6);
         duck.followTrajectory(m2);
         //moveClaw(0.3,1);
-        claw.setPosition(0);
+        //claw.setPosition(0);
         duck.followTrajectory(m3);
 
 

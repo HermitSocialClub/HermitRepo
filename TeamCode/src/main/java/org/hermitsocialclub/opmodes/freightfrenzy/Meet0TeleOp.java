@@ -100,11 +100,11 @@ public class Meet0TeleOp extends OpMode {
 
         if(gamepad2.left_bumper){
             telemetry.setData("left_bumper"," pressed");
-            drive.outtakeArm.setPosition(.4);
+            drive.outtakeArm.setPosition(0);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         }else {
             telemetry.setData("right_bumper"," pressed");
-            drive.outtakeArm.setPosition(1.0);
+            drive.outtakeArm.setPosition(.45);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         }
        /* drive.duck_wheel.setVelocity(liftType

@@ -53,7 +53,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.arcrobotics.ftclib.geometry.Transform2d;
+//import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.google.blocks.ftcrobotcontroller.ProgrammingWebHandlers;
 import com.google.blocks.ftcrobotcontroller.runtime.BlocksOpMode;
 import com.qualcomm.ftccommon.*;
@@ -79,7 +79,7 @@ import com.qualcomm.robotcore.util.*;
 import com.qualcomm.robotcore.wifi.NetworkConnection;
 import com.qualcomm.robotcore.wifi.NetworkConnectionFactory;
 import com.qualcomm.robotcore.wifi.NetworkType;
-import com.spartronics4915.lib.T265Camera;
+//import com.spartronics4915.lib.T265Camera;
 
 import org.firstinspires.ftc.ftccommon.external.SoundPlayingRobotMonitor;
 import org.firstinspires.ftc.ftccommon.internal.AnnotatedHooksClassFilter;
@@ -166,7 +166,7 @@ public class FtcRobotControllerActivity extends Activity {
 
   private WifiDirectChannelChanger wifiDirectChannelChanger;
 
-  public static T265Camera slamra;
+  //public static T265Camera slamra;
 
 
   HardwareMap hardwareMap;

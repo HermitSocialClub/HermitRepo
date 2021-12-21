@@ -19,9 +19,6 @@ import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInc
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
 
-import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
-import org.hermitsocialclub.drive.config.DriveConstants;
-
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -58,9 +55,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.spartronics4915.lib.T265Camera;
+import com.spartronics4915.lib.T265Helper;
+import com.spartronics4915.lib.T265Localizer;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.hermitsocialclub.localizers.T265LocalizerPro;
+import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
+import org.hermitsocialclub.drive.config.DriveConstants;
+//import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
@@ -74,7 +76,7 @@ import java.util.List;
  * Simple mecanum drive hardware implementation for REV hardware.
  */
 @Config
-public class BaselineMecanumDrive extends MecanumDrive {
+public class EncoderMecanumDrive extends MecanumDrive {
 
     public enum Mode {
         IDLE,
@@ -124,7 +126,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private PersistantTelemetry telemetry;
 
-    public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
+    public EncoderMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
 
 
 
@@ -192,7 +194,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        outtakeArm.setPosition(.45);
+        outtakeArm.setPosition(1.0);
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -206,9 +208,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
 
         // TODO: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerPro(hardwareMap));
-        telemetry.setData("Pose Estimatlocae",getPoseEstimate());
+        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));d
+        /*T265Camera slamera = T265Helper.getCamera(new T265Camera.OdometryInfo(
+                new Pose2d(slamraX,slamraY,0),0.8),hardwareMap.appContext);*/
+        setLocalizer(new MecanumLocalizer(this));
+        //telemetry.setData("Pose Estimatlocae",getPoseEstimate());
         //telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }

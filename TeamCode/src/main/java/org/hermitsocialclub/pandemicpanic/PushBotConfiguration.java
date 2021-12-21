@@ -30,7 +30,7 @@
 package org.hermitsocialclub.pandemicpanic;
 
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.arcrobotics.ftclib.geometry.Pose2d;
+//import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;

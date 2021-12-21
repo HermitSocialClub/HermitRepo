@@ -128,7 +128,7 @@ public class Meet1TeleOp extends OpMode {
         double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());
-        packet.put("Pose Confidence", ((T265LocalizerPro) (drive.getLocalizer())).getPoseConfidence());
+        //packet.put("Pose Confidence", ((T265LocalizerPro) (drive.getLocalizer())).getPoseConfidence());
 
         dash.sendTelemetryPacket(packet);
 

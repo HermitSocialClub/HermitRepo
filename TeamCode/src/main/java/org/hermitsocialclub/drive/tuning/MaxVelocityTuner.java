@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.drive.EncoderMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 import java.util.Objects;
@@ -31,7 +32,7 @@ import java.util.Objects;
 @Config
 @Autonomous(name = "MaxVelocityTuner", group = "drive")
 public class MaxVelocityTuner extends LinearOpMode {
-    public static double RUNTIME = 2.0;
+    public static double RUNTIME = 1.6;
 
     private ElapsedTime timer;
     private double maxVelocity = 0.0;
@@ -41,7 +42,7 @@ public class MaxVelocityTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
+        EncoderMecanumDrive drive = new EncoderMecanumDrive(hardwareMap, pt);
 
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

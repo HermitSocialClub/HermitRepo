@@ -95,7 +95,7 @@ public class Meet1Auto extends LinearOpMode {
                 .back(15.5)
                 .build();
          toCarouselBlue2 = drive.trajectoryBuilder(toCarouselBlue1.end()
-                 .plus(new Pose2d(0,0,m(90))))
+                 .plus(new Pose2d(0,0,m(45))))
                  .lineTo(blueCarousel)
                 .build();
          toHubBlue = drive.trajectoryBuilder(toCarouselBlue1.end(),m(-45))
@@ -198,7 +198,7 @@ public class Meet1Auto extends LinearOpMode {
             case BLUE: {
                 drive.setPoseEstimate(blueStart);
                 drive.followTrajectory(toCarouselBlue1);
-//                drive.turn(m(90));
+//                drive.turn(m(45));
 //                drive.followTrajectory(toCarouselBlue2);
 //                drive.duck_wheel.setPower(duckSpeed);
 //                sleep(500);
