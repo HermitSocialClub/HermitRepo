@@ -1,9 +1,10 @@
 package org.hermitsocialclub.localizers;
 
 
-import static org.checkerframework.checker.units.UnitsTools.min;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
+import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
+import static org.hermitsocialclub.tomato.LibTomato.checkBatteryForSlamra;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -11,22 +12,15 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.spartronics4915.lib.T265Camera;
-import com.spartronics4915.lib.T265Helper;
 
-import org.hermitsocialclub.drive.config.DriveConstants;
-import org.hermitsocialclub.util.Jukebox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Consumer;
 
 /**
  * a Road Runner localizer that uses the Intel T265 Realsense
  */
 @Config
 public class T265LocalizerRR implements Localizer {
-
-    public static T265Camera slamra;
 
     private Pose2d poseOffset = new Pose2d();
     private Pose2d mPoseEstimate = new Pose2d();
@@ -47,32 +41,14 @@ public class T265LocalizerRR implements Localizer {
     }
 
     public T265LocalizerRR(HardwareMap hardwareMap, boolean resetPos) {
+        checkBatteryForSlamra(hardwareMap);
+
         poseOffset = new Pose2d();
         mPoseEstimate = new Pose2d();
         rawPose = new Pose2d();
-        slamra = T265Helper.getCamera(
-                new T265Camera.OdometryInfo(new Pose2d(slamraX, slamraY,0), 0.0),
-                hardwareMap.appContext
-        );
-        RobotLog.d("Created Realsense Object");
-        setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
-        if (slamra == null) {
-            // Force an update here even if the camera is not
-            // ready yet to prevent NullPointerExceptions
 
-        }
-        try {
-            RobotLog.d("starting realsense");
-            slamra.setPose(new Pose2d(0,0,0));
-            slamra.start();
-        } catch (Exception ignored) {
-            RobotLog.v("Realsense already started");
-            if (resetPos) {
-                setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
-            }
-        }
         update();
-        if (slamra.getLastReceivedCameraUpdate().confidence == T265Camera.PoseConfidence.Failed) {
+        if (SLAMRA.getLastReceivedCameraUpdate().confidence == T265Camera.PoseConfidence.Failed) {
             RobotLog.e("Realsense Failed to get Position");
         }
         update();
@@ -80,7 +56,7 @@ public class T265LocalizerRR implements Localizer {
         resetPose = up.pose == null ?
                 new Pose2d(50,50,50)
                 : up.pose;
-        RobotLog.e("Reset Pose: " + resetPose.toString());
+        RobotLog.e("Reset Pose: " + resetPose);
     }
 
     @NotNull
@@ -141,7 +117,7 @@ public class T265LocalizerRR implements Localizer {
      */
     @Override
     public void update() {
-        up = slamra.getLastReceivedCameraUpdate();
+        up = SLAMRA.getLastReceivedCameraUpdate();
         poseConfidence = up.confidence;
     }
 
@@ -163,13 +139,5 @@ public class T265LocalizerRR implements Localizer {
     private double norm(double angle) {
         final double TAU = 2 * Math.PI;
         return (((angle % TAU) + TAU) % TAU);
-    }
-
-    /**
-     * Stops the realsense
-     */
-    public static void stopRealsense() {
-        RobotLog.v("Stopping Realsense");
-        slamra.stop();
     }
 }
