@@ -61,6 +61,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.localizers.T265LocalizerPro;
+import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
@@ -175,11 +176,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
 
-        lift = hardwareMap.get(DcMotorEx.class,"lift");
-        intake = hardwareMap.get(DcMotorEx.class,"intake");
-        duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
+        //lift = hardwareMap.get(DcMotorEx.class,"lift");
+        //intake = hardwareMap.get(DcMotorEx.class,"intake");
+        //duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
-        outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
+        //outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -189,10 +190,10 @@ public class BaselineMecanumDrive extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        outtakeArm.setPosition(.45);
+        //outtakeArm.setPosition(.45);
 
         if (RUN_USING_ENCODER) {
             setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -205,10 +206,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
         setMotorDirections(DIRECTIONS);
 
 
+
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerPro(hardwareMap));
-        telemetry.setData("Pose Estimatlocae",getPoseEstimate());
+        setLocalizer(new T265LocalizerRR(hardwareMap));
+        telemetry.setData("Pose Estimatlocae",getPoseEstimate() == null ? "No" : getPoseEstimate());
         //telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }
@@ -388,6 +390,27 @@ public class BaselineMecanumDrive extends MecanumDrive {
         }
     }
 
+
+    public void setWeightedDrivePowerBasic(Pose2d drivePower) {
+        Pose2d vel = drivePower;
+
+        if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
+                + Math.abs(drivePower.getHeading()) > 1) {
+            // re-normalize the powers according to the weights
+            double denom = VX_WEIGHT * Math.abs(drivePower.getX())
+                    + VY_WEIGHT * Math.abs(drivePower.getY())
+                    + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());
+
+            vel = new Pose2d(
+                    VX_WEIGHT * drivePower.getX(),
+                    VY_WEIGHT * drivePower.getY(),
+                    OMEGA_WEIGHT * drivePower.getHeading()
+            ).div(denom);
+        }
+
+        setDrivePower(vel);
+    }
+
     public void setWeightedDrivePower(Pose2d drivePower) {
         Pose2d targetvel = drivePower;
 
@@ -410,7 +433,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         telemetry.setData("motor powers",powers.toString());
         setRelativeMotorVelocities(powers);
 
-        telemetry.setData("Wheel Velocities",this.getWheelVelocities().toString());
+        telemetry.setData("Wheel Velocities",getWheelVelocities().toString());
         //setDrivePower(vel);
     }
 

@@ -1,23 +1,21 @@
 package org.hermitsocialclub.opmodes.freightfrenzy;
 
+import static org.hermitsocialclub.drive.config.DriveConstants.RUN_USING_ENCODER;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.hermitsocialclub.drive.BaselineMecanumDrive;
-import org.hermitsocialclub.localizers.T265LocalizerPro;
-import org.hermitsocialclub.localizers.T265LocalizerRR;
-import org.hermitsocialclub.telecat.PersistantTelemetry;
-import static org.hermitsocialclub.drive.config.DriveConstants.*;
 
-@TeleOp(name = "Meet0Tele")
-public class Meet0TeleOp extends OpMode {
+import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.telecat.PersistantTelemetry;
+
+@TeleOp(name = "MecBasic")
+public class MecanumBasic2022 extends OpMode {
     Canvas field;
     TelemetryPacket packet;
 
@@ -117,7 +115,7 @@ public class Meet0TeleOp extends OpMode {
         packet = new TelemetryPacket();
 
         field = packet.fieldOverlay();
-    if(!gamepad1.b) drive.setWeightedDrivePower(
+    if(!gamepad1.b) drive.setWeightedDrivePowerBasic(
             new Pose2d(
                     -gamepad1.left_stick_y,
                     -gamepad1.left_stick_x,

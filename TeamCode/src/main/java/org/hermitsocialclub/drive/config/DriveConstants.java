@@ -226,6 +226,7 @@ public class DriveConstants {
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
 
+
         MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
     }
 
@@ -346,6 +347,66 @@ public class DriveConstants {
 
         DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
                 DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
+
+        MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
+    }*/
+
+    //Skinny Bot
+    /*static {
+        TICKS_PER_REV = 537.6;
+
+        MAX_RPM = 340;
+
+        RUN_USING_ENCODER = false;
+
+        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 22.259453425873854);
+
+        WHEEL_RADIUS = 3;
+
+        GEAR_RATIO = 1;
+
+        TRACK_WIDTH = 18.2;
+
+        WHEEL_BASE = 16.5;
+
+        MAX_VELO = 16;
+
+        MAX_ACCEL = 30;
+
+        MAX_ANG_VELO = 5.45464229;
+
+        MAX_ANG_ACCEL = Math.toRadians(180);
+
+        kV = 0.012962055475993843;
+
+        kA = 0.003;
+
+        kStatic = 0.015;
+
+        BASE_CONSTRAINTS = new DriveConstraints(
+                MAX_VELO, MAX_ACCEL, 0.0,
+                MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
+        );
+        TRANSLATIONAL_PID = new PIDCoefficients(6,1,0.1);
+
+        HEADING_PID = new PIDCoefficients(4,1,0.1);
+
+        LATERAL_MULTIPLIER = 1;
+
+        VX_WEIGHT = 1;
+
+        VY_WEIGHT = 1;
+
+        OMEGA_WEIGHT = 1;
+
+        POSE_HISTORY_LIMIT = 200;
+
+        slamraX = 0;
+
+        slamraY = 0;
+
+        DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE,
+                DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD};
 
         MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
     }*/

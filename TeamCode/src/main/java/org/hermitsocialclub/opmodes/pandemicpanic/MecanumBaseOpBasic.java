@@ -20,7 +20,7 @@ public class MecanumBaseOpBasic extends LinearOpMode {
     private boolean lastAMash = false;
     private boolean lastBMash = false;
     public boolean precisionMode = false;
-    public double precisionModifier = 1.25;
+    public double precisionModifier = 1;
     public double invertedControls = 1;
     double clamperPosition = 0;
     double topClawPosition = 0;
@@ -69,12 +69,12 @@ public class MecanumBaseOpBasic extends LinearOpMode {
 
                 if (precisionMode) {
                     precisionMode = false;
-                    precisionModifier = 1.2;
+                    precisionModifier = 1;
                     pt.setData("Precision Mode", "DEACTIVATED!");
 
                 } else {
                     precisionMode = true;
-                    precisionModifier = 0.5;
+                    precisionModifier = 1;
                     pt.setData("Precision Mode", "ACTIVATED!");
 
                 }

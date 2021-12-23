@@ -197,7 +197,8 @@ public class Meet1Auto extends LinearOpMode {
             }*/
             case BLUE: {
                 drive.setPoseEstimate(blueStart);
-                drive.followTrajectory(toCarouselBlue1);
+                sleep(20000);
+                //drive.followTrajectory(toCarouselBlue1);
 //                drive.turn(m(45));
 //                drive.followTrajectory(toCarouselBlue2);
 //                drive.duck_wheel.setPower(duckSpeed);
