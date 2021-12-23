@@ -1,7 +1,5 @@
 package unibo.cvlab.pydnet;
 
-import android.graphics.Bitmap;
-
 import org.opencv.core.Mat;
 import org.tensorflow.lite.Interpreter;
 
@@ -17,7 +15,7 @@ public class TensorflowLiteModel extends Model {
     protected Interpreter tfLite;
     private ByteBuffer outputByteBuffer;
     private ByteBuffer inputByteBuffer;
-    private int[] intInputPixels;
+    private byte[] byteInputPixels;
     private boolean isPrepared = false;
 
     public TensorflowLiteModel(String name, File modelFile) {
@@ -33,7 +31,7 @@ public class TensorflowLiteModel extends Model {
     public void prepare(Utils.Resolution resolution) {
         outputByteBuffer = ByteBuffer.allocateDirect(resolution.getHeight() * resolution.getWidth() * 4);
         inputByteBuffer = ByteBuffer.allocateDirect(3 * resolution.getHeight() * resolution.getWidth() * 4);
-        intInputPixels = new int[resolution.getWidth() * resolution.getHeight()];
+        byteInputPixels = new byte[4 * resolution.getWidth() * resolution.getHeight()];
         inputByteBuffer.order(ByteOrder.nativeOrder());
         outputByteBuffer.order(ByteOrder.nativeOrder());
         isPrepared = true;
@@ -63,15 +61,14 @@ public class TensorflowLiteModel extends Model {
     // Helper methods
 
     private void fillInputByteBufferWithBitmap(Mat bitmap) {
-        bitmap.get(0, 0, intInputPixels);
+        bitmap.get(0, 0, byteInputPixels);
         // Convert the image to floating point.
-        int pixel = 0;
-        for (int i = 0; i < bitmap.width(); ++i) {
-            for (int j = 0; j < bitmap.height(); ++j) {
-                final int val = intInputPixels[pixel++];
-                inputByteBuffer.putFloat((((val >> 16) & 0xFF)) / (float) 255.);
-                inputByteBuffer.putFloat((((val >> 8) & 0xFF)) / (float) 255.);
-                inputByteBuffer.putFloat((((val) & 0xFF)) / (float) 255.);
+        for (int y = 0; y < bitmap.height(); ++y) {
+            for (int x = 0; x < bitmap.width(); ++x) {
+                final int pixelIdx = 4 * (x + y * bitmap.height());
+                inputByteBuffer.putFloat(byteInputPixels[pixelIdx] / (float) 255.);
+                inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 1] / (float) 255.);
+                inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 2] / (float) 255.);
             }
         }
     }

@@ -35,20 +35,19 @@ class Pydnet(val telemetry: PersistantTelemetry) : IVisionPipelineComponent {
     }
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
-        telemetry.setData("OPENCV INPUT MAT TYPE", CvType.typeToString(mat.type()))
+        // nb: mat is of type `CV_8UC4`
+        val resizedMat = Mat(Utils.Resolution.RES4.height, Utils.Resolution.RES4.width, mat.type())
+        resize(mat, resizedMat, Size(resizedMat.width().toDouble(), resizedMat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_CUBIC)
 
-        //val resizedMat = Mat(Utils.Resolution.RES4.height, Utils.Resolution.RES4.width, mat.type())
-        //resize(mat, resizedMat, Size(resizedMat.width().toDouble(), resizedMat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_CUBIC)
-//
-        //val inferredInverseDepth = model.doInference(resizedMat, Utils.Scale.HEIGHT)
-        //for (y in 0..Utils.Resolution.RES4.height) {
-        //    for (x in 0..Utils.Resolution.RES4.width) {
-        //        val invDepth = (inferredInverseDepth[x + y * Utils.Resolution.RES4.height] * 255).toInt()
-        //        resizedMat.put(y, x, intArrayOf(invDepth, invDepth, invDepth))
-        //    }
-        //}
-//
-        //resize(resizedMat, mat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_NEAREST)
+        val inferredInverseDepth = model.doInference(resizedMat, Utils.Scale.HEIGHT)
+        for (y in 0..Utils.Resolution.RES4.height) {
+            for (x in 0..Utils.Resolution.RES4.width) {
+                val invDepth = (inferredInverseDepth[x + y * Utils.Resolution.RES4.height] * 255).toInt().toByte()
+                resizedMat.put(y, x, byteArrayOf(invDepth, invDepth, invDepth, 255.toByte()))
+            }
+        }
+
+        resize(resizedMat, mat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_NEAREST)
         return mat
     }
 }
