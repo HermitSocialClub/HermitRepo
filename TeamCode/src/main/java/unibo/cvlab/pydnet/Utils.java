@@ -46,7 +46,7 @@ public class Utils {
     }
 
     public enum Resolution {
-        RES5(384, 640);
+        RES5(640, 384);
 
         private final int width;
         private final int height;

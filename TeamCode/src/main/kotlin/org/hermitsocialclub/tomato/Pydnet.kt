@@ -38,22 +38,17 @@ class Pydnet(val telemetry: PersistantTelemetry) : IVisionPipelineComponent {
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
         // nb: mat is of type `CV_8UC4`
-        // nb: we first resize to 640x384 before rotating the image
-        val resizedMat = Mat(Utils.Resolution.RES5.width, Utils.Resolution.RES5.height, mat.type())
+        val resizedMat = Mat(Utils.Resolution.RES5.height, Utils.Resolution.RES5.width, mat.type())
         resize(mat, resizedMat, Size(resizedMat.width().toDouble(), resizedMat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_CUBIC)
 
-        val rotatedMat = Mat(Utils.Resolution.RES5.height, Utils.Resolution.RES5.width, mat.type())
-        rotate(resizedMat, rotatedMat, Core.ROTATE_90_CLOCKWISE)
-
-        val inferredInverseDepth = model.doInference(rotatedMat, Utils.Scale.FULL)
+        val inferredInverseDepth = model.doInference(resizedMat, Utils.Scale.FULL)
         for (y in 0..Utils.Resolution.RES5.height) {
             for (x in 0..Utils.Resolution.RES5.width) {
                 val invDepth = (inferredInverseDepth[x + y * Utils.Resolution.RES5.height] * 255).toInt().toByte()
-                rotatedMat.put(y, x, byteArrayOf(invDepth, invDepth, invDepth, 255.toByte()))
+                resizedMat.put(y, x, byteArrayOf(invDepth, invDepth, invDepth, 255.toByte()))
             }
         }
 
-        rotate(rotatedMat, resizedMat, Core.ROTATE_90_COUNTERCLOCKWISE)
         resize(resizedMat, mat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_NEAREST)
         return mat
     }
