@@ -4,6 +4,7 @@ import android.os.Environment
 import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.telecat.PersistantTelemetry
+import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
@@ -34,18 +35,20 @@ class Pydnet(val telemetry: PersistantTelemetry) : IVisionPipelineComponent {
     }
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
-        val resizedMat = Mat(Utils.Resolution.RES4.height, Utils.Resolution.RES4.width, mat.type())
-        resize(mat, resizedMat, Size(resizedMat.width().toDouble(), resizedMat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_CUBIC)
+        telemetry.setData("OPENCV INPUT MAT TYPE", CvType.typeToString(mat.type()))
 
-        val inferredInverseDepth = model.doInference(resizedMat, Utils.Scale.HEIGHT)
-        for (y in 0..Utils.Resolution.RES4.height) {
-            for (x in 0..Utils.Resolution.RES4.width) {
-                val invDepth = (inferredInverseDepth[x + y * Utils.Resolution.RES4.height] * 255).toInt()
-                resizedMat.put(y, x, intArrayOf(invDepth, invDepth, invDepth))
-            }
-        }
-
-        resize(resizedMat, mat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_NEAREST)
+        //val resizedMat = Mat(Utils.Resolution.RES4.height, Utils.Resolution.RES4.width, mat.type())
+        //resize(mat, resizedMat, Size(resizedMat.width().toDouble(), resizedMat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_CUBIC)
+//
+        //val inferredInverseDepth = model.doInference(resizedMat, Utils.Scale.HEIGHT)
+        //for (y in 0..Utils.Resolution.RES4.height) {
+        //    for (x in 0..Utils.Resolution.RES4.width) {
+        //        val invDepth = (inferredInverseDepth[x + y * Utils.Resolution.RES4.height] * 255).toInt()
+        //        resizedMat.put(y, x, intArrayOf(invDepth, invDepth, invDepth))
+        //    }
+        //}
+//
+        //resize(resizedMat, mat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_NEAREST)
         return mat
     }
 }

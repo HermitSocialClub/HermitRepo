@@ -24,7 +24,8 @@ public class TensorflowLiteModel extends Model {
         super(name);
 
         Interpreter.Options tfliteOptions = new Interpreter.Options();
-
+        // <Aditya> also make sure when you init pydnet with tflite to use xnnpack
+        tfliteOptions.setUseXNNPACK(true);
         this.tfLite = new Interpreter(modelFile, tfliteOptions);
     }
 
