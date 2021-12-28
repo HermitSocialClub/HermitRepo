@@ -65,7 +65,7 @@ public class TensorflowLiteModel extends Model {
         // Convert the image to floating point.
         for (int y = 0; y < bitmap.height(); ++y) {
             for (int x = 0; x < bitmap.width(); ++x) {
-                final int pixelIdx = 4 * (x + y * bitmap.height());
+                final int pixelIdx = 4 * (x + y * bitmap.width());
                 inputByteBuffer.putFloat(byteInputPixels[pixelIdx] / (float) 255.);
                 inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 1] / (float) 255.);
                 inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 2] / (float) 255.);
