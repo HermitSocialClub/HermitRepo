@@ -26,5 +26,4 @@ class VisionSemaphore : IVisionPipelineComponent {
             lock.wait()
         }
     }
-
 }

@@ -4,7 +4,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 
-
 /**
  * ASCIICAST BUILDER
  *
@@ -39,5 +38,4 @@ object AsciicastBuilder {
         event.add(CLEAR + data)
         return event.toString()
     }
-
 }

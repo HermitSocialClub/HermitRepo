@@ -8,6 +8,7 @@ import org.xmlpull.v1.XmlPullParser
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.nio.ByteBuffer
 import java.util.*
 
 object VisionUtils {
@@ -36,10 +37,12 @@ object VisionUtils {
         return loadImage(pipeline, name, IMREAD_GRAYSCALE)
     }
 
+    external fun matAsByteBuffer(mat: Mat): ByteBuffer
+
     @JvmStatic
     fun loadRectFromFile(file: File): Rect {
         val properties = Properties()
-        if(!file.exists()) file.createNewFile()
+        if (!file.exists()) file.createNewFile()
         FileInputStream(file).use {
             properties.load(it)
         }
@@ -58,7 +61,7 @@ object VisionUtils {
         properties.setProperty("y", rect.y.toString())
         properties.setProperty("width", rect.width.toString())
         properties.setProperty("height", rect.height.toString())
-        if(!file.exists()) file.createNewFile()
+        if (!file.exists()) file.createNewFile()
         FileOutputStream(file).use {
             properties.store(it, null)
         }
@@ -112,5 +115,6 @@ object VisionUtils {
             this.action = action
         }
     }
-
 }
+
+fun Mat.asByteBuffer(): ByteBuffer = VisionUtils.matAsByteBuffer(this)

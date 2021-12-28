@@ -1,0 +1,17 @@
+{
+	"rust-analyzer.cargo.runBuildScripts": true,
+	"rust-analyzer.cargo.target": "armv7-linux-androideabi",
+	// "rust-analyzer.cargo.loadOutDirsFromCheck": true
+	"rust-analyzer.server.extraEnv": {
+		"OPENCV_MODULE_BLACKLIST": "gapi,highgui,stitching,videoio",
+		"OPENCV_INCLUDE_PATHS": "/application/ProjectTomato/OpenCV-Repackaged/doc/native_headers",
+		"OPENCV_LINK_PATHS": "/application/ProjectTomato/OpenCV-Repackaged/doc/native_libs/armeabi-v7a",
+		"OPENCV_LINK_LIBS": "OpenCvAndroid453",
+		"TFLITE_LIB_DIR":"/application/ProjectTomato/target/tensorflowLite/",
+		"OPENCV_CLANG_TARGET": "armv7a-unknown-linux-android24",
+		// "CFLAGS":"-stdlib=libstdc++",
+		// "CXX": "clang++",
+		// "CC": "clang",
+		// "BINDGEN_EXTRA_CLANG_ARGS": "-stdlib=libstdc++"
+	},
+}

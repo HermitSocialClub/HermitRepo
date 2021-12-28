@@ -52,8 +52,8 @@ object Jukebox {
                     .build()
             )
 
-            //Attempt to play the file from /storage/emulated/0/JukeboxExternalStorage if it exists
-            //Otherwise play from TeamCode/res/raw
+            // Attempt to play the file from /storage/emulated/0/JukeboxExternalStorage if it exists
+            // Otherwise play from TeamCode/res/raw
             val path =
                 File(Environment.getExternalStorageDirectory().path + File.separator + "JukeboxExternalStorage" + File.separator + filename + ".wav")
             if (path.exists()) {
@@ -90,5 +90,4 @@ object Jukebox {
         }
         musics.clear()
     }
-
 }
