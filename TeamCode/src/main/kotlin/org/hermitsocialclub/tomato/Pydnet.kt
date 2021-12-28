@@ -42,8 +42,8 @@ class Pydnet(val telemetry: PersistantTelemetry) : IVisionPipelineComponent {
         resize(mat, resizedMat, Size(resizedMat.width().toDouble(), resizedMat.height().toDouble()), 0.0, 0.0, Imgproc.INTER_CUBIC)
 
         val inferredInverseDepth = model.doInference(resizedMat, Utils.Scale.FULL)
-        for (y in 0..Utils.Resolution.RES5.height) {
-            for (x in 0..Utils.Resolution.RES5.width) {
+        for (y in 0..Utils.Resolution.RES5.height - 1) {
+            for (x in 0..Utils.Resolution.RES5.width - 1) {
                 val invDepth = (inferredInverseDepth[x + y * Utils.Resolution.RES5.width] * 255).toInt().toByte()
                 resizedMat.put(y, x, byteArrayOf(invDepth, invDepth, invDepth, 255.toByte()))
             }
