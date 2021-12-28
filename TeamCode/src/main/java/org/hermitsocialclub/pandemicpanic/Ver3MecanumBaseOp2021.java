@@ -11,11 +11,12 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.drive.opmode.BaselineMecanumDrive;
 import org.firstinspires.ftc.teamcode.drive.opmode.PoseStorage;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
-
+@SuppressWarnings("all")
 @TeleOp(name = "Version 3 2021 Mecanum Base Op", group = "Hermit")
 public class Ver3MecanumBaseOp2021 extends LinearOpMode {
 
@@ -304,9 +305,8 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                     drive.followTrajectory(constantLaunchSpline2);
                 }
             }
-            //tobePowerRatio = Math.max(sonicHedgehogSensor.getDistance(DistanceUnit.CM) * tobeDistanceRatio,1);
 
-           /* if (drive.color.getDistance(DistanceUnit.INCH) < 1.3) {
+            if (drive.color.getDistance(DistanceUnit.INCH) < 1.3) {
                 ringDetected = true;
                 ringTime.reset();
             }
@@ -329,7 +329,7 @@ public class Ver3MecanumBaseOp2021 extends LinearOpMode {
                     drive.outtake.setVelocity(-outTake75Speed, AngleUnit.RADIANS);
                 }
 
-            }*/
+            }
 
             if (!lastAMash && gamepad1.cross) {
                 if (precisionMode) {
