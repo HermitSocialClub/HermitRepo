@@ -170,7 +170,7 @@ public class DriveConstants {
     }*/
 
     //Big Bertha
-    static {
+    /*static {
         TICKS_PER_REV = 537.6;
 
         MAX_RPM = 340;
@@ -228,7 +228,7 @@ public class DriveConstants {
 
 
         MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
-    }
+    }*/
 
     //The OSHA Offender
     /*static {
@@ -410,6 +410,64 @@ public class DriveConstants {
 
         MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
     }*/
+
+    //Ryan's Test Bot
+    static {
+        TICKS_PER_REV = 1680;
+
+        MAX_RPM = 5480;
+
+        RUN_USING_ENCODER = false;
+
+        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 22.259453425873854);
+
+        WHEEL_RADIUS = 2;
+
+        GEAR_RATIO = 1.0/16.0;
+
+        TRACK_WIDTH = 13.5;
+
+        WHEEL_BASE = 13.5;
+
+        MAX_VELO = 30;
+
+        MAX_ACCEL = 30;
+
+        MAX_ANG_VELO = Math.toRadians(180);
+
+        MAX_ANG_ACCEL = Math.toRadians(180);
+
+        kV = 0.022940578956954337;
+
+        kA = 0;
+
+        kStatic = 0;
+
+        BASE_CONSTRAINTS = new DriveConstraints(
+            MAX_VELO, MAX_ACCEL, 0.0,
+            MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
+        );
+        TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
+
+        HEADING_PID = new PIDCoefficients(0, 0, 0);
+
+        LATERAL_MULTIPLIER = 1;
+
+        VX_WEIGHT = 1;
+
+        VY_WEIGHT = 1;
+
+        OMEGA_WEIGHT = 1;
+
+        POSE_HISTORY_LIMIT = 200;
+
+        slamraX = 0;
+
+        slamraY = 0;
+
+        DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE,
+                DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD};
+    }
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;

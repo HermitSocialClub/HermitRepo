@@ -67,10 +67,10 @@ public class T265LocalizerRR implements Localizer {
         //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
             Pose2d curPose = up.pose;
-            curPose = new Pose2d(-curPose.getX(), curPose.getY());
+            curPose = new Pose2d(-curPose.getX(), curPose.getY(),-curPose.getHeading());
             RobotLog.d("CurPose: " + curPose.toString());
             RobotLog.d("Original Pose: " + resetPose.toString());
-            Pose2d newPose = curPose.minus(new Pose2d(-resetPose.getX(), resetPose.getY(),resetPose.getHeading()));
+            Pose2d newPose = curPose.minus(new Pose2d(-resetPose.getX(), resetPose.getY(),-resetPose.getHeading()));
             RobotLog.d("New Pose: " + newPose.toString());
             //The T265's unit of measurement is meters.  dividing it by .0254 converts meters to inches.
             rawPose = new Pose2d(newPose.getX(), newPose.getY(), norm(newPose.getHeading() + angleModifer)); //raw pos
@@ -93,10 +93,10 @@ public class T265LocalizerRR implements Localizer {
         RobotLog.d("SETTING POSE ESTIMATE TO " + pose2d.toString());
         poseOffset = pose2d.minus(rawPose)
                 .minus(new Pose2d(slamFormPose.getX(),
-                        slamFormPose.getY(),0));
+                        slamFormPose.getY(),-slamFormPose.getHeading()));
         poseOffset = new Pose2d(poseOffset.getX(), poseOffset.getY(), Math.toRadians(0));
         RobotLog.d("SET POSE OFFSET TO " + poseOffset);
-        mPoseEstimate = new Pose2d(pose2d.getX() * .0254, pose2d.getY() * .0254, pose2d.getHeading());
+        mPoseEstimate = new Pose2d(pose2d.getX(), pose2d.getY(), pose2d.getHeading());
         poseOffset = new Pose2d(pose2d.getX(), pose2d.getY(), pose2d.getHeading()); //?
     }
 
@@ -129,7 +129,8 @@ public class T265LocalizerRR implements Localizer {
     @Nullable
     @Override
     public Pose2d getPoseVelocity() {
-        return up.velocity;
+        return new Pose2d(-up.velocity.getX(),up.velocity.getY(),
+        -up.velocity.getHeading());
     }
 
     /**

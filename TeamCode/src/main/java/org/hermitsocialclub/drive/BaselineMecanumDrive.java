@@ -18,6 +18,7 @@ import static org.hermitsocialclub.drive.config.DriveConstants.VY_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInches;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
+import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
 
 import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
 import org.hermitsocialclub.drive.config.DriveConstants;
@@ -296,6 +297,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
 
+        packet.put("Camera Pose",SLAMRA.getLastReceivedCameraUpdate().pose.toString());
+
         switch (mode) {
             case IDLE:
                 // do nothing
@@ -396,7 +399,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
-            // re-normalize the powers according to the weights
+            // re-normalize the powers aclcording to the weights
             double denom = VX_WEIGHT * Math.abs(drivePower.getX())
                     + VY_WEIGHT * Math.abs(drivePower.getY())
                     + OMEGA_WEIGHT * Math.abs(drivePower.getHeading());

@@ -1,5 +1,7 @@
 package org.hermitsocialclub.drive.tuning;
 
+import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -74,8 +76,9 @@ public class LocalSlamTestOp extends OpMode {
         double x2 = pose.getX() + arrowX, y2 = pose.getY() + arrowY;
         field.strokeLine(x1, y1, x2, y2);
         packet.put("Pose", pose.toString());
-        packet.put("Pose Confidence", ((T265LocalizerPro) (drive.getLocalizer())).getPoseConfidence());
+        //packet.put("Pose Confidence", ((T265LocalizerPro) (drive.getLocalizer())).getPoseConfidence());
         packet.put("Pose Estimate", pose);
+        packet.put("Camera Pose",SLAMRA.getLastReceivedCameraUpdate().pose.toString());
 
         dash.sendTelemetryPacket(packet);
 
