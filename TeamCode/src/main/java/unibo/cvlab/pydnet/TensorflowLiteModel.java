@@ -10,7 +10,7 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TensorflowLiteModel extends Model {
+public abstract class TensorflowLiteModel extends Model {
 
     protected Interpreter tfLite;
     private ByteBuffer outputByteBuffer;
@@ -22,10 +22,11 @@ public class TensorflowLiteModel extends Model {
         super(name);
 
         Interpreter.Options tfliteOptions = new Interpreter.Options();
-        // <Aditya> also make sure when you init pydnet with tflite to use xnnpack
-        tfliteOptions.setUseXNNPACK(true);
+        configureInterpreter(tfliteOptions);
         this.tfLite = new Interpreter(modelFile, tfliteOptions);
     }
+
+    protected abstract void configureInterpreter(Interpreter.Options options);
 
     @Override
     public void prepare(Utils.Resolution resolution) {
