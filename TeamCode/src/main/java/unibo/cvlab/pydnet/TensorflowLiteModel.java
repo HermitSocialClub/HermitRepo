@@ -12,18 +12,21 @@ import java.util.Map;
 
 public abstract class TensorflowLiteModel extends Model {
 
+    private final boolean quantizeInput;
     protected Interpreter tfLite;
     private ByteBuffer outputByteBuffer;
     private ByteBuffer inputByteBuffer;
     private byte[] byteInputPixels;
     private boolean isPrepared = false;
 
-    public TensorflowLiteModel(String name, File modelFile) {
+    public TensorflowLiteModel(String name, File modelFile, boolean quantizeInput) {
         super(name);
 
         Interpreter.Options tfliteOptions = new Interpreter.Options();
         configureInterpreter(tfliteOptions);
         this.tfLite = new Interpreter(modelFile, tfliteOptions);
+
+        this.quantizeInput = quantizeInput;
     }
 
     protected abstract void configureInterpreter(Interpreter.Options options);
@@ -64,12 +67,23 @@ public abstract class TensorflowLiteModel extends Model {
     private void fillInputByteBufferWithBitmap(Mat bitmap) {
         bitmap.get(0, 0, byteInputPixels);
         // Convert the image to floating point.
-        for (int y = 0; y < bitmap.height(); ++y) {
-            for (int x = 0; x < bitmap.width(); ++x) {
-                final int pixelIdx = 4 * (x + y * bitmap.width());
-                inputByteBuffer.putFloat(byteInputPixels[pixelIdx] / (float) 255.);
-                inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 1] / (float) 255.);
-                inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 2] / (float) 255.);
+        if(quantizeInput) {
+            for (int y = 0; y < bitmap.height(); ++y) {
+                for (int x = 0; x < bitmap.width(); ++x) {
+                    final int pixelIdx = 4 * (x + y * bitmap.width());
+                    inputByteBuffer.putFloat(byteInputPixels[pixelIdx] / (float) 255.);
+                    inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 1] / (float) 255.);
+                    inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 2] / (float) 255.);
+                }
+            }
+        } else {
+            for (int y = 0; y < bitmap.height(); ++y) {
+                for (int x = 0; x < bitmap.width(); ++x) {
+                    final int pixelIdx = 4 * (x + y * bitmap.width());
+                    inputByteBuffer.putFloat(byteInputPixels[pixelIdx]);
+                    inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 1]);
+                    inputByteBuffer.putFloat(byteInputPixels[pixelIdx + 2]);
+                }
             }
         }
     }

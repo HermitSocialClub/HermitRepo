@@ -5,6 +5,9 @@ import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.hermitsocialclub.util.Profiler
+import org.opencv.core.Core.NORM_MINMAX
+import org.opencv.core.Core.normalize
+import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc.INTER_CUBIC
@@ -42,16 +45,17 @@ class Midas(telemetry: PersistantTelemetry) : IVisionPipelineComponent {
         resize(mat, resizedMat, Size(resizedMat.width().toDouble(), resizedMat.height().toDouble()), 0.0, 0.0, INTER_CUBIC)
 
         profiler.swap("inference")
-        val inferredInverseDepth = model.doInference(resizedMat, Scale.FULL)
+        val inferredRelativeDepth = model.doInference(resizedMat, Scale.FULL)
+        val inferredRelativeDepthMat = Mat(Resolution.SQUARE_256.height, Resolution.SQUARE_256.width, CvType.CV_32FC(4))
 
         profiler.swap("post-process")
         for (y in 0 until Resolution.SQUARE_256.height) {
             for (x in 0 until Resolution.SQUARE_256.width) {
-                val invDepth = (inferredInverseDepth[x + y * Resolution.SQUARE_256.width] * 255).toInt().toByte()
-                resizedMat.put(y, x, byteArrayOf(invDepth, invDepth, invDepth, 255.toByte()))
+                val depth = inferredRelativeDepth[x + y * Resolution.SQUARE_256.width]
+                inferredRelativeDepthMat.put(y, x, floatArrayOf(depth, depth, depth, 1.0F))
             }
         }
-
+        normalize(inferredRelativeDepthMat, resizedMat, 0.0, 255.0, NORM_MINMAX, resizedMat.type())
         resize(resizedMat, mat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, INTER_NEAREST)
         profiler.end()
 
@@ -59,7 +63,7 @@ class Midas(telemetry: PersistantTelemetry) : IVisionPipelineComponent {
     }
 }
 
-class MidasModel(modelFile: File) : TensorflowLiteModel("MiDaS", modelFile) {
+class MidasModel(modelFile: File) : TensorflowLiteModel("MiDaS", modelFile, false) {
     init {
         addInputNode("image", "Const")
         addOutputNodes(Scale.FULL, "midas_net_custom/sequential/re_lu_9/Relu")
