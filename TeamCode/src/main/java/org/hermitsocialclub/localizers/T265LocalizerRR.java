@@ -1,9 +1,10 @@
 package org.hermitsocialclub.localizers;
 
 
+import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
-import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
+//import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
 import static org.hermitsocialclub.tomato.LibTomato.checkBatteryForSlamra;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -48,7 +49,7 @@ public class T265LocalizerRR implements Localizer {
         rawPose = new Pose2d();
 
         update();
-        if (SLAMRA.getLastReceivedCameraUpdate().confidence == T265Camera.PoseConfidence.Failed) {
+        if (slamra.getLastReceivedCameraUpdate().confidence == T265Camera.PoseConfidence.Failed) {
             RobotLog.e("Realsense Failed to get Position");
         }
         update();
@@ -117,7 +118,7 @@ public class T265LocalizerRR implements Localizer {
      */
     @Override
     public void update() {
-        up = SLAMRA.getLastReceivedCameraUpdate();
+        up = slamra.getLastReceivedCameraUpdate();
         poseConfidence = up.confidence;
     }
 

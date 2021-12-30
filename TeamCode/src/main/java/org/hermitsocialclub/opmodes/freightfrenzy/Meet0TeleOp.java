@@ -13,6 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.localizers.T265LocalizerPro;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
+import com.spartronics4915.lib.T265Localizer;
+import com.spartronics4915.lib.T265Helper;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import static org.hermitsocialclub.drive.config.DriveConstants.*;
 

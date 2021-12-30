@@ -1,6 +1,7 @@
 package org.hermitsocialclub.drive;
 
 
+import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.drive.config.DriveConstants.BASE_CONSTRAINTS;
 import static org.hermitsocialclub.drive.config.DriveConstants.DIRECTIONS;
 import static org.hermitsocialclub.drive.config.DriveConstants.HEADING_PID;
@@ -18,7 +19,7 @@ import static org.hermitsocialclub.drive.config.DriveConstants.VY_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInches;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
-import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
+//import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
 
 import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
 import org.hermitsocialclub.drive.config.DriveConstants;
@@ -297,7 +298,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
 
-        packet.put("Camera Pose",SLAMRA.getLastReceivedCameraUpdate().pose.toString());
+        packet.put("Camera Pose",slamra.getLastReceivedCameraUpdate().pose.toString());
 
         switch (mode) {
             case IDLE:

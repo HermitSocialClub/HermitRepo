@@ -20,7 +20,8 @@ import java.util.Locale;
 public class LibTomato {
     private static volatile boolean INIT_YET = false;
 
-    public static T265Camera SLAMRA;
+    //Removed the camera initialization from libtomato to check if it is a source of current localization issues
+    //public static T265Camera SLAMRA;
 
     /**
      * The LibTomato init function.
@@ -47,12 +48,12 @@ public class LibTomato {
             throw e;
         }
 
-        if (splat() != 69) {
+        if (splat() != 69) { //TODO: What even is this, change it, if this does have a legit purpose at least change the number
             throw new AssertionError("Library init failed: splat() was not nice!");
         }
 
         // Load the T265 camera
-        try {
+        /*try {
             SLAMRA = T265Helper.getCamera(
                     new T265Camera.OdometryInfo(new Pose2d(DriveConstants.slamraX, DriveConstants.slamraY), 0.0),
                     context
@@ -65,7 +66,7 @@ public class LibTomato {
             t.printStackTrace(new PrintWriter(writer));
             RobotLog.ee("LibTomato", t, "FTC265 init failed!");
             RobotLog.addGlobalWarningMessage("FTC265 init failed. All OpModes using the SLAMRA camera will crash.");
-        }
+        }*/
 
         // we're done loading!
         INIT_YET = true;

@@ -54,6 +54,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import com.acmerobotics.dashboard.FtcDashboard;
 //import com.arcrobotics.ftclib.geometry.Transform2d;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.google.blocks.ftcrobotcontroller.ProgrammingWebHandlers;
 import com.google.blocks.ftcrobotcontroller.runtime.BlocksOpMode;
 import com.qualcomm.ftccommon.*;
@@ -79,7 +80,9 @@ import com.qualcomm.robotcore.util.*;
 import com.qualcomm.robotcore.wifi.NetworkConnection;
 import com.qualcomm.robotcore.wifi.NetworkConnectionFactory;
 import com.qualcomm.robotcore.wifi.NetworkType;
-//import com.spartronics4915.lib.T265Camera;
+import com.spartronics4915.lib.T265Camera;
+import com.spartronics4915.lib.T265Helper;
+//import c;
 
 import org.firstinspires.ftc.ftccommon.external.SoundPlayingRobotMonitor;
 import org.firstinspires.ftc.ftccommon.internal.AnnotatedHooksClassFilter;
@@ -108,6 +111,8 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -166,7 +171,7 @@ public class FtcRobotControllerActivity extends Activity {
 
   private WifiDirectChannelChanger wifiDirectChannelChanger;
 
-  //public static T265Camera slamra;
+  public static T265Camera slamra;
 
 
   HardwareMap hardwareMap;
@@ -420,7 +425,20 @@ public class FtcRobotControllerActivity extends Activity {
 
     FtcDashboard.start(context);
 
-    //slamra = new T265Camera(new Transform2d(), .8, context);
+    try {
+            slamra = T265Helper.getCamera(
+                    new T265Camera.OdometryInfo(new Pose2d(0, 0), 0.0),
+                    context
+            );
+            if (!slamra.isStarted()) {
+                slamra.start();
+            }
+        } catch (Throwable t) {
+            StringWriter writer = new StringWriter();
+            t.printStackTrace(new PrintWriter(writer));
+            RobotLog.ee("LibTomato", t, "FTC265 init failed!");
+            RobotLog.addGlobalWarningMessage("FTC265 init failed. All OpModes using the SLAMRA camera will crash.");
+        }
   }
 
   protected UpdateUI createUpdateUI() {

@@ -17,7 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  DcMotor right_drive;
  DcMotor left_drive_2;
  DcMotor right_drive_2;
- DcMotor duck_wheel;
+ //DcMotor duck_wheel;
  //DcMotor intake;
  //DcMotor linear;
  //28 * 20 / (2ppi * 4.125)
@@ -47,7 +47,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
   right_drive = hardwareMap.dcMotor.get("right_drive");
   left_drive_2 = hardwareMap.dcMotor.get("left_drive_2");
   right_drive_2 = hardwareMap.dcMotor.get("right_drive_2");
-  duck_wheel = hardwareMap.dcMotor.get("duck_wheel");
+  //duck_wheel = hardwareMap.dcMotor.get("duck_wheel");
   //intake = hardwareMap.dcMotor.get("intake");
   //linear = hardwareMap.dcMotor.get("linear");
 
@@ -126,16 +126,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
   return;
  }
 
- public void duckKnocker(long timeout, double speed) {
+/* public void duckKnocker(long timeout, double speed) {
                /* duckwheel.setPower(speed);
                 while (opModeIsActive() &&
                          (runtime.seconds() < timeout) &&
                          (frontleft.isBusy() && frontright.isBusy())&&(backleft.isBusy() && backright.isBusy())); */
 
-  long start = System.currentTimeMillis();
+  /*long start = System.currentTimeMillis();
   long end = start + timeout * 1000;
   while (System.currentTimeMillis() < end) {
-   duck_wheel.setPower(speed);
-  }
- }
+   duck_wheel.setPower(speed);*/
+  //}
+// }
 }

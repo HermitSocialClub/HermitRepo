@@ -2,10 +2,11 @@ package org.hermitsocialclub.localizers
 
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.spartronics4915.lib.T265Localizer
-import org.hermitsocialclub.tomato.LibTomato.SLAMRA
+import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra
+//import org.hermitsocialclub.tomato.LibTomato.SLAMRA
 import org.hermitsocialclub.tomato.LibTomato.checkBatteryForSlamra
 
-class T265LocalizerPro(hardwareMap: HardwareMap) : T265Localizer(SLAMRA) {
+class T265LocalizerPro(hardwareMap: HardwareMap) : T265Localizer(slamra) {
     init {
         // Force an update here even if the camera is not
         // ready yet to prevent NullPointerExceptions
