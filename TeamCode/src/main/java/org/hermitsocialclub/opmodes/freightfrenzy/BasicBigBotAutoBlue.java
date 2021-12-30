@@ -23,11 +23,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  //28 * 20 / (2ppi * 4.125)
  Double width = 13.0; //inches
  Integer cpr = 28; //counts per rotation
- Integer gear_ratio = 40;
- Double diameter = 4.125;
+ Integer gear_ratio = 640; //neverest 40 is 40:1, custom gearbox is 16:1, multiply (40*16) and (1*1) gives us 640:1
+ Double diameter = 2.95276; //75mm
  Double cpi = (cpr * gear_ratio) / (Math.PI * diameter); //counts per inch, 28cpr * gear ratio / (2 * pi * diameter (in inches, in the center))
  Double bias = 0.8;//default 0.8
- Double meccyBias = 0.9;//change to adjust only strafing movement
+ Double meccyBias = 0.8;//change to adjust only strafing movement
 
  Double conversion = cpi * bias;
  Boolean exit = false;
@@ -56,11 +56,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
   //
   waitForStart();
   //
-  strafeToPosition(10.0, 0.3);
+  strafeToPosition(5.0, 0.2);
   //
-  moveToPosition(18, 0.3);
+  moveToPosition(9, 0.2);
   //
-  strafeToPosition(-97.4, 0.3);
+  strafeToPosition(-48.7, 0.2);
   //
      }
  public void moveToPosition(double inches, double speed) {
