@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -17,7 +18,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  DcMotor right_drive;
  DcMotor left_drive_2;
  DcMotor right_drive_2;
- //DcMotor duck_wheel;
+ DcMotor duck_wheel;
+ Servo outtake_arm;
  //DcMotor intake;
  //DcMotor linear;
  //28 * 20 / (2ppi * 4.125)
@@ -47,20 +49,37 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
   right_drive = hardwareMap.dcMotor.get("right_drive");
   left_drive_2 = hardwareMap.dcMotor.get("left_drive_2");
   right_drive_2 = hardwareMap.dcMotor.get("right_drive_2");
-  //duck_wheel = hardwareMap.dcMotor.get("duck_wheel");
+  duck_wheel = hardwareMap.dcMotor.get("duck_wheel");
+  outtake_arm = hardwareMap.servo.get("outtake_arm");
+
   //intake = hardwareMap.dcMotor.get("intake");
   //linear = hardwareMap.dcMotor.get("linear");
 
   right_drive.setDirection(DcMotorSimple.Direction.REVERSE);
   right_drive_2.setDirection(DcMotorSimple.Direction.REVERSE);
+  /*right_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+  right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+  left_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+  left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);*/
   //
   waitForStart();
   //
-  strafeToPosition(5.0, 0.2);
+  moveToTime(1.5,0.4);
+  //strafeToPosition(5.0, 0.2);
+  duckKnocker(3.5,0.4);
   //
-  moveToPosition(9, 0.2);
+  wait(1500);
+  strafeToTime(1.35,-0.3);
+  wait(500);
+  moveOuttake(2,0);
+  wait(1000);
+  moveOuttake(1,0.45);
+  //moveToPosition(9, 0.2);
   //
-  strafeToPosition(-48.7, 0.2);
+  moveToTime(3,-0.4);
+  strafeToTime(1.75,0.3);
+  moveToTime(3,-0.4);
+  //strafeToPosition(-48.7, 0.2);
   //
      }
  public void moveToPosition(double inches, double speed) {
@@ -72,10 +91,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
   right_drive_2.setTargetPosition(right_drive_2.getCurrentPosition() + move);
   right_drive.setTargetPosition(right_drive.getCurrentPosition() + move);
   //
-  left_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-  right_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-  left_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-  right_drive_2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+  left_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+  right_drive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+  left_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+  right_drive_2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
   //
   left_drive.setPower(speed);
   left_drive_2.setPower(speed);
@@ -126,16 +145,57 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
   return;
  }
 
-/* public void duckKnocker(long timeout, double speed) {
-               /* duckwheel.setPower(speed);
+ public void strafeToTime (double timeout, double speed){
+
+  double start = System.currentTimeMillis();
+  double end = start + timeout * 1000;
+
+  while (System.currentTimeMillis() < end){
+   left_drive.setPower(speed);
+   left_drive_2.setPower(-speed);
+   right_drive.setPower(-speed);
+   right_drive_2.setPower(speed);
+  }
+
+ }
+
+ public void moveToTime (double timeout, double speed){
+
+  double start = System.currentTimeMillis();
+  double end = start + timeout * 1000;
+
+  while (System.currentTimeMillis() < end){
+   left_drive.setPower(speed);
+   left_drive_2.setPower(speed);
+   right_drive.setPower(speed);
+   right_drive_2.setPower(speed);
+  }
+
+
+ }
+
+public void duckKnocker(double timeout, double speed) {
+               /*duck_wheel.setPower(speed);
                 while (opModeIsActive() &&
                          (runtime.seconds() < timeout) &&
-                         (frontleft.isBusy() && frontright.isBusy())&&(backleft.isBusy() && backright.isBusy())); */
+                         (left_drive.isBusy() && right_drive.isBusy())&&(left_drive_2.isBusy() && backright.isBusy())); */
 
-  /*long start = System.currentTimeMillis();
-  long end = start + timeout * 1000;
+  double start = System.currentTimeMillis();
+  double end = start + timeout * 1000;
+
   while (System.currentTimeMillis() < end) {
-   duck_wheel.setPower(speed);*/
-  //}
-// }
+   duck_wheel.setPower(speed);
+  }
+ }
+
+ public void moveOuttake (double time, double position){
+
+  double start = System.currentTimeMillis();
+  double end = start + time * 1000;
+
+  while (System.currentTimeMillis() < end) {
+   outtake_arm.setPosition(position);
+  }
+
+ }
 }
