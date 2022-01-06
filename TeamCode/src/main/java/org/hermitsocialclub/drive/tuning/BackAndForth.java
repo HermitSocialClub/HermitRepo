@@ -29,12 +29,14 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 public class BackAndForth extends LinearOpMode {
 
     public static double DISTANCE = 50;
+    PersistantTelemetry pt;
+    BaselineMecanumDrive drive;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        PersistantTelemetry pt = new PersistantTelemetry(telemetry);
-        BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
-
+        pt = new PersistantTelemetry(telemetry);
+        drive = new BaselineMecanumDrive(hardwareMap, pt);
+        drive.setPoseEstimate(new Pose2d(0, 0,0));
         Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)
                 .build();

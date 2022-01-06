@@ -178,9 +178,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
 
-        //lift = hardwareMap.get(DcMotorEx.class,"lift");
-        //intake = hardwareMap.get(DcMotorEx.class,"intake");
-        //duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
+        lift = hardwareMap.get(DcMotorEx.class,"lift");
+        intake = hardwareMap.get(DcMotorEx.class,"intake");
+        duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
         //outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
@@ -192,8 +192,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //outtakeArm.setPosition(.45);
 
