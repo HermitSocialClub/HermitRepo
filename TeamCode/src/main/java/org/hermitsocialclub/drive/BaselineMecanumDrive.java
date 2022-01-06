@@ -182,7 +182,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotorEx.class,"intake");
         duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
-        //outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
+        outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 

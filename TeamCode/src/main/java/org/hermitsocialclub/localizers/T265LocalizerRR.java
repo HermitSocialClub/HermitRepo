@@ -68,7 +68,7 @@ public class T265LocalizerRR implements Localizer {
         //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
             Pose2d curPose = up.pose;
-            curPose = new Pose2d(curPose.getX(), curPose.getY(),curPose.getHeading());
+            curPose = new Pose2d(-curPose.getX(), curPose.getY(),curPose.getHeading());
             RobotLog.d("CurPose: " + curPose.toString());
             RobotLog.d("Original Pose: " + resetPose.toString());
             Pose2d newPose = curPose.minus(new Pose2d(resetPose.getX(), resetPose.getY(),resetPose.getHeading()));
