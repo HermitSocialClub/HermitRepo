@@ -20,6 +20,7 @@ public class StraightTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         PersistantTelemetry pt = new PersistantTelemetry(telemetry);
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
+        drive.setPoseEstimate(new Pose2d());
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .forward(DISTANCE)
                 .build();

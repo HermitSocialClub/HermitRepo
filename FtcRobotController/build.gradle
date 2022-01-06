@@ -30,4 +30,9 @@ apply from: '../build.dependencies.gradle'
 
 dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.3'
+
+    implementation "ryleu:ftc265:3.0.0-pre.5@aar"
+    implementation 'com.intel.realsense:librealsense:2.41.1-ftc265@aar'
+    implementation 'com.acmerobotics.roadrunner:core:0.5.2'
+
 }

@@ -1,6 +1,7 @@
 package org.hermitsocialclub.drive;
 
 
+import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.drive.config.DriveConstants.BASE_CONSTRAINTS;
 import static org.hermitsocialclub.drive.config.DriveConstants.DIRECTIONS;
 import static org.hermitsocialclub.drive.config.DriveConstants.HEADING_PID;
@@ -18,7 +19,7 @@ import static org.hermitsocialclub.drive.config.DriveConstants.VY_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInches;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
-import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
+//import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
 
 import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
 import org.hermitsocialclub.drive.config.DriveConstants;
@@ -177,9 +178,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
         rightRear = hardwareMap.get(DcMotorEx.class, "right_drive_2");
         rightFront = hardwareMap.get(DcMotorEx.class, "right_drive");
 
-        //lift = hardwareMap.get(DcMotorEx.class,"lift");
-        //intake = hardwareMap.get(DcMotorEx.class,"intake");
-        //duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
+        lift = hardwareMap.get(DcMotorEx.class,"lift");
+        intake = hardwareMap.get(DcMotorEx.class,"intake");
+        duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
         //outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
@@ -191,8 +192,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
             motor.setMotorType(motorConfigurationType);
         }
 
-        //lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //outtakeArm.setPosition(.45);
 
@@ -297,7 +298,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         packet.put("yError", lastError.getY());
         packet.put("headingError", lastError.getHeading());
 
-        packet.put("Camera Pose",SLAMRA.getLastReceivedCameraUpdate().pose.toString());
+        packet.put("Camera Pose",slamra.getLastReceivedCameraUpdate().pose.toString());
 
         switch (mode) {
             case IDLE:

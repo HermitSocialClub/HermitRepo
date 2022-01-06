@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import com.spartronics4915.lib.T265Camera;
-import com.spartronics4915.lib.T265Helper;
-import com.spartronics4915.lib.T265Localizer;
+//import com.spartronics4915.lib.T265Helper;
+//import com.spartronics4915.lib.T265Localizer;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.hydra.vision.FirstFrameSemaphore;
@@ -84,7 +84,7 @@ public class Meet1Auto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        drive.setLocalizer(new T265LocalizerPro(hardwareMap));
+        //drive.setLocalizer(new T265LocalizerPro(hardwareMap));
 
         duckType = drive.duck_wheel.getMotorType();
 
@@ -197,8 +197,8 @@ public class Meet1Auto extends LinearOpMode {
             }*/
             case BLUE: {
                 drive.setPoseEstimate(blueStart);
-                sleep(20000);
-                //drive.followTrajectory(toCarouselBlue1);
+//                sleep(20000);
+                drive.followTrajectory(toCarouselBlue1);
 //                drive.turn(m(45));
 //                drive.followTrajectory(toCarouselBlue2);
 //                drive.duck_wheel.setPower(duckSpeed);
