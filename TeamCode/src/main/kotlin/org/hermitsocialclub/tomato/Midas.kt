@@ -60,7 +60,7 @@ class Midas(telemetry: PersistantTelemetry) : IVisionPipelineComponent {
         val depthMat = Mat(mat.height(), mat.width(), mat.type())
         resize(resizedMat, depthMat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, INTER_NEAREST)
 
-        val temp = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+        val temp = byteArrayOf(0, 0, 0, 0)
         for (y in 0 until mat.height()) {
             for (x in 0 until mat.width()) {
                 depthMat.get(y, x, temp)
