@@ -52,11 +52,24 @@ class Midas(telemetry: PersistantTelemetry) : IVisionPipelineComponent {
         for (y in 0 until Resolution.SQUARE_256.height) {
             for (x in 0 until Resolution.SQUARE_256.width) {
                 val depth = inferredRelativeDepth[x + y * Resolution.SQUARE_256.width]
-                inferredRelativeDepthMat.put(y, x, floatArrayOf(depth, depth, depth, 1.0F))
+                inferredRelativeDepthMat.put(y, x, floatArrayOf(0.0f, 0.0f, 0.0f, depth))
             }
         }
         normalize(inferredRelativeDepthMat, resizedMat, 0.0, 255.0, NORM_MINMAX, resizedMat.type())
-        resize(resizedMat, mat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, INTER_NEAREST)
+
+        val depthMat = Mat(mat.height(), mat.width(), mat.type())
+        resize(resizedMat, depthMat, Size(mat.width().toDouble(), mat.height().toDouble()), 0.0, 0.0, INTER_NEAREST)
+
+        val temp = floatArrayOf(0.0f, 0.0f, 0.0f, 0.0f)
+        for (y in 0 until mat.height()) {
+            for (x in 0 until mat.width()) {
+                depthMat.get(y, x, temp)
+                val depth = temp[3]
+                mat.get(y, x, temp)
+                temp[3] = depth
+                mat.put(y, x, temp)
+            }
+        }
         profiler.end()
 
         return mat
