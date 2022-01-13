@@ -17,8 +17,10 @@ import com.spartronics4915.lib.T265Localizer;
 import com.spartronics4915.lib.T265Helper;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
+import static org.checkerframework.checker.units.UnitsTools.m;
 import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.drive.config.DriveConstants.*;
+import static org.hermitsocialclub.util.MoveUtils.m;
 
 @TeleOp(name = "Meet0Tele")
 public class Meet0TeleOp extends OpMode {
@@ -57,7 +59,7 @@ public class Meet0TeleOp extends OpMode {
         telemetry = new PersistantTelemetry(super.telemetry);
         RUN_USING_ENCODER = true;
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        drive.setPoseEstimate(new Pose2d(0, 0,0));
+        drive.setPoseEstimate(new Pose2d(0, 0,m(90)));
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         drive.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

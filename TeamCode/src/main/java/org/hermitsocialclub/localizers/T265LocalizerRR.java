@@ -2,6 +2,8 @@ package org.hermitsocialclub.localizers;
 
 
 import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
+import static org.firstinspires.ftc.teamcode.util.PoseMath.calculateTransformation;
+import static org.firstinspires.ftc.teamcode.util.PoseMath.transformBy;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
 //import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
@@ -24,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class T265LocalizerRR implements Localizer {
 
     private Pose2d poseOffset = new Pose2d();
+    private Pose2d headingChanged = new Pose2d();
     private Pose2d mPoseEstimate = new Pose2d();
     public Pose2d resetPose = new Pose2d();
     private Pose2d rawPose = new Pose2d();
@@ -57,6 +60,7 @@ public class T265LocalizerRR implements Localizer {
         resetPose = up.pose == null ?
                 new Pose2d(0,0,0)
                 : up.pose;
+        headingChanged = new Pose2d(0,0, resetPose.getHeading());
         RobotLog.e("Reset Pose: " + resetPose);
     }
 
@@ -68,15 +72,18 @@ public class T265LocalizerRR implements Localizer {
         //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
             Pose2d curPose = up.pose;
-            curPose = new Pose2d(-curPose.getX(), curPose.getY(),curPose.getHeading());
+//            curPose = new Pose2d(curPose.getX(), curPose.getY(),curPose.getHeading());
             RobotLog.d("CurPose: " + curPose.toString());
             RobotLog.d("Original Pose: " + resetPose.toString());
-            Pose2d newPose = curPose.minus(new Pose2d(resetPose.getX(), resetPose.getY(),resetPose.getHeading()));
+//            if (curPose.getHeading() == headingChanged.getHeading()) {
+//
+//            }
+            Pose2d newPose = calculateTransformation(resetPose, curPose);
             RobotLog.d("New Pose: " + newPose.toString());
             //The T265's unit of measurement is meters.  dividing it by .0254 converts meters to inches.
             rawPose = new Pose2d(newPose.getX(), newPose.getY(), norm(newPose.getHeading() + angleModifer)); //raw pos
             RobotLog.v("Raw Pose: " + rawPose);
-            mPoseEstimate = rawPose.plus(poseOffset); // offsets the pose to be what the pose estimate is
+             mPoseEstimate = transformBy(poseOffset, rawPose); // offsets the pose to be what the pose estimate is
         } else {
             RobotLog.v("NULL Camera Update");
         }

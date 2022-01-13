@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 import static org.hermitsocialclub.util.MoveUtils.m;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -18,7 +19,7 @@ public class Meet2Auto extends LinearOpMode {
 
     Trajectory backUp;
 
-    Pose2d blueStart =  new Pose2d(-38,63,m(90));
+    Pose2d blueStart =  new Pose2d(-38,63,m(-90));
 
 
     @Override
@@ -29,8 +30,8 @@ public class Meet2Auto extends LinearOpMode {
 
         drive.setPoseEstimate(blueStart);
 
-        backUp = drive.trajectoryBuilder(blueStart)
-                .back(15.5)
+        backUp = drive.trajectoryBuilder(blueStart, -90)
+                .splineTo(new Vector2d(-53.50, 53.50), Math.toRadians(135))
                 .build();
 
         waitForStart();

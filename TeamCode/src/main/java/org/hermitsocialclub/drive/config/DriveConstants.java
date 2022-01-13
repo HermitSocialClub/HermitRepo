@@ -187,7 +187,7 @@ public class DriveConstants {
 
         WHEEL_BASE = 16.5;
 
-        MAX_VELO = 30;
+        MAX_VELO = 24;
 
         MAX_ACCEL = 30;
 
