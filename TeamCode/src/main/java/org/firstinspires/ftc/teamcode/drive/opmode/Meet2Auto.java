@@ -18,8 +18,10 @@ public class Meet2Auto extends LinearOpMode {
     private PersistantTelemetry telemetry;
 
     Trajectory backUp;
+    Trajectory toBlueHub;
 
-    Pose2d blueStart =  new Pose2d(-38,63,m(-90));
+    Pose2d blueStart =  new Pose2d(-38,63,m(90));
+    Pose2d blueCarousel = new Pose2d(-12,44,m(90));
 
 
     @Override
@@ -31,13 +33,21 @@ public class Meet2Auto extends LinearOpMode {
         drive.setPoseEstimate(blueStart);
 
         backUp = drive.trajectoryBuilder(blueStart, -90)
-                .splineTo(new Vector2d(-53.50, 53.50), Math.toRadians(135))
+                .splineToSplineHeading(new Pose2d(-59.1360, 59.1360,m(135)), m(135))
+                .build();
+
+        toBlueHub = drive.trajectoryBuilder(backUp.end())
+                .splineToLinearHeading(blueCarousel,m(-90))
                 .build();
 
         waitForStart();
 
 
             drive.followTrajectory(backUp);
+            drive.duck_wheel.setPower(.3);
+            sleep(300);
+            drive.duck_wheel.setPower(0);
+            drive.followTrajectory(toBlueHub);
 
 
 
