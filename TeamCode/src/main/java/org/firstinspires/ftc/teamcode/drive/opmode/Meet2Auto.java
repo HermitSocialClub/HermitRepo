@@ -23,7 +23,7 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.tomato.BarcodeDetect;
 
 @Autonomous(name = "Meet2Auto")
-                                                                        public class Meet2Auto extends LinearOpMode {
+public class Meet2Auto extends LinearOpMode {
 
     private BaselineMecanumDrive drive;
     private PersistantTelemetry telemetry;
@@ -35,7 +35,8 @@ import org.hermitsocialclub.tomato.BarcodeDetect;
     Pose2d blueCarousel = new Pose2d(-12,44,m(90));
     private VisionPipeline visionPipeline;
     private VisionSemaphore semaphore;
-    private BarcodeDetect barcodeDetect;
+    private BarcodeDetect detector;
+    private Byte barcodeLevel;
 
     private MotorConfigurationType carouselType;
     private double carouselSpeed = .3;
@@ -48,6 +49,17 @@ import org.hermitsocialclub.tomato.BarcodeDetect;
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap,telemetry);
 
+        //init vision stuff
+        detector = new BarcodeDetect(true);
+        semaphore = new VisionSemaphore();
+        visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
+
+        semaphore.waitForFirstFrame();
+        barcodeLevel = detector.getResult();
+
+        telemetry.setData("Barcode Level", barcodeLevel);
+
+
         drive.setPoseEstimate(blueStart);
 
                                                         backUp = drive.trajectoryBuilder(blueStart, -90)
@@ -57,9 +69,7 @@ import org.hermitsocialclub.tomato.BarcodeDetect;
         toBlueHub = drive.trajectoryBuilder(backUp.end(),m(-20))
                 .splineToLinearHeading(blueCarousel,m(-90))
                 .build();
-        barcodeDetect = new BarcodeDetect(true);
-        this.semaphore = new VisionSemaphore();
-        this.visionPipeline = new VisionPipeline(hardwareMap, telemetry, barcodeDetect, semaphore);
+
         CameraStreamSource cameraStream = visionPipeline.getCamera();
         FtcDashboard.getInstance().startCameraStream(cameraStream,0);
 
