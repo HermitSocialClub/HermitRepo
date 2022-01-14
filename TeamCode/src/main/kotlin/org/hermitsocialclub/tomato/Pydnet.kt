@@ -5,9 +5,6 @@ import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.telecat.PersistantTelemetry
 import org.hermitsocialclub.util.Profiler
-import org.opencv.core.Core
-import org.opencv.core.Core.rotate
-import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc

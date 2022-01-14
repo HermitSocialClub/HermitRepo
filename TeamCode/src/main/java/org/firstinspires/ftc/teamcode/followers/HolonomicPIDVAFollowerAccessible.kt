@@ -75,17 +75,19 @@ class HolonomicPIDVAFollowerAccessible @JvmOverloads constructor(
     fun internalUpdateTeleop(currentPose: Pose2d, currentRobotVel: Pose2d?, drivePose: Pose2d): DriveSignal {
         val t = elapsedTime()
 
-        val targetPose = Pose2d(currentPose.x + drivePose.x/10,
-            currentPose.y + drivePose.y/10, currentPose.heading)
+        val targetPose = Pose2d(
+            currentPose.x + drivePose.x / 10,
+            currentPose.y + drivePose.y / 10, currentPose.heading
+        )
         val targetVel = drivePose
         val targetAccel = drivePose.minus(currentRobotVel!!)
 
         val targetRobotVel = Kinematics.fieldToRobotVelocity(targetPose, targetVel)
         val targetRobotAccel = Kinematics.fieldToRobotAcceleration(targetPose, targetVel, targetAccel)
 
-        val hypotTargetVel = Math.hypot(targetRobotVel.x,targetRobotVel.y)
-        val hypotMaxVel = Math.signum(hypotTargetVel) * Math.min(Math.abs(hypotTargetVel),MAX_TELE_VELO)
-        val velMod = hypotMaxVel/hypotTargetVel;
+        val hypotTargetVel = Math.hypot(targetRobotVel.x, targetRobotVel.y)
+        val hypotMaxVel = Math.signum(hypotTargetVel) * Math.min(Math.abs(hypotTargetVel), MAX_TELE_VELO)
+        val velMod = hypotMaxVel / hypotTargetVel
         val adjustedTargetRobotVel = Pose2d(targetRobotVel.x * velMod, targetRobotVel.y * velMod)
 
         val poseError = Kinematics.calculatePoseError(targetPose, currentPose)
@@ -115,4 +117,3 @@ class HolonomicPIDVAFollowerAccessible @JvmOverloads constructor(
         return DriveSignal(correctedVelocity, targetRobotAccel)
     }
 }
-

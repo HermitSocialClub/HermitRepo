@@ -3,7 +3,7 @@ package org.hermitsocialclub.localizers
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.spartronics4915.lib.T265Localizer
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra
-//import org.hermitsocialclub.tomato.LibTomato.SLAMRA
+// import org.hermitsocialclub.tomato.LibTomato.SLAMRA
 import org.hermitsocialclub.tomato.LibTomato.checkBatteryForSlamra
 
 class T265LocalizerPro(hardwareMap: HardwareMap) : T265Localizer(slamra) {
