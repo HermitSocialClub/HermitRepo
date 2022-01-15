@@ -3,7 +3,6 @@ package org.hermitsocialclub.hydra.opmodes
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.hermitsocialclub.telecat.PersistantTelemetry
-import org.hermitsocialclub.tomato.Midas
 import org.hermitsocialclub.tomato.Pydnet
 import org.openftc.easyopencv.OpenCvCamera
 

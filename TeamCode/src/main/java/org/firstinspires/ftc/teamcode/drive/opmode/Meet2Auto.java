@@ -26,9 +26,10 @@ import org.hermitsocialclub.hydra.vision.VisionSemaphore;
 import org.hermitsocialclub.hydra.vision.util.VisionUtils;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.tomato.BarcodeDetect;
+import org.hermitsocialclub.hydra.vision.FirstFrameSemaphore;
 
 @Autonomous(name = "Meet2Auto")
-                                                                        public class Meet2Auto extends LinearOpMode {
+public class Meet2Auto extends LinearOpMode {
 
     private BaselineMecanumDrive drive;
     private PersistantTelemetry telemetry;
@@ -45,8 +46,9 @@ import org.hermitsocialclub.tomato.BarcodeDetect;
     Pose2d bluePit = new Pose2d(48,48,m(45));
 
     private VisionPipeline visionPipeline;
-    private VisionSemaphore semaphore;
-    private BarcodeDetect barcodeDetect;
+    private FirstFrameSemaphore semaphore;
+    private BarcodeDetect detector;
+    private Byte barcodeLevel;
 
     private MotorConfigurationType carouselType;
     private double carouselSpeed = .3;
@@ -58,6 +60,17 @@ import org.hermitsocialclub.tomato.BarcodeDetect;
 
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap,telemetry);
+
+        //init vision stuff
+        detector = new BarcodeDetect(true);
+        semaphore = new FirstFrameSemaphore();
+        visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
+
+        semaphore.waitForFirstFrame();
+        barcodeLevel = detector.getResult();
+
+        telemetry.setData("Barcode Level", barcodeLevel);
+
 
         drive.setPoseEstimate(blueStart);
 

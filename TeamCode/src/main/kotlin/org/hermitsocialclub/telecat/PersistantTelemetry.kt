@@ -34,8 +34,8 @@ class PersistantTelemetry @JvmOverloads constructor(val originalTelemetry: Telem
      * @param value   What to set the data to.
      */
     fun setData(caption: String, value: Any) = synchronized(lock) {
-            telemetryData[caption] = value.toString()
-            update()
+        telemetryData[caption] = value.toString()
+        update()
     }
 
     fun setXData(key: String, formatKey: String, values: Array<Any>) = synchronized(lock) {

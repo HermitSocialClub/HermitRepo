@@ -15,7 +15,7 @@ class FirstFrameSemaphore : IVisionPipelineComponent {
 
     override fun apply(t: Mat, u: VisionPipeline): Mat {
         synchronized(lock) {
-            if(!firstFramePassed) {
+            if (!firstFramePassed) {
                 lock.notifyAll()
                 firstFramePassed = true
             }
@@ -28,7 +28,7 @@ class FirstFrameSemaphore : IVisionPipelineComponent {
      */
     fun waitForFirstFrame() {
         synchronized(lock) {
-            if(!firstFramePassed) {
+            if (!firstFramePassed) {
                 lock.wait()
             }
         }
