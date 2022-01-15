@@ -7,6 +7,13 @@ import org.opencv.core.Mat
  * to the main loop, we need this to
  * sync data between the two.
  */
+@Deprecated(
+    "Unnecessarily blocks after the first frame.",
+    ReplaceWith(
+        "FirstFrameSemaphore",
+        "org.hermitsocialclub.hydra.vision.FirstFrameSemaphore"
+    )
+)
 class VisionSemaphore : IVisionPipelineComponent {
 
     private val lock = Object()
