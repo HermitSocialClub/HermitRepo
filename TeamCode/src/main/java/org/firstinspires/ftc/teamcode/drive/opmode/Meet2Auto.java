@@ -93,9 +93,9 @@ public class Meet2Auto extends LinearOpMode {
                 .back(5)
                 .build();
 
-        barcodeDetect = new BarcodeDetect(true);
-        this.semaphore = new VisionSemaphore();
-        this.visionPipeline = new VisionPipeline(hardwareMap, telemetry, barcodeDetect, semaphore);
+        detector = new BarcodeDetect(true);
+        this.semaphore = new FirstFrameSemaphore();
+        this.visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
         CameraStreamSource cameraStream = visionPipeline.getCamera();
         FtcDashboard.getInstance().startCameraStream(cameraStream,0);
 
