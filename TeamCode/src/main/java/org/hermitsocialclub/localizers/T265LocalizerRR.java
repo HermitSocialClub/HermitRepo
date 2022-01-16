@@ -132,8 +132,8 @@ public class T265LocalizerRR implements Localizer {
     @Nullable
     @Override
     public Pose2d getPoseVelocity() {
-        return new Pose2d(-up.velocity.getX(),up.velocity.getY(),
-        -up.velocity.getHeading());
+        return new Pose2d(up.velocity.getX(),up.velocity.getY(),
+        up.velocity.getHeading());
     }
 
     /**

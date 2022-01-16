@@ -22,8 +22,8 @@ import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerA
 import static org.hermitsocialclub.drive.config.DriveConstants.*;
 import static org.hermitsocialclub.util.MoveUtils.m;
 
-@TeleOp(name = "Meet0Tele")
-public class Meet0TeleOp extends OpMode {
+@TeleOp(name = "SkinnyTele")
+public class SkinnyTele extends OpMode {
     Canvas field;
     TelemetryPacket packet;
 
@@ -115,7 +115,7 @@ public class Meet0TeleOp extends OpMode {
 
         if (gamepad2.left_bumper) {
             telemetry.setData("left_bumper", " pressed");
-            drive.outtakeArm.setPosition(0.55);
+            drive.outtakeArm.setPosition(0.25);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         } else {
             telemetry.setData("right_bumper", " pressed");
@@ -130,13 +130,13 @@ public class Meet0TeleOp extends OpMode {
         packet = new TelemetryPacket();
 
         field = packet.fieldOverlay();
-    if(!gamepad1.b) drive.setWeightedDrivePower(
-            new Pose2d(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x,
-                    -gamepad1.right_stick_x
-            ).times(1)
-    );
+        if(!gamepad1.b) drive.setWeightedDrivePower(
+                new Pose2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -gamepad1.right_stick_x
+                ).times(1.25)
+        );
         drive.update();
 
         Pose2d pose = drive.getPoseEstimate();

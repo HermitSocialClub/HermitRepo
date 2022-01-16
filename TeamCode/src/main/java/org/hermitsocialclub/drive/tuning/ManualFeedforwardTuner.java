@@ -82,6 +82,7 @@ public class ManualFeedforwardTuner extends LinearOpMode {
         mode = Mode.TUNING_MODE;
 
         NanoClock clock = NanoClock.system();
+//        drive.setPoseEstimate(new Pose2d(0, 0, Math.toRadians(0)));
 
         telemetry.addLine("Ready!");
         telemetry.update();

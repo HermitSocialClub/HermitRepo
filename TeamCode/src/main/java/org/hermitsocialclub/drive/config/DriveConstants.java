@@ -2,6 +2,7 @@ package org.hermitsocialclub.drive.config;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -170,65 +171,65 @@ public class DriveConstants {
     }*/
 
     //Big Bertha
-    static {
-        TICKS_PER_REV = 537.6;
-
-        MAX_RPM = 340;
-
-        RUN_USING_ENCODER = false;
-
-        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 22.259453425873854);
-
-        WHEEL_RADIUS = 3;
-
-        GEAR_RATIO = 1;
-
-        TRACK_WIDTH = 18.2;
-
-        WHEEL_BASE = 16.5;
-
-        MAX_VELO = 24;
-
-        MAX_ACCEL = 30;
-
-        MAX_ANG_VELO = 5.45464229;
-
-        MAX_ANG_ACCEL = Math.toRadians(180);
-
-        kV = 0.012962055475993843;
-
-        kA = 0.003;
-
-        kStatic = 0.015;
-
-        BASE_CONSTRAINTS = new DriveConstraints(
-                MAX_VELO, MAX_ACCEL, 0.0,
-                MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
-        );
-        TRANSLATIONAL_PID = new PIDCoefficients(6,1,0.1);
-
-        HEADING_PID = new PIDCoefficients(4,1,0.1);
-
-        LATERAL_MULTIPLIER = 1;
-
-        VX_WEIGHT = 1;
-
-        VY_WEIGHT = 1;
-
-        OMEGA_WEIGHT = 1;
-
-        POSE_HISTORY_LIMIT = 200;
-
-        slamraX = 0;
-
-        slamraY = 0;
-
-        DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
-                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
-
-
-        MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
-    }
+//    static {
+//        TICKS_PER_REV = 537.6;
+//
+//        MAX_RPM = 340;
+//
+//        RUN_USING_ENCODER = false;
+//
+//        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, 22.259453425873854);
+//
+//        WHEEL_RADIUS = 3;
+//
+//        GEAR_RATIO = 1;
+//
+//        TRACK_WIDTH = 18.2;
+//
+//        WHEEL_BASE = 16.5;
+//
+//        MAX_VELO = 24;
+//
+//        MAX_ACCEL = 30;
+//
+//        MAX_ANG_VELO = 5.45464229;
+//
+//        MAX_ANG_ACCEL = Math.toRadians(180);
+//
+//        kV = 0.012962055475993843;
+//
+//        kA = 0.003;
+//
+//        kStatic = 0.015;
+//
+//        BASE_CONSTRAINTS = new DriveConstraints(
+//                MAX_VELO, MAX_ACCEL, 0.0,
+//                MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
+//        );
+//        TRANSLATIONAL_PID = new PIDCoefficients(6,1,0.1);
+//
+//        HEADING_PID = new PIDCoefficients(4,1,0.1);
+//
+//        LATERAL_MULTIPLIER = 1;
+//
+//        VX_WEIGHT = 1;
+//
+//        VY_WEIGHT = 1;
+//
+//        OMEGA_WEIGHT = 1;
+//
+//        POSE_HISTORY_LIMIT = 200;
+//
+//        slamraX = 0;
+//
+//        slamraY = 0;
+//
+//        DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
+//                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
+//
+//
+//        MAX_TELE_VELO = 3.0/4.0 * MAX_VELO;
+//    }
 
     //The OSHA Offender
     /*static {
@@ -352,34 +353,52 @@ public class DriveConstants {
     }*/
 
     //Skinny Bot
-    /*static {
-
-
-         TICKS_PER_REV = 537.6;
-         MAX_RPM = 340;
-
+    static {
+        TICKS_PER_REV = 537.6;
+        MAX_RPM = 340;
 
         RUN_USING_ENCODER = false;
-        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0,
-                getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
+        MOTOR_VELO_PID = new PIDFCoefficients(0, 0, 0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV));
 
 
-         WHEEL_RADIUS = 2; // in
-         GEAR_RATIO = 0.5; // output (wheel) speed / input (motor) speed
-         TRACK_WIDTH = 11; // in
+        WHEEL_RADIUS = 1.9685;
+        GEAR_RATIO = 0.5;
+        TRACK_WIDTH = 11;
 
+        kV = 0.03025;
+        kA = 0.00425;
+        kStatic = 0.03;
 
-         kV = 1.0 / rpmToVelocity(MAX_RPM);
-         kA = 0;
-         kStatic = 0;
+        MAX_VELO = 30;
+        MAX_ACCEL = 30;
+        MAX_ANG_VELO = Math.toRadians(155.15359090909092);
+        MAX_ANG_ACCEL = Math.toRadians(155.15359090909092);
 
+        BASE_CONSTRAINTS = new DriveConstraints(
+                MAX_VELO, MAX_ACCEL, 0.0,
+                MAX_ANG_VELO, MAX_ANG_ACCEL, 0.0
+        );
+        TRANSLATIONAL_PID = new PIDCoefficients(8, 8, .1);
 
-         MAX_VELO = 30;
-         MAX_ACCEL = 30;
-         MAX_ANG_VELO = Math.toRadians(157.63636363636363);
-         MAX_ANG_ACCEL = Math.toRadians(157.63636363636363);
+        HEADING_PID = new PIDCoefficients(8, 1, 0);
 
-    }*/
+        LATERAL_MULTIPLIER = 1;
+
+        VX_WEIGHT = 1;
+
+        VY_WEIGHT = 1;
+
+        OMEGA_WEIGHT = 1;
+
+        POSE_HISTORY_LIMIT = 200;
+
+        slamraX = 0;
+
+        slamraY = 0;
+
+        DIRECTIONS = new DcMotorSimple.Direction[]{DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD,
+                DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.REVERSE};
+    }
 
     //Ryan's Test Bot
     /*static {
