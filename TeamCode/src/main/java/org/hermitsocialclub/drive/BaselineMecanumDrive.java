@@ -51,6 +51,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -114,7 +115,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public Servo kicker;
     public CRServo hook;
     public CRServo friend;
-    public RevColorSensorV3 color;
+    public RevColorSensorV3 colorSensor;
     public Servo hopperLift;
     public Servo outtakeArm;
     public CRServo intakeThirdStage;
@@ -183,6 +184,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
         duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
         outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
+
+        colorSensor = hardwareMap.get(RevColorSensorV3.class,"colorSensor");
+
+        colorSensor.enableLed(true);
+        colorSensor.initialize();
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -299,6 +305,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
         packet.put("headingError", lastError.getHeading());
 
         packet.put("Camera Pose",slamra.getLastReceivedCameraUpdate().pose.toString());
+
+        packet.put("RGB",colorSensor.blue());
 
         switch (mode) {
             case IDLE:

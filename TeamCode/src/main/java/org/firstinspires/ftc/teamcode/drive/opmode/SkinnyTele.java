@@ -40,7 +40,7 @@ public class SkinnyTele extends OpMode {
     private double liftSpeed = -15;
     private MotorConfigurationType liftType;
 
-    private double intakeSpeed = .85;
+    private double intakeSpeed = 0.95;
     private MotorConfigurationType intakeType;
 
     private double carouselSpeed = .15;

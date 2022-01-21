@@ -38,10 +38,12 @@ public class Meet2autoSkinny extends LinearOpMode {
     Trajectory toBlueHub;
     Trajectory toBlueBarrier;
     Trajectory toBlueWarehouse;
+    Trajectory toBlueWarehouseBack;
     Trajectory goBack;
 
     Pose2d blueStart =  new Pose2d(10,60,m(90));
-    Vector2d blueHub = new Vector2d(-10, 45);
+    Vector2d blueHub = new Vector2d(-10, 40);
+    Pose2d blueBarrier = new Pose2d(19,64.5, m(0));
 //    Pose2d blueCarousel = new Pose2d(-12,44,m(90));
 //    Pose2d blueBarrier = new Pose2d(12,42,m(0));
 //    Pose2d bluePit = new Pose2d(48,48,m(45));
@@ -54,6 +56,8 @@ public class Meet2autoSkinny extends LinearOpMode {
     private MotorConfigurationType carouselType;
     private double carouselSpeed = .3;
     private MotorConfigurationType liftType;
+    private MotorConfigurationType intakeType;
+    private Trajectory toBlueBarrierBack;
 
 
     @Override
@@ -77,9 +81,26 @@ public class Meet2autoSkinny extends LinearOpMode {
         toBlueHub = drive.trajectoryBuilder(blueStart)
                 .strafeTo(blueHub)
                 .build();
-
-        toBlueWarehouse = drive.trajectoryBuilder(new Pose2d(blueHub, m(90)))
+        toBlueBarrier = drive.trajectoryBuilder(new Pose2d(blueHub, m(90)))
+                .lineToLinearHeading(blueBarrier)
                 .build();
+
+        toBlueWarehouse = drive.trajectoryBuilder(toBlueBarrier.end())
+                .forward(35)
+                .build();
+
+        toBlueWarehouseBack = drive.trajectoryBuilder(toBlueBarrier.end(),true)
+                .forward(35)
+                .build();
+        toBlueBarrierBack = drive.trajectoryBuilder(new Pose2d(blueHub, m(90)), true)
+                .lineToLinearHeading(blueBarrier)
+                .build();
+
+//        toBlueWarehouse = drive.trajectoryBuilder(new Pose2d(blueHub, m(90)),m(90))
+//                .splineTo(blueBarrier,m(0))
+
+//                .forward(36)
+//                .build();
 
 
 
@@ -115,6 +136,7 @@ public class Meet2autoSkinny extends LinearOpMode {
         carouselType = drive.duck_wheel.getMotorType();
 
         liftType = drive.lift.getMotorType();
+        intakeType = drive.intake.getMotorType();
 
         drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -132,12 +154,45 @@ public class Meet2autoSkinny extends LinearOpMode {
         drive.lift.setVelocity(liftType
                 .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * .85 *
                 1, AngleUnit.RADIANS);
+        sleep(1500);
+        drive.outtakeArm.setPosition(0.55);
+        drive.lift.setPower(0);
+        sleep(800);
+        drive.outtakeArm.setPosition(0);
+        sleep(800);
+        drive.outtakeArm.setPosition(0.45);
+        drive.lift.setVelocity(liftType
+                .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * -.55 *
+                1, AngleUnit.RADIANS);
         sleep(2100);
-        drive.outtakeArm.setPosition(0.25);
-        drive.lift.setPower(0.2);
-        sleep(600);
-        drive.outtakeArm.setPosition(1);
-//        drive.followTrajectory(toBlueBarrier);
+        drive.lift.setPower(0);
+        drive.followTrajectory(toBlueBarrier);
+        drive.intake.setVelocity(0.85
+                * intakeType.getAchieveableMaxRPMFraction() *
+                intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
+        drive.followTrajectory(toBlueWarehouse);
+        sleep(300);
+        drive.intake.setPower(0);
+        drive.intake.setVelocity(-0.85
+                * intakeType.getAchieveableMaxRPMFraction() *
+                intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
+        drive.followTrajectory(toBlueWarehouseBack);
+        drive.intake.setPower(0);
+        drive.followTrajectory(toBlueBarrierBack);
+        drive.lift.setVelocity(liftType
+                .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * .85 *
+                1, AngleUnit.RADIANS);
+        sleep(2100);
+        drive.outtakeArm.setPosition(0.55);
+        drive.lift.setPower(0);
+        sleep(800);
+        drive.outtakeArm.setPosition(0);
+        sleep(800);
+        drive.outtakeArm.setPosition(0.45);
+
+
+
+
 //        drive.setWeightedDrivePower(new Pose2d(.3,0));
 //        sleep(1800);
 //        drive.setWeightedDrivePower(new Pose2d());
