@@ -40,7 +40,7 @@ public class SkinnyTele extends OpMode {
     private double liftSpeed = -15;
     private MotorConfigurationType liftType;
 
-    private double intakeSpeed = 0.95;
+    private double intakeSpeed = 1;
     private MotorConfigurationType intakeType;
 
     private double carouselSpeed = .15;
@@ -115,11 +115,11 @@ public class SkinnyTele extends OpMode {
 
         if (gamepad2.left_bumper) {
             telemetry.setData("left_bumper", " pressed");
-            drive.outtakeArm.setPosition(0.25);
+            drive.outtakeArm.setPosition(0);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         } else {
             telemetry.setData("right_bumper", " pressed");
-            drive.outtakeArm.setPosition(1);
+            drive.outtakeArm.setPosition(0.55);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         }
        /* drive.duck_wheel.setVelocity(liftType
