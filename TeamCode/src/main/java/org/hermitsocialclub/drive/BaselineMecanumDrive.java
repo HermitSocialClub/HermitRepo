@@ -58,6 +58,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -116,6 +117,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public CRServo hook;
     public CRServo friend;
     public RevColorSensorV3 colorSensor;
+    public TouchSensor linearSwitch;
     public Servo hopperLift;
     public Servo outtakeArm;
     public CRServo intakeThirdStage;
@@ -186,6 +188,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
         colorSensor = hardwareMap.get(RevColorSensorV3.class,"colorSensor");
+        linearSwitch = hardwareMap.get(TouchSensor.class,"linearSwitch");
 
         colorSensor.enableLed(true);
         colorSensor.initialize();

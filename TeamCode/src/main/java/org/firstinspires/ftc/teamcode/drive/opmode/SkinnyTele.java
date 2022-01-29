@@ -1,4 +1,4 @@
-package org.hermitsocialclub.opmodes.freightfrenzy;
+package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
@@ -16,6 +16,7 @@ import org.hermitsocialclub.localizers.T265LocalizerRR;
 import com.spartronics4915.lib.T265Localizer;
 import com.spartronics4915.lib.T265Helper;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.util.LinearHelpers;
 
 import static org.checkerframework.checker.units.UnitsTools.m;
 import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
@@ -36,6 +37,7 @@ public class SkinnyTele extends OpMode {
     private final int robotRadius = 8;
 
     private double trigVal = 0;
+    private LinearHelpers linears;
     //in ticks
     private double liftSpeed = -15;
     private MotorConfigurationType liftType;
@@ -43,7 +45,7 @@ public class SkinnyTele extends OpMode {
     private double intakeSpeed = 1;
     private MotorConfigurationType intakeType;
 
-    private double carouselSpeed = .15;
+    private double carouselSpeed = .85;
     private MotorConfigurationType carouselType;
 
     public static double liftP = 3.0;
@@ -51,6 +53,9 @@ public class SkinnyTele extends OpMode {
     public static double liftD = .1;
     public static double liftF = 22.259453425873854;
     public static PIDFCoefficients liftCoefficients = new PIDFCoefficients(3,1,.1,22.259453425873854);
+
+    int invert = -1;
+    private boolean lastXMash = false;
 
 
     @Override
@@ -61,12 +66,14 @@ public class SkinnyTele extends OpMode {
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
         drive.setPoseEstimate(new Pose2d(0, 0,m(0)));
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         drive.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftType = drive.lift.getMotorType();
         intakeType = drive.intake.getMotorType();
         carouselType = drive.duck_wheel.getMotorType();
         telemetry.setData("Lift Pos",drive.lift.getCurrentPosition());
+        telemetry.setData("Ticks Per Rev", liftType.getTicksPerRev());
+        linears = new LinearHelpers(drive, telemetry);
     }
 
     @Override
@@ -82,17 +89,23 @@ public class SkinnyTele extends OpMode {
     @Override
     public void loop() {
 
-        /*drive.lift.setTargetPosition(drive.lift.getCurrentPosition() +
-                (int)(liftSpeed * gamepad1.right_stick_y));
-        drive.lift.setPower(.45);*/
-
         trigVal = -gamepad2.right_stick_y > 0.05 ? -gamepad2.right_stick_y * 1.25 :
                 -gamepad2.right_stick_y < -.05 ? -gamepad2.right_stick_y : 0.000;
-
+//        if(trigVal > .05)
         drive.lift.setVelocity(liftType
-                .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * .65 *
+                .getMaxRPM() / 60 * 2 * Math.PI * liftType.getAchieveableMaxRPMFraction() * .85 *
                 trigVal, AngleUnit.RADIANS);
 
+//        if (gamepad2.x) {
+//            linears.LiftLinears();
+//        }
+//        else if (gamepad2.y){
+//            linears.ReturnLinears();;
+//        }
+//        linears.LinearUpdate();
+        telemetry.setData("liftMode: ", drive.lift.getMode().toString());
+        telemetry.setData("liftPID: ", drive.lift
+                .getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).toString());
 
         if (gamepad2.right_trigger > 0.05) {
             drive.intake.setVelocity(intakeSpeed
@@ -130,10 +143,16 @@ public class SkinnyTele extends OpMode {
         packet = new TelemetryPacket();
 
         field = packet.fieldOverlay();
-        if(!gamepad1.b) drive.setWeightedDrivePower(
+
+        if (!lastXMash && gamepad1.x) {
+            invert *= -1;
+        }
+        lastXMash = gamepad1.x;
+
+        drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad1.left_stick_y,
-                        -gamepad1.left_stick_x,
+                        invert * gamepad1.left_stick_y,
+                        invert * gamepad1.left_stick_x,
                         -gamepad1.right_stick_x
                 ).times(1.25)
         );
