@@ -41,6 +41,8 @@ public class SkinnyTele extends OpMode {
     //in ticks
     private double liftSpeed = -15;
     private MotorConfigurationType liftType;
+    boolean lastUpFlick = false;
+    boolean lastDownFlick = false;
 
     private double intakeSpeed = 1;
     private MotorConfigurationType intakeType;
@@ -89,23 +91,20 @@ public class SkinnyTele extends OpMode {
     @Override
     public void loop() {
 
-        trigVal = -gamepad2.right_stick_y > 0.05 ? -gamepad2.right_stick_y * 1.25 :
-                -gamepad2.right_stick_y < -.05 ? -gamepad2.right_stick_y : 0.000;
-//        if(trigVal > .05)
-        drive.lift.setVelocity(liftType
-                .getMaxRPM() / 60 * 2 * Math.PI * liftType.getAchieveableMaxRPMFraction() * .85 *
-                trigVal, AngleUnit.RADIANS);
+        if (gamepad2.left_stick_y < -.25 && !lastUpFlick) {
+            linears.LiftLinears();
+        }
 
-//        if (gamepad2.x) {
-//            linears.LiftLinears();
-//        }
-//        else if (gamepad2.y){
-//            linears.ReturnLinears();;
-//        }
-//        linears.LinearUpdate();
+        if (gamepad2.left_stick_y > .25 && !lastDownFlick){
+            linears.ReturnLinears();
+        }
+        linears.LinearUpdate();
         telemetry.setData("liftMode: ", drive.lift.getMode().toString());
         telemetry.setData("liftPID: ", drive.lift
                 .getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).toString());
+
+        lastUpFlick = gamepad2.left_stick_y < -.25;
+        lastDownFlick = gamepad2.left_stick_y > .25;
 
         if (gamepad2.right_trigger > 0.05) {
             drive.intake.setVelocity(intakeSpeed
@@ -117,7 +116,7 @@ public class SkinnyTele extends OpMode {
                     intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
         } else drive.intake.setPower(0);
 
-        if (Math.abs(gamepad2.left_stick_y) > 0.05) {
+        if (Math.abs(gamepad2.left_stick_x) > 0.05) {
             drive.duck_wheel.setVelocity(carouselSpeed *
                     carouselType.getAchieveableMaxRPMFraction()
                     * carouselType.getMaxRPM()/60 *
@@ -125,6 +124,8 @@ public class SkinnyTele extends OpMode {
         } else {
             drive.duck_wheel.setPower(0);
         }
+
+
 
         if (gamepad2.left_bumper) {
             telemetry.setData("left_bumper", " pressed");

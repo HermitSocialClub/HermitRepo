@@ -69,6 +69,7 @@ import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
 import org.hermitsocialclub.util.LynxModuleUtil;
+import org.openftc.revextensions2.ExpansionHubEx;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,6 +118,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public CRServo hook;
     public CRServo friend;
     public RevColorSensorV3 colorSensor;
+    public ExpansionHubEx hub;
     public TouchSensor linearSwitch;
     public Servo hopperLift;
     public Servo outtakeArm;
@@ -189,6 +191,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         colorSensor = hardwareMap.get(RevColorSensorV3.class,"colorSensor");
         linearSwitch = hardwareMap.get(TouchSensor.class,"linearSwitch");
+
+        hub = hardwareMap.get(ExpansionHubEx.class, "expansionHub");
 
         colorSensor.enableLed(true);
         colorSensor.initialize();

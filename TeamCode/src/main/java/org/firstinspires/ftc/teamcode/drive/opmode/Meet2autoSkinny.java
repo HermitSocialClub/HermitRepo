@@ -41,16 +41,16 @@ public class Meet2autoSkinny extends LinearOpMode {
 
     Trajectory backUp;
     Trajectory toBlueHub;
-//    Trajectory toBlueBarrier;
+    //    Trajectory toBlueBarrier;
     Trajectory cycleFromHub;
     Trajectory toBlueWarehouse;
 //    Trajectory toBlueWarehouseBack;
 //    Trajectory goBack;
 
-    Pose2d blueStart =  new Pose2d(6,63.5,m(90));
+    Pose2d blueStart = new Pose2d(6, 63.5, m(90));
     Vector2d blueHub = new Vector2d(-12, 46);
     Pose2d blueIntermediate = new Pose2d(6.25, 57, m(0));
-    Pose2d blueBarrier = new Pose2d(12,65.50, m(0));
+    Pose2d blueBarrier = new Pose2d(12, 65.50, m(0));
     Vector2d blueWarehouse = new Vector2d(48, 65.50);
 //    Pose2d blueCarousel = new Pose2d(-12,44,m(90));
 //    Pose2d blueBarrier = new Pose2d(12,42,m(0));
@@ -75,28 +75,30 @@ public class Meet2autoSkinny extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         telemetry = new PersistantTelemetry(super.telemetry);
-        drive = new BaselineMecanumDrive(hardwareMap,telemetry);
+        drive = new BaselineMecanumDrive(hardwareMap, telemetry);
 
-        linear = new LinearHelpers(drive,telemetry);
+        linear = new LinearHelpers(drive, telemetry);
 
 
         drive.setPoseEstimate(blueStart);
         toBlueHub = drive.trajectoryBuilder(blueStart)
+                .addDisplacementMarker(() -> linear.setLinears(3))
                 .strafeTo(blueHub)
                 .build();
+
         toBlueWarehouse = drive.trajectoryBuilder(new Pose2d(blueHub, m(90)), m(50))
                 .splineToSplineHeading(blueBarrier, m(50))
                 .splineToConstantHeading(blueWarehouse, m(0))
                 .build();
+
         cycleFromHub = drive.trajectoryBuilder(new Pose2d(blueHub, m(90)), m(50))
-                .addDisplacementMarker(() -> drive.lift.setVelocity(liftType
-                        .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * Math.PI * 2 -.55 *
-                        1, AngleUnit.RADIANS))
-                .addTemporalMarker(1.5, () -> drive.lift.setVelocity(0))
+                .addDisplacementMarker(() -> linear.setLinears(0))
+//                .addTemporalMarker(1.5, () -> drive.lift.setVelocity(0))
                 .splineToSplineHeading(blueBarrier, m(50))
-                .addDisplacementMarker(() -> {drive.intake.setVelocity(1
-                        * intakeType.getAchieveableMaxRPMFraction() *
-                        intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
+                .addDisplacementMarker(() -> {
+                    drive.intake.setVelocity(1
+                            * intakeType.getAchieveableMaxRPMFraction() *
+                            intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
 //                        while (drive.colorSensor.red() < 50){
 //                            drive.update();
 //                        }
@@ -105,22 +107,25 @@ public class Meet2autoSkinny extends LinearOpMode {
                 })
                 .splineToConstantHeading(blueWarehouse, m(0))
                 .splineToConstantHeading(new Vector2d(blueBarrier.getX(), blueBarrier.getY()), m(200))
-                .addDisplacementMarker(()->drive.intake.setVelocity(0))
+                .addDisplacementMarker(() -> {
+                    drive.intake.setVelocity(0);
+                    linear.setLinears(3);
+                })
                 .splineToSplineHeading(new Pose2d(blueHub, m(90)), m(-90))
                 .addDisplacementMarker(() -> {
                     ElapsedTime time = new ElapsedTime();
-                    drive.lift.setVelocity(liftType
+                    /*drive.lift.setVelocity(liftType
                             .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * -.55 *
                             2 * Math.PI, AngleUnit.RADIANS);
                     while (time.milliseconds() < 2000){
                         drive.update();
-                    }
+                    }*/
                     drive.outtakeArm.setPosition(0);
                     time.reset();
-                    while (time.milliseconds() < 900){
+                    while (time.milliseconds() < 900) {
                         drive.update();
                     }
-                    drive.lift.setVelocity(0);
+//                    drive.lift.setVelocity(0);
                     drive.outtakeArm.setPosition(0.55);
                 })
 
@@ -134,7 +139,7 @@ public class Meet2autoSkinny extends LinearOpMode {
 
         telemetry.setData("Barcode Level", barcodeLevel);
         CameraStreamSource cameraStream = visionPipeline.getCamera();
-        FtcDashboard.getInstance().startCameraStream(cameraStream,0);
+        FtcDashboard.getInstance().startCameraStream(cameraStream, 0);
 
         carouselType = drive.duck_wheel.getMotorType();
 
@@ -155,31 +160,32 @@ public class Meet2autoSkinny extends LinearOpMode {
         waitForStart();
 
 
-        drive.followTrajectory(toBlueHub);
-        drive.lift.setVelocity(liftType
-                .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * 2 * Math.PI *
-                1, AngleUnit.RADIANS);
-        sleep(1600);
+        drive.followTrajectoryAsync(toBlueHub);
+        while (drive.isBusy() && !Thread.currentThread().isInterrupted()) {
+            drive.update();
+            linear.LinearUpdate();
+        }
+
+
+//        drive.lift.setVelocity(liftType
+//                .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * 2 * Math.PI *
+//                1, AngleUnit.RADIANS);
+//        sleep(1600);
         drive.outtakeArm.setPosition(0);
-        drive.lift.setVelocity(liftType
-                .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * .3,
-                AngleUnit.RADIANS);
-        sleep(900);
         drive.outtakeArm.setPosition(0.55);
-        for (int i = 0; i < 3; i++){
-            telemetry.setData("Cycle Number: ", i +1);
-            drive.followTrajectory(cycleFromHub);
+        for (int i = 0; i < 3; i++) {
+            telemetry.setData("Cycle Number: ", i + 1);
+            drive.followTrajectoryAsync(cycleFromHub);
+            time.reset();
+            while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
+                drive.update();
+                linear.LinearUpdate();
+            }
             sleep(900);
         }
+
         drive.followTrajectory(toBlueWarehouse);
 
 
-
-
-//        time.reset();
-//        while (!Thread.currentThread().isInterrupted() && drive.isBusy()){
-//            drive.update();
-////            linear.LinearUpdate();
-//        }
     }
 }

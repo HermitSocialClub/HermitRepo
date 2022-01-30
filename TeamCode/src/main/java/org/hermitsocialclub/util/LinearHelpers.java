@@ -27,18 +27,29 @@ public class LinearHelpers {
         this.liftType = drive.lift.getMotorType();
         startingPosition = drive.lift.getCurrentPosition();
         currentPosition = drive.lift.getCurrentPosition();
+        drive.lift.setTargetPositionTolerance(20);
     }
 
     /**
      * Lifts the linear to the highest level*/
     public void LiftLinears () {
-        this.targetLevel = 3;
+
+        if (targetLevel < 4) this.targetLevel++;
+
     }
+
+    /**
+     * Sets the Linears to a Specified Level
+     */
+    public void setLinears (int level) {
+        this.targetLevel = level;
+    }
+
     /**
      * Returns linears to bottom
      */
     public void ReturnLinears () {
-        this.targetLevel = 1;
+        if (targetLevel > 0) this.targetLevel--;
 //        Callback()
     }
     public void AutomaticLinears ()  {
@@ -51,45 +62,84 @@ public class LinearHelpers {
         telemetry.setData("curPosLift",currentPosition);
         telemetry.setData("targetLevel",targetLevel);
         telemetry.setData("currlevel",currentLevel);
+        telemetry.setData("Lift Power", drive.lift.getPower());
         telemetry.setData("a",runtime.seconds());
        if (drive.lift.isBusy()) {
            telemetry.setData("isGoing: ", "Still Going");
-//           if(targetLevel == currentLevel) return;
-           return;
+           if(targetLevel == currentLevel) return;
        };
        telemetry.setData("isGoing: ","Stopping and Resetting");
-       drive.lift.setPower(0);
-        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//       drive.lift.setPower(0);
+//        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         if (targetLevel > currentLevel) {
-           if (targetLevel == 3) {
+            if (targetLevel == 4) {
+                runtime.reset();
+                telemetry.setData("Going to Level: ", targetLevel);
+                i++;
+                telemetry.setData("reset timer: ", i);
+                drive.lift.setTargetPosition(startingPosition + 2400);
+                telemetry.setData("startingPosition: ", startingPosition);
+                telemetry.setData("target: ", drive.lift.getTargetPosition());
+                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                drive.lift.setPower(0.85);
+                currentLevel = targetLevel;
+            }
+            else if (targetLevel == 3) {
                runtime.reset();
+               telemetry.setData("Going to Level: ", targetLevel);
                i++;
                telemetry.setData("reset timer: ", i);
-//               drive.lift.setPower(0);
-               drive.lift.setTargetPosition(startingPosition + 1000);
+               drive.lift.setTargetPosition(startingPosition + 1800);
                telemetry.setData("startingPosition: ", startingPosition);
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.5);
+               drive.lift.setPower(0.85);
                currentLevel = targetLevel;
-//               currentLevel = targetLevel;
            }
            else if (targetLevel == 2) {
-//               (startingPosition + 300) - currentPosition
+               runtime.reset();
+               telemetry.setData("Going to Level: ", targetLevel);
+               i++;
+               telemetry.setData("reset timer: ", i);
+               drive.lift.setTargetPosition(startingPosition + 800);
+               telemetry.setData("startingPosition: ", startingPosition);
+               telemetry.setData("target: ", drive.lift.getTargetPosition());
+               drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+               drive.lift.setPower(0.85);
+               currentLevel = targetLevel;
            }
        }
        else if (targetLevel < currentLevel) {
            if (targetLevel == 2) {
-
+               runtime.reset();
+               telemetry.setData("Going to Level: ", targetLevel);
+               i++;
+               telemetry.setData("reset timer: ", i);
+               drive.lift.setTargetPosition(startingPosition + 800);
+               telemetry.setData("startingPosition: ", startingPosition);
+               telemetry.setData("target: ", drive.lift.getTargetPosition());
+               drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+               drive.lift.setPower(0.85);
+               currentLevel = targetLevel;
            }
            else if (targetLevel == 1) {
                runtime.reset();
-//               drive.lift.setPower(0);
+               telemetry.setData("Going to Level: ", targetLevel);
+               drive.lift.setTargetPosition(startingPosition + 200);
+               telemetry.setData("target: ", drive.lift.getTargetPosition());
+               telemetry.setData("startingPosition: ", startingPosition);
+               drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+               drive.lift.setPower(0.75);
+               currentLevel = targetLevel;
+           }
+           else if (targetLevel == 0) {
+               runtime.reset();
+               telemetry.setData("Going to Level: ", targetLevel);
                drive.lift.setTargetPosition(startingPosition);
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                telemetry.setData("startingPosition: ", startingPosition);
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.5);
+               drive.lift.setPower(0.75);
                currentLevel = targetLevel;
            }
        }
