@@ -117,7 +117,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public Servo kicker;
     public CRServo hook;
     public CRServo friend;
-    public RevColorSensorV3 colorSensor;
+//    public ColorSensor colorSensor;
     public ExpansionHubEx hub;
     public TouchSensor linearSwitch;
     public Servo hopperLift;
@@ -189,13 +189,11 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
-        colorSensor = hardwareMap.get(RevColorSensorV3.class,"colorSensor");
+//        colorSensor = hardwareMap.get(ColorSensor.class,"colorSensor");
         linearSwitch = hardwareMap.get(TouchSensor.class,"linearSwitch");
 
-        hub = hardwareMap.get(ExpansionHubEx.class, "expansionHub");
 
-        colorSensor.enableLed(true);
-        colorSensor.initialize();
+//        colorSensor.enableLed(true);
 
         motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -313,7 +311,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         packet.put("Camera Pose",slamra.getLastReceivedCameraUpdate().pose.toString());
 
-        packet.put("RGB",colorSensor.blue());
+//        packet.put("RGB",colorSensor.blue());
 
         switch (mode) {
             case IDLE:

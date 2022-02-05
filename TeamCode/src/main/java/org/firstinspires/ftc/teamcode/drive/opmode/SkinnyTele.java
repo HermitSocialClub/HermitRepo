@@ -90,15 +90,22 @@ public class SkinnyTele extends OpMode {
 
     @Override
     public void loop() {
+        trigVal = -gamepad2.right_stick_y > 0.05 ? -gamepad2.right_stick_y * 1.25 :
+                -gamepad2.right_stick_y < -.05 ? -gamepad2.right_stick_y : 0.000;
+//        if(trigVal > .05)
+        drive.lift.setVelocity(liftType
+                .getMaxRPM() / 60 * 2 * Math.PI * liftType.getAchieveableMaxRPMFraction() * .85 *
+                trigVal, AngleUnit.RADIANS);
 
-        if (gamepad2.left_stick_y < -.25 && !lastUpFlick) {
-            linears.LiftLinears();
-        }
 
-        if (gamepad2.left_stick_y > .25 && !lastDownFlick){
-            linears.ReturnLinears();
-        }
-        linears.LinearUpdate();
+//        if (gamepad2.left_stick_y < -.25 && !lastUpFlick) {
+//            linears.LiftLinears();
+//        }
+//
+//        if (gamepad2.left_stick_y > .25 && !lastDownFlick){
+//            linears.setLinears(0);
+//        }
+//        linears.LinearUpdate();
         telemetry.setData("liftMode: ", drive.lift.getMode().toString());
         telemetry.setData("liftPID: ", drive.lift
                 .getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).toString());

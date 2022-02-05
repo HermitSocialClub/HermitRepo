@@ -81,7 +81,7 @@ public class LinearHelpers {
                 telemetry.setData("startingPosition: ", startingPosition);
                 telemetry.setData("target: ", drive.lift.getTargetPosition());
                 drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                drive.lift.setPower(0.85);
+                drive.lift.setPower(0.95);
                 currentLevel = targetLevel;
             }
             else if (targetLevel == 3) {
@@ -89,11 +89,11 @@ public class LinearHelpers {
                telemetry.setData("Going to Level: ", targetLevel);
                i++;
                telemetry.setData("reset timer: ", i);
-               drive.lift.setTargetPosition(startingPosition + 1800);
+               drive.lift.setTargetPosition(startingPosition + 2000);
                telemetry.setData("startingPosition: ", startingPosition);
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.85);
+               drive.lift.setPower(0.95);
                currentLevel = targetLevel;
            }
            else if (targetLevel == 2) {
@@ -105,7 +105,7 @@ public class LinearHelpers {
                telemetry.setData("startingPosition: ", startingPosition);
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.85);
+               drive.lift.setPower(0.95);
                currentLevel = targetLevel;
            }
        }
@@ -119,7 +119,7 @@ public class LinearHelpers {
                telemetry.setData("startingPosition: ", startingPosition);
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.85);
+               drive.lift.setPower(0.95);
                currentLevel = targetLevel;
            }
            else if (targetLevel == 1) {
@@ -129,7 +129,7 @@ public class LinearHelpers {
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                telemetry.setData("startingPosition: ", startingPosition);
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.75);
+               drive.lift.setPower(0.95);
                currentLevel = targetLevel;
            }
            else if (targetLevel == 0) {
@@ -139,7 +139,7 @@ public class LinearHelpers {
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                telemetry.setData("startingPosition: ", startingPosition);
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.75);
+               drive.lift.setPower(0.95);
                currentLevel = targetLevel;
            }
        }
