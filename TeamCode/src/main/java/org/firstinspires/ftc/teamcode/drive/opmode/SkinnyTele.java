@@ -105,7 +105,7 @@ public class SkinnyTele extends OpMode {
 //        if (gamepad2.left_stick_y > .25 && !lastDownFlick){
 //            linears.setLinears(0);
 //        }
-//        linears.LinearUpdate();
+        linears.LinearUpdate();
         telemetry.setData("liftMode: ", drive.lift.getMode().toString());
         telemetry.setData("liftPID: ", drive.lift
                 .getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).toString());
@@ -136,11 +136,11 @@ public class SkinnyTele extends OpMode {
 
         if (gamepad2.left_bumper) {
             telemetry.setData("left_bumper", " pressed");
-            drive.outtakeArm.setPosition(0);
+            drive.outtakeArm.setPosition(0.35);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         } else {
             telemetry.setData("right_bumper", " pressed");
-            drive.outtakeArm.setPosition(0.55);
+            drive.outtakeArm.setPosition(1);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         }
        /* drive.duck_wheel.setVelocity(liftType

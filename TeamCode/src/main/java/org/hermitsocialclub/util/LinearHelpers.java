@@ -1,12 +1,9 @@
 package org.hermitsocialclub.util;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
@@ -15,10 +12,43 @@ public class LinearHelpers {
     private PersistantTelemetry telemetry;
     private MotorConfigurationType liftType;
     private ElapsedTime runtime = new ElapsedTime();
-    private int startingPosition;
+    public int startingPosition;
     public int currentPosition;
-    private int currentLevel = 1;
-    private int targetLevel = 1;
+    public final static int TICKS_PER_REV = 652;
+    private int targetLevel = 0;
+    private int currentLevel = 0;
+
+    public final static int INCREMENT = 5;
+
+    public enum LEVEL{
+        ZERO(0),ONE(800),TWO(1600),
+        THREE(2200),FOUR(2800);
+
+        LEVEL(int targetPosition){
+            this.targetPosition = targetPosition;
+        }
+        public int targetPosition;
+    }
+
+    public enum STATE{
+
+        UP, DOWN, SAME, SET
+
+    }
+
+    public enum MODE{
+
+        TELEOP, AUTON
+
+    }
+
+    private LEVEL targetLevelNew = LEVEL.ZERO;
+    private LEVEL currentLevelNew = LEVEL.ZERO;
+
+    private STATE state = STATE.SAME;
+
+    private MODE mode = MODE.AUTON;
+
 //    line
 
     public LinearHelpers(BaselineMecanumDrive drive, PersistantTelemetry telemetry){
@@ -32,11 +62,11 @@ public class LinearHelpers {
 
     /**
      * Lifts the linear to the highest level*/
-    public void LiftLinears () {
-
-        if (targetLevel < 4) this.targetLevel++;
-
-    }
+//    public void LiftLinears () {
+//
+//        if (targetLevel.ordinal() < 4) this.targetLevel.ordinal();
+//
+//    }
 
     /**
      * Sets the Linears to a Specified Level
@@ -45,14 +75,57 @@ public class LinearHelpers {
         this.targetLevel = level;
     }
 
-    /**
-     * Returns linears to bottom
-     */
-    public void ReturnLinears () {
-        if (targetLevel > 0) this.targetLevel--;
-//        Callback()
+    public void setLevel(LEVEL level){
+        this.targetLevelNew = level;
     }
+
     public void AutomaticLinears ()  {
+
+    }
+
+    public void LinearUpdateNew () {
+        switch (mode){
+            case AUTON: {
+                state = (targetLevelNew.ordinal() > currentLevelNew.ordinal()) ? STATE.UP :
+                        (targetLevelNew.ordinal() < currentLevelNew.ordinal()) ? STATE.DOWN : STATE.SAME;
+                break;
+            }
+            case TELEOP: {
+
+                switch (state){
+
+                    case UP: {
+                        if (drive.lift.getCurrentPosition() + 5 >
+                                LEVEL.FOUR.targetPosition + startingPosition){
+                            drive.lift.setTargetPosition(LEVEL.FOUR.targetPosition);
+                            drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                            drive.lift.setPower(.95);
+                            break;
+                        }
+                        drive.lift.setTargetPosition(drive.lift.getCurrentPosition()
+                        + INCREMENT);
+                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setPower(.95);
+
+                        break;
+                    }
+                    case DOWN: {
+                        if (drive.linearSwitch.isPressed()){
+                            drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                            drive.lift.setPower(0);
+                            startingPosition = drive.lift.getCurrentPosition();
+                            break;
+                        }
+                        drive.lift.setTargetPosition(drive.lift.getCurrentPosition()
+                                - INCREMENT);
+                    }
+
+                }
+
+                break;
+            }
+        }
+
 
     }
 
@@ -71,7 +144,7 @@ public class LinearHelpers {
        telemetry.setData("isGoing: ","Stopping and Resetting");
 //       drive.lift.setPower(0);
 //        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if (targetLevel > currentLevel) {
+        if (targetLevel != currentLevel) {
             if (targetLevel == 4) {
                 runtime.reset();
                 telemetry.setData("Going to Level: ", targetLevel);
@@ -89,7 +162,7 @@ public class LinearHelpers {
                telemetry.setData("Going to Level: ", targetLevel);
                i++;
                telemetry.setData("reset timer: ", i);
-               drive.lift.setTargetPosition(startingPosition + 2000);
+               drive.lift.setTargetPosition(startingPosition + 2200);
                telemetry.setData("startingPosition: ", startingPosition);
                telemetry.setData("target: ", drive.lift.getTargetPosition());
                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -108,74 +181,35 @@ public class LinearHelpers {
                drive.lift.setPower(0.95);
                currentLevel = targetLevel;
            }
-       }
-       else if (targetLevel < currentLevel) {
-           if (targetLevel == 2) {
-               runtime.reset();
-               telemetry.setData("Going to Level: ", targetLevel);
-               i++;
-               telemetry.setData("reset timer: ", i);
-               drive.lift.setTargetPosition(startingPosition + 800);
-               telemetry.setData("startingPosition: ", startingPosition);
-               telemetry.setData("target: ", drive.lift.getTargetPosition());
-               drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.95);
-               currentLevel = targetLevel;
-           }
            else if (targetLevel == 1) {
-               runtime.reset();
-               telemetry.setData("Going to Level: ", targetLevel);
-               drive.lift.setTargetPosition(startingPosition + 200);
-               telemetry.setData("target: ", drive.lift.getTargetPosition());
-               telemetry.setData("startingPosition: ", startingPosition);
-               drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.95);
-               currentLevel = targetLevel;
-           }
-           else if (targetLevel == 0) {
-               runtime.reset();
-               telemetry.setData("Going to Level: ", targetLevel);
-               drive.lift.setTargetPosition(startingPosition);
-               telemetry.setData("target: ", drive.lift.getTargetPosition());
-               telemetry.setData("startingPosition: ", startingPosition);
-               drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-               drive.lift.setPower(0.95);
-               currentLevel = targetLevel;
-           }
+                runtime.reset();
+                telemetry.setData("Going to Level: ", targetLevel);
+                drive.lift.setTargetPosition(startingPosition + 800);
+                telemetry.setData("target: ", drive.lift.getTargetPosition());
+                telemetry.setData("startingPosition: ", startingPosition);
+                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                drive.lift.setPower(0.95);
+                currentLevel = targetLevel;
+            }
+            else if (targetLevel == 0) {
+                runtime.reset();
+                telemetry.setData("Going to Level: ", targetLevel);
+                drive.lift.setTargetPosition(startingPosition);
+                telemetry.setData("target: ", drive.lift.getTargetPosition());
+                telemetry.setData("startingPosition: ", startingPosition);
+                drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                drive.lift.setPower(0.95);
+                currentLevel = targetLevel;
+            }
        }
     }
-//        boolean firstRun = true;
-//        if(drive.linearSwitch.isPressed()) {
-//            drive.lift.setPower(0);
-//            this.currentlyBottomed = true;
-//            firstRun = false;
-//        }
-//        else if(this.shouldBottom && !this.currentlyBottomed) {
-//            drive.lift.setVelocity(liftType
-//                    .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * -.55 *
-//                    1, AngleUnit.RADIANS);
-//        }
-//        if(!this.shouldBottom && this.currentlyBottomed) {
-////            this.currentlyBottomed
-//            if (firstRun){
-//                time.reset();
-//                firstRun = false;
-//            }
-//            drive.lift.setVelocity(liftType
-//                    .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * .85 *
-//                    1, AngleUnit.RADIANS);
-//
-//        }
-//        if (time.seconds() >= 2.1){
-//            drive.lift.setVelocity(liftType
-//                    .getMaxRPM() / 60 * liftType.getAchieveableMaxRPMFraction() * .2 *
-//                    1);
-//            firstRun = true;
-//        }
-////        else if (this.shouldBottom && this.currentLevvel != 2) {
-//
-////        }
-//    }
 
+    public void setMode(MODE mode){
+        this.mode = mode;
+    }
+
+    public void setState(STATE state){
+        this.state = state;
+    }
 
 }

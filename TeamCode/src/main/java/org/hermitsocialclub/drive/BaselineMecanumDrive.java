@@ -649,5 +649,10 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public double ticksToRadians(double ticks, MotorConfigurationType motor, int GEAR_RATIO){
         return 2 * Math.PI * GEAR_RATIO * ticks / motor.getTicksPerRev();
     }
+    public void stopFollowing(){
+        mode = Mode.IDLE;
+        setDriveSignal(new DriveSignal(new Pose2d()));
+
+    }
 
 }
