@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
@@ -44,10 +45,10 @@ public class SkinnyTele extends OpMode {
     boolean lastUpFlick = false;
     boolean lastDownFlick = false;
 
-    private double intakeSpeed = 1;
+    private double intakeSpeed = 0.65;
     private MotorConfigurationType intakeType;
 
-    private double carouselSpeed = .85;
+    private double carouselSpeed = 1;
     private MotorConfigurationType carouselType;
 
     public static double liftP = 3.0;
@@ -76,6 +77,8 @@ public class SkinnyTele extends OpMode {
         telemetry.setData("Lift Pos",drive.lift.getCurrentPosition());
         telemetry.setData("Ticks Per Rev", liftType.getTicksPerRev());
         linears = new LinearHelpers(drive, telemetry);
+        linears.setMode(LinearHelpers.MODE.TELEOP);
+
     }
 
     @Override
@@ -96,23 +99,33 @@ public class SkinnyTele extends OpMode {
         drive.lift.setVelocity(liftType
                 .getMaxRPM() / 60 * 2 * Math.PI * liftType.getAchieveableMaxRPMFraction() * .85 *
                 trigVal, AngleUnit.RADIANS);
+//        if (trigVal == 0) {
+//            drive.lift.setPower(0.2);
+//        }
 
 
 //        if (gamepad2.left_stick_y < -.25 && !lastUpFlick) {
 //            linears.LiftLinears();
 //        }
 //
-//        if (gamepad2.left_stick_y > .25 && !lastDownFlick){
-//            linears.setLinears(0);
-//        }
-        linears.LinearUpdate();
+        /*
+        if (gamepad2.left_stick_y > 0){
+            linears.setState(LinearHelpers.STATE.UP);
+        }
+        else if (gamepad2.left_stick_y < 0) {
+            linears.setState(LinearHelpers.STATE.DOWN);
+        }
+        else {
+            linears.setState(LinearHelpers.STATE.SET);
+        }
+        linears.LinearUpdateNew();
         telemetry.setData("liftMode: ", drive.lift.getMode().toString());
         telemetry.setData("liftPID: ", drive.lift
                 .getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).toString());
 
         lastUpFlick = gamepad2.left_stick_y < -.25;
         lastDownFlick = gamepad2.left_stick_y > .25;
-
+*/
         if (gamepad2.right_trigger > 0.05) {
             drive.intake.setVelocity(intakeSpeed
                     * intakeType.getAchieveableMaxRPMFraction() *
@@ -132,14 +145,15 @@ public class SkinnyTele extends OpMode {
             drive.duck_wheel.setPower(0);
         }
 
-
-
+//        telemetry.setData("color_in Red",drive.color_intake.red());
+//        telemetry.setData("color_in Blue",drive.color_intake.blue());
+//        telemetry.setData("color_in Green",drive.color_intake.green());
+//        drive.outtakeArm.setDirection(Servo.Direction.REVERSE);
         if (gamepad2.left_bumper) {
             telemetry.setData("left_bumper", " pressed");
-            drive.outtakeArm.setPosition(0.35);
+            drive.outtakeArm.setPosition(0.45);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         } else {
-            telemetry.setData("right_bumper", " pressed");
             drive.outtakeArm.setPosition(1);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         }
@@ -157,6 +171,7 @@ public class SkinnyTele extends OpMode {
         }
         lastXMash = gamepad1.x;
 
+//        telemetry.setData("y_thing: ", gamepad1.left_stick_y);
         drive.setWeightedDrivePower(
                 new Pose2d(
                         invert * gamepad1.left_stick_y,
@@ -168,6 +183,7 @@ public class SkinnyTele extends OpMode {
 
         Pose2d pose = drive.getPoseEstimate();
         double angle = pose.getHeading();
+
         /*telemetry.setData("x", pose.getX());
         telemetry.setData("y", pose.getY());
         telemetry.setData("heading", pose.getHeading());*/

@@ -3,6 +3,7 @@ package org.hermitsocialclub.util;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
@@ -21,7 +22,7 @@ public class LinearHelpers {
     public final static int INCREMENT = 5;
 
     public enum LEVEL{
-        ZERO(0),ONE(800),TWO(1600),
+        ZERO(0),ONE(200),TWO(800),
         THREE(2200),FOUR(2800);
 
         LEVEL(int targetPosition){
@@ -86,20 +87,58 @@ public class LinearHelpers {
     public void LinearUpdateNew () {
         switch (mode){
             case AUTON: {
+                RobotLog.d("Linear Case: AUTON");
                 state = (targetLevelNew.ordinal() > currentLevelNew.ordinal()) ? STATE.UP :
                         (targetLevelNew.ordinal() < currentLevelNew.ordinal()) ? STATE.DOWN : STATE.SAME;
+                switch (state){
+                    case UP: {
+                        drive.lift.setTargetPosition(startingPosition
+                                + targetLevelNew.targetPosition);
+                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setPower(.95);
+                        if (Math.abs(drive.lift.getCurrentPosition()
+                                - (targetLevelNew.targetPosition + startingPosition))
+                                < 5){
+                            currentLevelNew = targetLevelNew;
+                        }
+                        break;
+                    }
+                    case DOWN: {
+                        if (drive.linearSwitch.isPressed()){
+                            drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                            drive.lift.setPower(0);
+                            startingPosition = drive.lift.getCurrentPosition();
+                            currentLevelNew = LEVEL.ZERO;
+                            break;
+                        }
+                        drive.lift.setTargetPosition(startingPosition
+                                + targetLevelNew.targetPosition);
+                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setPower(.95);
+                        if (Math.abs(drive.lift.getCurrentPosition()
+                                - (targetLevelNew.targetPosition + startingPosition))
+                        < 5){
+                            currentLevelNew = targetLevelNew;
+                        }
+                        break;
+
+                    }
+                }
                 break;
             }
             case TELEOP: {
-
+                RobotLog.d("Linear Case: TELEOP");
                 switch (state){
 
                     case UP: {
+                        RobotLog.d("Linear Case: UP TELEOP");
+
                         if (drive.lift.getCurrentPosition() + 5 >
                                 LEVEL.FOUR.targetPosition + startingPosition){
                             drive.lift.setTargetPosition(LEVEL.FOUR.targetPosition);
                             drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             drive.lift.setPower(.95);
+                            state = STATE.SAME;
                             break;
                         }
                         drive.lift.setTargetPosition(drive.lift.getCurrentPosition()
@@ -110,14 +149,45 @@ public class LinearHelpers {
                         break;
                     }
                     case DOWN: {
+                        RobotLog.d("Linear Case: DOWN TELEOP");
                         if (drive.linearSwitch.isPressed()){
                             drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                             drive.lift.setPower(0);
                             startingPosition = drive.lift.getCurrentPosition();
+                            state = STATE.SAME;
                             break;
                         }
                         drive.lift.setTargetPosition(drive.lift.getCurrentPosition()
                                 - INCREMENT);
+                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setPower(.95);
+                        break;
+                    }
+                    case SET: {
+                        RobotLog.d("Linear Case: SET TELEOP");
+                        LEVEL closestLevel = LEVEL.ZERO;
+                        int closeness = 0;
+                        for (LEVEL l:
+                             LEVEL.values()) {
+                            if(Math.abs(drive.lift.getCurrentPosition()
+                                    - (l.targetPosition + startingPosition))
+                            > closeness){
+                                closestLevel = l;
+                                closeness = Math.abs(drive.lift.getCurrentPosition()
+                                        - (l.targetPosition + startingPosition));
+                            }
+                        }
+                        drive.lift.setTargetPosition(startingPosition + closestLevel.targetPosition);
+                        RobotLog.e("Target Position: " + drive.lift.getTargetPosition());
+                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setPower(.95);
+                        break;
+                    }
+                    case SAME: {
+                        drive.lift.setTargetPosition(drive.lift.getCurrentPosition());
+                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setPower(.95);
+                        break;
                     }
 
                 }

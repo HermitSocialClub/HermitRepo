@@ -35,8 +35,8 @@ import org.hermitsocialclub.util.LinearHelpers;
 
 import java.util.Vector;
 
-@Autonomous(name = "Meet2AutoSkinny")
-public class Meet2autoSkinny extends LinearOpMode {
+@Autonomous(name = "Meet2AutoSkinnyBlue")
+public class Meet2autoSkinnyBlue extends LinearOpMode {
 
     private BaselineMecanumDrive drive;
     private PersistantTelemetry telemetry;
@@ -51,11 +51,11 @@ public class Meet2autoSkinny extends LinearOpMode {
 //    Trajectory goBack;
 
     Pose2d blueStart = new Pose2d(6, 63.5, m(90));
-    Vector2d blueHub = new Vector2d(-12, 46);
+    Vector2d blueHub = new Vector2d(-10, 44);
     Pose2d blueIntermediate = new Pose2d(6.25, 57, m(0));
     Pose2d blueBarrier = new Pose2d(12, 65.50, m(0));
     Vector2d blueWarehouse = new Vector2d(44, 65.50);
-    Pose2d blueLeaveWarehouse = new Pose2d(32,64.50,0);
+    Pose2d blueLeaveWarehouse = new Pose2d(40,65.50,0);
 //    Pose2d blueCarousel = new Pose2d(-12,44,m(90));
 //    Pose2d blueBarrier = new Pose2d(12,42,m(0));
 //    Pose2d bluePit = new Pose2d(48,48,m(45));
@@ -73,6 +73,8 @@ public class Meet2autoSkinny extends LinearOpMode {
     private MotorConfigurationType intakeType;
     private Trajectory toBlueBarrierBack;
     LinearHelpers linear;
+//    private ColorSensor color_in;
+
 
     ElapsedTime time = new ElapsedTime();
 
@@ -81,6 +83,11 @@ public class Meet2autoSkinny extends LinearOpMode {
 
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
+
+
+//        telemetry.setData("color_in Red",color_in.red());
+//        telemetry.setData("color_in Blue",color_in.blue());
+//        telemetry.setData("color_in Green",color_in.green());
 
         linear = new LinearHelpers(drive, telemetry);
 
@@ -138,12 +145,12 @@ public class Meet2autoSkinny extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(blueHub, m(90)), m(225))
                 .addDisplacementMarker(() -> {
                     ElapsedTime time = new ElapsedTime();
-                    drive.outtakeArm.setPosition(0);
+                    drive.outtakeArm.setPosition(0.35);
                     time.reset();
                     while (time.milliseconds() < 900) {
                         drive.update();
                     }
-                    drive.outtakeArm.setPosition(0.55);
+                    drive.outtakeArm.setPosition(1);
                 })
 
                 .build();
@@ -171,6 +178,7 @@ public class Meet2autoSkinny extends LinearOpMode {
         waitForStart();
 
         barcodeLevel = detector.getResult();
+
 //        while(opModeIsActive()){
 //            drive.lift.setTargetPosition((int) 0.75 * linear.TICKS_PER_REV + linear.startingPosition);
 //            drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -184,10 +192,10 @@ public class Meet2autoSkinny extends LinearOpMode {
             drive.update();
             linear.LinearUpdate();
         }
-        drive.outtakeArm.setPosition(0);
+        drive.outtakeArm.setPosition(0.35);
         sleep(700);
-        drive.outtakeArm.setPosition(0.55);
-        for (int i = 0; i < 1; i++) {
+        drive.outtakeArm.setPosition(1);
+        for (int i = 0; i < 4; i++) {
             telemetry.setData("Cycle Number: ", i + 1);
             drive.followTrajectoryAsync(cycleFromHub);
             time.reset();
@@ -195,19 +203,41 @@ public class Meet2autoSkinny extends LinearOpMode {
                 drive.update();
                 linear.LinearUpdate();
             }
-            drive.setWeightedDrivePower(new Pose2d(0.6,0,0));
+//            drive.setWeightedDrivePower(new Pose2d(0.6,0,0));
+            boolean forward = true;
             while (opModeIsActive() && color.red() < 80){
-                Pose2d d = drive.getPoseEstimate().minus(blueLeaveWarehouse);
+                Pose2d estimate = drive.getPoseEstimate();
+                Pose2d d = estimate.minus(blueLeaveWarehouse);
                 telemetry.setData("Distance from Target Pose",
                         Math.hypot(d.getX(),d.getY()));
                 telemetry.setData("Robot Pose Velocity",drive.getPoseVelocity().toString());
+                if (estimate.getX() >= 52) {
+                    forward = false;
+                }
+                if (estimate.getX() <= 40) {
+                    forward = true;
+                }
+                if(forward) {
+                    drive.setWeightedDrivePower(new Pose2d(1.2,0,0));
+                }
+                else {
+                    drive.setWeightedDrivePower(new Pose2d(-0.8,0,0));
+                }
+
             }
             drive.intake.setVelocity(-1
                     * intakeType.getAchieveableMaxRPMFraction() *
                     intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
             drive.setWeightedDrivePower(new Pose2d());
 
-            sleep(900);
+            drive.followTrajectoryAsync(blueWarehouseToHub);
+            time.reset();
+            while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
+                drive.update();
+                linear.LinearUpdate();
+            }
+
+//            sleep(900);
         }
 
 //        drive.followTrajectory(toBlueWarehouse);

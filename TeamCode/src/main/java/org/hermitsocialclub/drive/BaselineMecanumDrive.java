@@ -117,7 +117,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
     public Servo kicker;
     public CRServo hook;
     public CRServo friend;
-//    public ColorSensor colorSensor;
+//    public ColorSensor color_intake;
     public ExpansionHubEx hub;
     public TouchSensor linearSwitch;
     public Servo hopperLift;
@@ -189,7 +189,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
-//        colorSensor = hardwareMap.get(ColorSensor.class,"colorSensor");
+//        color_intake = hardwareMap.get(ColorSensor.class,"color_intake");
         linearSwitch = hardwareMap.get(TouchSensor.class,"linearSwitch");
 
 
