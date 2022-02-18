@@ -13,17 +13,19 @@ public class LinearHelpers {
     private PersistantTelemetry telemetry;
     private MotorConfigurationType liftType;
     private ElapsedTime runtime = new ElapsedTime();
+    private ElapsedTime gameTime;
     public int startingPosition;
     public int currentPosition;
     public final static int TICKS_PER_REV = 652;
     private int targetLevel = 0;
     private int currentLevel = 0;
+    public int levelOverride = 0;
 
-    public final static int INCREMENT = 5;
+    public final static int INCREMENT = 400;
 
     public enum LEVEL{
-        ZERO(0),ONE(200),TWO(800),
-        THREE(2200),FOUR(2800);
+        ZERO(0),ONE(900),TWO(1700),
+        THREE(2600),FOUR(3200);
 
         LEVEL(int targetPosition){
             this.targetPosition = targetPosition;
@@ -51,10 +53,19 @@ public class LinearHelpers {
     private MODE mode = MODE.AUTON;
 
 //    line
-
+    @Deprecated
     public LinearHelpers(BaselineMecanumDrive drive, PersistantTelemetry telemetry){
         this.telemetry = telemetry;
         this.drive = drive;
+        this.liftType = drive.lift.getMotorType();
+        startingPosition = drive.lift.getCurrentPosition();
+        currentPosition = drive.lift.getCurrentPosition();
+        drive.lift.setTargetPositionTolerance(20);
+    }
+    public LinearHelpers(BaselineMecanumDrive drive, PersistantTelemetry telemetry, ElapsedTime gameTime){
+        this.telemetry = telemetry;
+        this.drive = drive;
+        this.gameTime = gameTime;
         this.liftType = drive.lift.getMotorType();
         startingPosition = drive.lift.getCurrentPosition();
         currentPosition = drive.lift.getCurrentPosition();
@@ -85,6 +96,7 @@ public class LinearHelpers {
     }
 
     public void LinearUpdateNew () {
+        telemetry.setData("Linear State: ", state.toString());
         switch (mode){
             case AUTON: {
                 RobotLog.d("Linear Case: AUTON");
@@ -94,7 +106,7 @@ public class LinearHelpers {
                     case UP: {
                         drive.lift.setTargetPosition(startingPosition
                                 + targetLevelNew.targetPosition);
-                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.lift.setPower(.95);
                         if (Math.abs(drive.lift.getCurrentPosition()
                                 - (targetLevelNew.targetPosition + startingPosition))
@@ -113,7 +125,7 @@ public class LinearHelpers {
                         }
                         drive.lift.setTargetPosition(startingPosition
                                 + targetLevelNew.targetPosition);
-                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.lift.setPower(.95);
                         if (Math.abs(drive.lift.getCurrentPosition()
                                 - (targetLevelNew.targetPosition + startingPosition))
@@ -122,6 +134,12 @@ public class LinearHelpers {
                         }
                         break;
 
+                    }
+                    case SAME: {
+                        drive.lift.setTargetPosition(currentLevelNew.targetPosition);
+                        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setPower(.95);
+                        break;
                     }
                 }
                 break;
@@ -133,17 +151,20 @@ public class LinearHelpers {
                     case UP: {
                         RobotLog.d("Linear Case: UP TELEOP");
 
-                        if (drive.lift.getCurrentPosition() + 5 >
-                                LEVEL.FOUR.targetPosition + startingPosition){
-                            drive.lift.setTargetPosition(LEVEL.FOUR.targetPosition);
-                            drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        if (drive.lift.getCurrentPosition() + INCREMENT >
+                                LEVEL.values()[((gameTime.seconds() < 90) ? 3 : 4)].targetPosition
+                                        + startingPosition){
+                            drive.lift.setTargetPosition(LEVEL.values()
+                                    [((gameTime.seconds() + levelOverride < 90) ? 3 : 4)].targetPosition
+                                    + startingPosition);
+                            drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                             drive.lift.setPower(.95);
-                            state = STATE.SAME;
+                            state = STATE.SET;
                             break;
                         }
                         drive.lift.setTargetPosition(drive.lift.getCurrentPosition()
                         + INCREMENT);
-                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.lift.setPower(.95);
 
                         break;
@@ -154,40 +175,38 @@ public class LinearHelpers {
                             drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                             drive.lift.setPower(0);
                             startingPosition = drive.lift.getCurrentPosition();
-                            state = STATE.SAME;
+                            setState(STATE.SAME);
                             break;
                         }
                         drive.lift.setTargetPosition(drive.lift.getCurrentPosition()
                                 - INCREMENT);
-                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.lift.setPower(.95);
                         break;
                     }
                     case SET: {
                         RobotLog.d("Linear Case: SET TELEOP");
                         LEVEL closestLevel = LEVEL.ZERO;
-                        int closeness = 0;
-                        for (LEVEL l:
-                             LEVEL.values()) {
-                            if(Math.abs(drive.lift.getCurrentPosition()
-                                    - (l.targetPosition + startingPosition))
-                            > closeness){
-                                closestLevel = l;
-                                closeness = Math.abs(drive.lift.getCurrentPosition()
-                                        - (l.targetPosition + startingPosition));
+                        int closeness = Math.abs(drive.lift.getCurrentPosition()
+                                - (closestLevel.targetPosition + startingPosition));
+                        for (int i = 1; i < ((gameTime.seconds() < 90) ? 4 : 5); i++) {
+                            int temp = Math.abs(drive.lift.getCurrentPosition()
+                                    - (LEVEL.values()[i].targetPosition + startingPosition));
+                            if(temp < closeness){
+                                closestLevel = LEVEL.values()[i];
+                                closeness = temp;
                             }
                         }
+                        telemetry.setData("Target Level: ", closestLevel.toString());
                         drive.lift.setTargetPosition(startingPosition + closestLevel.targetPosition);
                         RobotLog.e("Target Position: " + drive.lift.getTargetPosition());
-                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        drive.lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         drive.lift.setPower(.95);
                         break;
                     }
                     case SAME: {
-                        drive.lift.setTargetPosition(drive.lift.getCurrentPosition());
-                        drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                        drive.lift.setPower(.95);
-                        break;
+                        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        drive.lift.setVelocity(0);
                     }
 
                 }
@@ -280,6 +299,10 @@ public class LinearHelpers {
 
     public void setState(STATE state){
         this.state = state;
+    }
+
+    public STATE getState(){
+        return state;
     }
 
 }

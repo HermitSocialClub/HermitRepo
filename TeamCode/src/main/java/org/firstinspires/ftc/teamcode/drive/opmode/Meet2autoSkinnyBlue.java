@@ -145,7 +145,7 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(blueHub, m(90)), m(225))
                 .addDisplacementMarker(() -> {
                     ElapsedTime time = new ElapsedTime();
-                    drive.outtakeArm.setPosition(0.35);
+                    drive.outtakeArm.setPosition(0.05);
                     time.reset();
                     while (time.milliseconds() < 900) {
                         drive.update();
@@ -192,7 +192,7 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
             drive.update();
             linear.LinearUpdate();
         }
-        drive.outtakeArm.setPosition(0.35);
+        drive.outtakeArm.setPosition(0.05);
         sleep(700);
         drive.outtakeArm.setPosition(1);
         for (int i = 0; i < 4; i++) {

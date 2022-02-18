@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
-import org.hermitsocialclub.localizers.T265LocalizerPro;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 
 @TeleOp(name = "Local Slam")
@@ -32,7 +31,7 @@ public class LocalSlamTestOp extends OpMode {
     public void init() {
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.setWheelModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.setPoseEstimate(new Pose2d(0, 0));
     }
 

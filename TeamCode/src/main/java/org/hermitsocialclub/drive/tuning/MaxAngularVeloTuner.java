@@ -41,7 +41,7 @@ public class MaxAngularVeloTuner extends LinearOpMode {
 
         BaselineMecanumDrive drive = new BaselineMecanumDrive(hardwareMap, pt);
 
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        drive.setWheelModes(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         TelemetryPacket packet = new TelemetryPacket();
 

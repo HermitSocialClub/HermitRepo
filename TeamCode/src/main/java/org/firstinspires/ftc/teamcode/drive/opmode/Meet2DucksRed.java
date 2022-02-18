@@ -20,8 +20,8 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.tomato.BarcodeDetect;
 import org.hermitsocialclub.util.LinearHelpers;
 
-@Autonomous(name = "Meet2autoducks")
-public class Meet2_ducks extends LinearOpMode {
+@Autonomous(name = "Meet2autoducksred")
+public class Meet2DucksRed extends LinearOpMode {
 
     private BaselineMecanumDrive drive;
     private PersistantTelemetry telemetry;
@@ -38,12 +38,12 @@ public class Meet2_ducks extends LinearOpMode {
     private double carouselSpeed = .85;
     private MotorConfigurationType carouselType;
 
-    Pose2d blueStart = new Pose2d(-30,64,m(90));
-    Vector2d blueHub = new Vector2d(-12, 47.5);
+    Pose2d redStart = new Pose2d(-30,-64,m(-90));
+    Vector2d redHub = new Vector2d(-12, -47.5);
     Vector2d blueCarousel = new Vector2d(-58.5,59);
 
-    Trajectory blueHubTraj;
-    Trajectory blueCarouselTraj;
+    Trajectory redHubTraj;
+    Trajectory redCarouselTraj;
 
 
     @Override
@@ -66,15 +66,15 @@ public class Meet2_ducks extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(cameraStream, 0);
         barcodeLevel = detector.getResult();
 
-        drive.setPoseEstimate(blueStart);
+        drive.setPoseEstimate(redStart);
 
-        blueHubTraj = drive.trajectoryBuilder(blueStart,m(-90))
+        redHubTraj = drive.trajectoryBuilder(redStart,m(45))
                 .addDisplacementMarker(this::setLinearToBarcode)
-                .splineToConstantHeading(blueHub,m(-90))
+                .splineToConstantHeading(redHub,m(45))
                 .addDisplacementMarker(() -> drive.outtakeArm.setPosition(0))
                 .build();
 
-        blueCarouselTraj = drive.trajectoryBuilder(new Pose2d(blueHub,m(90)),m(163))
+        redCarouselTraj = drive.trajectoryBuilder(new Pose2d(redHub,m(90)),m(163))
                 .splineToConstantHeading(blueCarousel,m(165))
                 .addDisplacementMarker(() -> {
                     drive.outtakeArm.setPosition(0.55);
@@ -95,13 +95,13 @@ public class Meet2_ducks extends LinearOpMode {
 
         waitForStart();
 
-        drive.followTrajectoryAsync(blueHubTraj);
+        drive.followTrajectoryAsync(redHubTraj);
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()){
             drive.update();
             linear.LinearUpdate();
         }
         sleep(400);
-        drive.followTrajectoryAsync(blueCarouselTraj);
+        drive.followTrajectoryAsync(redCarouselTraj);
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()){
             drive.update();
             linear.LinearUpdate();

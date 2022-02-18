@@ -17,10 +17,10 @@ import static org.hermitsocialclub.drive.config.DriveConstants.TRANSLATIONAL_PID
 import static org.hermitsocialclub.drive.config.DriveConstants.VX_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.VY_WEIGHT;
 import static org.hermitsocialclub.drive.config.DriveConstants.encoderTicksToInches;
-import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
-import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
+import static org.hermitsocialclub.util.MoveUtils.m;
 //import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.followers.HolonomicPIDVAFollowerAccessible;
 import org.hermitsocialclub.drive.config.DriveConstants;
 
@@ -49,9 +49,7 @@ import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.motors.NeveRest20Gearmotor;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -64,7 +62,6 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.hermitsocialclub.localizers.T265LocalizerPro;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
 import org.hermitsocialclub.util.DashboardUtil;
@@ -99,6 +96,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private DriveConstraints constraints;
 
+    boolean resetPose = true;
+
     /*
         First follower is the standard one used for autonomous,
      second one is a custom accessible one used to allow PID and FeedForward
@@ -109,7 +108,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private LinkedList<Pose2d> poseHistory;
 
-    public DcMotorEx leftFront, leftRear, rightRear, rightFront, outtake, intake, wobbleArm, lift;
+    public DcMotorEx leftFront, leftRear, rightRear, rightFront, outtake, intake, wobbleArm, lift,
+            leftFollower;
     public List<DcMotorEx> motors;
     private BNO055IMU imu;
 
@@ -131,6 +131,12 @@ public class BaselineMecanumDrive extends MecanumDrive {
     private Pose2d lastPoseOnTurn;
 
     private PersistantTelemetry telemetry;
+
+    public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt,boolean resetPose){
+        super(DriveConstants.kV, DriveConstants.kA, DriveConstants.kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+        this.resetPose = resetPose;
+        new BaselineMecanumDrive(hardwareMap,pt);
+    }
 
     public BaselineMecanumDrive(HardwareMap hardwareMap, PersistantTelemetry pt) {
 
@@ -187,6 +193,8 @@ public class BaselineMecanumDrive extends MecanumDrive {
         intake = hardwareMap.get(DcMotorEx.class,"intake");
         duck_wheel = hardwareMap.get(DcMotorEx.class,"duck_wheel");
 
+        leftFollower = hardwareMap.get(DcMotorEx.class,"leftFollower");
+
         outtakeArm = hardwareMap.get(Servo.class,"outtakeArm");
 
 //        color_intake = hardwareMap.get(ColorSensor.class,"color_intake");
@@ -209,7 +217,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         //outtakeArm.setPosition(.45);
 
         if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            setWheelModes(DcMotor.RunMode.RUN_USING_ENCODER);
         }
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             //setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID_IMPL);
@@ -222,8 +230,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerRR(hardwareMap));
-        telemetry.setData("Pose Estimatlocae",getPoseEstimate() == null ? "No" : getPoseEstimate());
+        setLocalizer(new T265LocalizerRR(this,hardwareMap,resetPose));
         //telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }
@@ -385,7 +392,7 @@ public class BaselineMecanumDrive extends MecanumDrive {
         return mode != Mode.IDLE;
     }
 
-    public void setMode(DcMotor.RunMode runMode) {
+    public void setWheelModes(DcMotor.RunMode runMode) {
         for (DcMotorEx motor : motors) {
             motor.setMode(runMode);
         }
@@ -653,6 +660,18 @@ public class BaselineMecanumDrive extends MecanumDrive {
         mode = Mode.IDLE;
         setDriveSignal(new DriveSignal(new Pose2d()));
 
+    }
+    public void killTrajectory(){
+        stopFollowing();
+        setWeightedDrivePower(new Pose2d());
+    }
+    public Pose2d checkWallFollowers(Pose2d p, double heading, int sideMod){
+        return (Math.abs(intake.getVelocity(AngleUnit.RADIANS)) > .5
+                || Math.abs(leftFollower.getVelocity(AngleUnit.RADIANS)) > .5) ?
+                (Math.abs(heading) < .01 || Math.abs(heading - m(180)) < .01) ?
+                        new Pose2d(p.getX(),sideMod * 65.5,heading) :
+                        (Math.abs(heading - m(90)) < .1 || Math.abs(heading - m(270)) < .1) ?
+                                new Pose2d(sideMod * 65.5, p.getY(), heading) : p : p;
     }
 
 }
