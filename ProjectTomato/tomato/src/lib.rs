@@ -16,7 +16,7 @@ use crate::vision::image_provider::{from_java_mat, get_java_mat_ptr};
 
 #[no_mangle]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_LibTomato_splat(_env: JNIEnv) -> i32 {
-    69
+    12675
 }
 
 #[no_mangle]

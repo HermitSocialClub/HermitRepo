@@ -48,8 +48,9 @@ public class LibTomato {
             throw e;
         }
 
-        if (splat() != 69) { //TODO: What even is this, change it, if this does have a legit purpose at least change the number
-            throw new AssertionError("Library init failed: splat() was not nice!");
+        // Do a quick test to make sure the library linked properly
+        if (splat() != 12675) {
+            throw new AssertionError("Library init failed: splat() did not return expected value!");
         }
 
         // Load the T265 camera
