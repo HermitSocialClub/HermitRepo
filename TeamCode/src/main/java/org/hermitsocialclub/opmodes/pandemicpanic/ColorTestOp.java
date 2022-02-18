@@ -9,7 +9,8 @@ import org.hermitsocialclub.telecat.PersistantTelemetry;
 public class ColorTestOp extends LinearOpMode {
     private ColorSensor color;
     private final PersistantTelemetry telemetry = new PersistantTelemetry(super.telemetry);
-
+    //ARGB Block facing grid empty: 503316480
+    //
     @Override
     public void runOpMode() throws InterruptedException {
         color = hardwareMap.get(ColorSensor.class, "color");

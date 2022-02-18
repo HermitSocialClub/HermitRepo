@@ -8,6 +8,7 @@ import static org.hermitsocialclub.drive.config.DriveConstants.slamraX;
 import static org.hermitsocialclub.drive.config.DriveConstants.slamraY;
 //import static org.hermitsocialclub.tomato.LibTomato.SLAMRA;
 import static org.hermitsocialclub.tomato.LibTomato.checkBatteryForSlamra;
+import static org.hermitsocialclub.util.MoveUtils.m;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -16,6 +17,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.spartronics4915.lib.T265Camera;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.hermitsocialclub.drive.BaselineMecanumDrive;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,11 +28,12 @@ import org.jetbrains.annotations.Nullable;
 @Config
 public class T265LocalizerRR implements Localizer {
 
-    private Pose2d poseOffset = new Pose2d();
+    private static Pose2d poseOffset = new Pose2d();
     private Pose2d headingChanged = new Pose2d();
-    private Pose2d mPoseEstimate = new Pose2d();
-    public Pose2d resetPose = new Pose2d();
-    private Pose2d rawPose = new Pose2d();
+    private static Pose2d mPoseEstimate = new Pose2d();
+    public static Pose2d resetPose = new Pose2d();
+    private static Pose2d rawPose = new Pose2d();
+    private BaselineMecanumDrive drive;
     private T265Camera.CameraUpdate up;
 
     /**
@@ -40,11 +44,47 @@ public class T265LocalizerRR implements Localizer {
     private T265Camera.PoseConfidence poseConfidence;
     private double angleModifer = 0;
 
-    public T265LocalizerRR(HardwareMap hardwareMap) {
-        new T265LocalizerRR(hardwareMap, true);
+    public static int sideMod = 1;
+
+    public T265LocalizerRR(BaselineMecanumDrive drive, HardwareMap hardwareMap){
+        this.drive = drive;
+        new T265LocalizerRR(hardwareMap);
     }
 
-    public T265LocalizerRR(HardwareMap hardwareMap, boolean resetPos) {
+    public T265LocalizerRR(BaselineMecanumDrive drive, HardwareMap hardwareMap, boolean resetPose) {
+        this.drive = drive;
+        if (!resetPose) new T265LocalizerRR(hardwareMap);
+        else {
+
+            if (poseOffset.equals(null)){
+                poseOffset = new Pose2d();
+            }else {
+                poseOffset = poseOffset;
+            }
+            if (mPoseEstimate.equals(null)){
+            mPoseEstimate = new Pose2d();
+            }else {
+                mPoseEstimate = mPoseEstimate;
+            }
+            if (rawPose.equals(null)) {
+                rawPose = new Pose2d();
+            }else {
+                rawPose = rawPose;
+            }
+
+            checkBatteryForSlamra(hardwareMap);
+            update();
+            if (slamra.getLastReceivedCameraUpdate().confidence == T265Camera.PoseConfidence.Failed) {
+                RobotLog.e("Realsense Failed to get Position");
+            }
+            update();
+            RobotLog.e("Ran on line 78" + up.pose.toString());
+            headingChanged = new Pose2d(0,0, 0);
+            RobotLog.e("Reset Pose: " + resetPose);
+        }
+    }
+
+    public T265LocalizerRR(HardwareMap hardwareMap) {
         checkBatteryForSlamra(hardwareMap);
 
         poseOffset = new Pose2d();
@@ -69,7 +109,20 @@ public class T265LocalizerRR implements Localizer {
     public Pose2d getPoseEstimate() {
         //variable up is updated in update()
         update();
-        //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
+//        if(Math.abs(drive.intake.getVelocity(AngleUnit.RADIANS)) > 1.25
+//                || Math.abs(drive.leftFollower.getVelocity(AngleUnit.RADIANS)) > 1.25){
+//            if (Math.abs(getHeading()) < .01 || Math.abs(getHeading() - m(180)) < .01){
+//                setPoseEstimate(
+//                        new Pose2d(mPoseEstimate.getX(),sideMod * 65.5,getHeading())
+//                );
+//            }else if (Math.abs(getHeading() - m(90)) < .1
+//                    || Math.abs(getHeading() - m(270)) < .1){
+//                setPoseEstimate(
+//                        new Pose2d(sideMod * 65.5, mPoseEstimate.getY(), getHeading())
+//                );
+//            }
+//        }
+//        //The FTC265 library uses Ftclib geometry, so I need to convert that to road runner GeometryS
         if (up != null) {
             Pose2d curPose = up.pose;
 //            curPose = new Pose2d(curPose.getX(), curPose.getY(),curPose.getHeading());
@@ -132,8 +185,8 @@ public class T265LocalizerRR implements Localizer {
     @Nullable
     @Override
     public Pose2d getPoseVelocity() {
-        return new Pose2d(-up.velocity.getX(),up.velocity.getY(),
-        -up.velocity.getHeading());
+        return new Pose2d(up.velocity.getX(),up.velocity.getY(),
+        up.velocity.getHeading());
     }
 
     /**
@@ -143,5 +196,8 @@ public class T265LocalizerRR implements Localizer {
     private double norm(double angle) {
         final double TAU = 2 * Math.PI;
         return (((angle % TAU) + TAU) % TAU);
+    }
+    public static void setSideMod(int sideModSet){
+        sideMod = sideModSet;
     }
 }

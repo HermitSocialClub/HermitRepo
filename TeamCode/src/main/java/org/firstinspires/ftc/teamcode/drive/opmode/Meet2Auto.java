@@ -62,20 +62,20 @@ public class Meet2Auto extends LinearOpMode {
         drive = new BaselineMecanumDrive(hardwareMap,telemetry);
 
         //init vision stuff
-        detector = new BarcodeDetect(true);
-        semaphore = new FirstFrameSemaphore();
-        visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
+//        detector = new BarcodeDetect(true);
+//        semaphore = new FirstFrameSemaphore();
+//        visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
 
-        semaphore.waitForFirstFrame();
-        barcodeLevel = detector.getResult();
-
-        telemetry.setData("Barcode Level", barcodeLevel);
+//        semaphore.waitForFirstFrame();
+//        barcodeLevel = detector.getResult();
+//
+//        telemetry.setData("Barcode Level", barcodeLevel);
 
 
         drive.setPoseEstimate(blueStart);
 
                                                         backUp = drive.trajectoryBuilder(blueStart, -90)
-                .splineToLinearHeading(new Pose2d(-59.6360, 59.1360,m(140)), m(135))
+                .splineToLinearHeading(new Pose2d(-59.2360, 59.1360,m(140)), m(135))
                 .build();
 
         toBlueHub = drive.trajectoryBuilder(backUp.end(),m(-20))
@@ -96,6 +96,10 @@ public class Meet2Auto extends LinearOpMode {
         detector = new BarcodeDetect(true);
         this.semaphore = new FirstFrameSemaphore();
         this.visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
+
+        barcodeLevel = detector.getResult();
+
+        telemetry.setData("Barcode Level", barcodeLevel);
         CameraStreamSource cameraStream = visionPipeline.getCamera();
         FtcDashboard.getInstance().startCameraStream(cameraStream,0);
 
@@ -111,8 +115,8 @@ public class Meet2Auto extends LinearOpMode {
 
 
             drive.followTrajectory(backUp);
-        drive.duck_wheel.setPower(0.15);
-        sleep(1200);
+        drive.duck_wheel.setPower(0.10);
+        sleep(2500);
             drive.duck_wheel.setPower(0);
             drive.followTrajectory(toBlueHub);
         drive.lift.setVelocity(liftType
@@ -122,13 +126,12 @@ public class Meet2Auto extends LinearOpMode {
         drive.outtakeArm.setPosition(.0);
         drive.lift.setPower(0.2);
         sleep(600);
-        drive.lift.setPower(0);
+        drive.lift.setPower(0.025);
         drive.outtakeArm.setPosition(.45);
         drive.followTrajectory(toBlueBarrier);
         drive.setWeightedDrivePower(new Pose2d(.3,0));
         sleep(1800);
         drive.setWeightedDrivePower(new Pose2d());
-        sleep(2000);
 
 
     }

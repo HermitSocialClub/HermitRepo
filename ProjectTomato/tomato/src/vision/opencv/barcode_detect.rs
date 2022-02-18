@@ -20,7 +20,77 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
     pipeline: jobject,
     is_red: jboolean,
 ) -> jbyte {
-    let telemetry = get_telemetry_from_pipeline(env, pipeline);
+    let mut og_mat = from_java_mat(env, mat);
+    //convert weak RGB to stronk HSV 💪
+    let mut hsv = Mat::default();
+    opencv::imgproc::cvt_color(&*og_mat, &mut hsv, opencv::imgproc::COLOR_RGB2HSV, 0).unwrap();
+    let width = 320;
+
+    if let Ok(shipping_element) = find_shipping_element(&hsv) {
+        opencv::imgproc::rectangle(
+            &mut *og_mat,
+            shipping_element,
+            Scalar::new(255.0, 0.0, 0.0, 100.0),
+            5,
+            opencv::imgproc::FILLED,
+            0,
+        )
+        .unwrap();
+
+        opencv::imgproc::rectangle(
+            &mut *og_mat,
+            Rect {
+                x: 0,
+                y: 0,
+                width: width / 3,
+                height: 480,
+            },
+            Scalar::new(255.0, 0.0, 0.0, 100.0),
+            5,
+            opencv::imgproc::FILLED,
+            0,
+        )
+        .unwrap();
+        opencv::imgproc::rectangle(
+            &mut *og_mat,
+            Rect {
+                x: 2 * (width / 3),
+                y: 0,
+                width: width / 3,
+                height: 480,
+            },
+            Scalar::new(255.0, 0.0, 0.0, 100.0),
+            5,
+            opencv::imgproc::FILLED,
+            0,
+        )
+        .unwrap();
+        opencv::imgproc::rectangle(
+            &mut *og_mat,
+            Rect {
+                x: width,
+                y: 0,
+                width: width / 3,
+                height: 480,
+            },
+            Scalar::new(255.0, 0.0, 0.0, 100.0),
+            5,
+            opencv::imgproc::FILLED,
+            0,
+        )
+        .unwrap();
+        if shipping_element.x > width / 3 {
+            if (shipping_element.x + shipping_element.width) < ((2 * width) / 3) {
+                return 2i8;
+            } else {
+                return 3i8;
+            }
+        } else {
+            return 1i8;
+        }
+    }
+    return 4i8;
+    /*let telemetry = get_telemetry_from_pipeline(env, pipeline);
     //Yoink Java Mat
     let mut og_mat = from_java_mat(env, mat);
 
@@ -62,7 +132,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect(
         }
     } else {
         return 4i8;
-    }
+    }*/
 }
 
 /**
@@ -74,13 +144,13 @@ fn find_barcode_squares(mat: &Mat, is_red: u8) -> Result<Vec<Rect>, ()> {
     if is_red != 0 {
         //workaround since red is on both sides of the HSV spectrum 😒
         let mut red_right = Mat::default();
-        let lower_target: Vector<i32> = Vector::from_iter([170, 70, 50].into_iter());
+        let lower_target: Vector<i32> = Vector::from_iter([175, 50, 0].into_iter());
         let upper_target: Vector<i32> = Vector::from_iter([180, 255, 255].into_iter());
         opencv::core::in_range(&mat, &lower_target, &upper_target, &mut red_right).unwrap();
 
         let mut red_left = Mat::default();
-        let lower_target: Vector<i32> = Vector::from_iter([0, 70, 50].into_iter());
-        let upper_target: Vector<i32> = Vector::from_iter([10, 255, 255].into_iter());
+        let lower_target: Vector<i32> = Vector::from_iter([0, 50, 20].into_iter());
+        let upper_target: Vector<i32> = Vector::from_iter([5, 255, 255].into_iter());
         opencv::core::in_range(&mat, &lower_target, &upper_target, &mut red_left).unwrap();
 
         opencv::core::bitwise_or(&red_right, &red_left, &mut barcode, &opencv::core::no_array().unwrap()).unwrap();
@@ -138,7 +208,7 @@ fn find_shipping_element(mat: &Mat) -> Result<Rect, ()> {
 /**
  * Utility function that searches (and optionally filters) contours
  */
-fn get_contours(mat: &mut Mat, get_squared: bool) -> Vec<VectorOfPoint> {
+pub fn get_contours(mat: &mut Mat, get_squared: bool) -> Vec<VectorOfPoint> {
     //blur image to reduce the chance that a random thing gets picked up as noise
     let mut blurred_mat = Mat::default();
     opencv::imgproc::gaussian_blur(
@@ -193,7 +263,7 @@ fn get_contours(mat: &mut Mat, get_squared: bool) -> Vec<VectorOfPoint> {
  * compares contour sizes cuz damn rust is verbose
  * me when floats are not an Ord
  */
-fn compare_contour_size(a: &Vector<Point>, b: &Vector<Point>) -> Ordering {
+pub fn compare_contour_size(a: &Vector<Point>, b: &Vector<Point>) -> Ordering {
     opencv::imgproc::contour_area(&b, false)
         .unwrap()
         .partial_cmp(&(opencv::imgproc::contour_area(&a, false).unwrap()))
