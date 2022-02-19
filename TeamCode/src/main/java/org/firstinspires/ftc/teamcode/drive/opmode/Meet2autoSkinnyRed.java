@@ -118,7 +118,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
 //                .build();
 
         cycleFromHub = drive.trajectoryBuilder(new Pose2d(redHub, m(-90)), m(-50))
-                .addDisplacementMarker(() -> linear.setLinears(0))
+                .addDisplacementMarker(() -> linear.setLevel(LinearHelpers.LEVEL.ZERO))
 //                .addTemporalMarker(1.5, () -> drive.lift.setVelocity(0))
                 .splineToSplineHeading(redBarrier, m(-50))
                 .addDisplacementMarker(() -> {
@@ -143,9 +143,12 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
                     drive.intake.setVelocity(-1
                             * intakeType.getAchieveableMaxRPMFraction() *
                             intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
-                    linear.setLinears(3);
+                    linear.setLevel(LinearHelpers.LEVEL.THREE);
                 })
                 .splineToSplineHeading(new Pose2d(redHub, m(-90)), m(-225))
+                .addDisplacementMarker(() -> {
+                    drive.intake.setPower(0);
+                })
                 .addDisplacementMarker(() -> {
                     ElapsedTime time = new ElapsedTime();
                     drive.outtakeArm.setPosition(0.05);
@@ -179,6 +182,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
         }
 
         waitForStart();
+        gameTime.reset();
 
         barcodeLevel = detector.getResult();
 
@@ -194,6 +198,8 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()) {
             drive.update();
             linear.LinearUpdateNew();
+            BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
+
         }
         drive.outtakeArm.setPosition(0.05);
         sleep(700);
@@ -205,20 +211,25 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
             while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
                 drive.update();
                 linear.LinearUpdateNew();
+
             }
 //            drive.setWeightedDrivePower(new Pose2d(0.6,0,0));
             boolean forward = true;
+            int modifier = 0;
             while (opModeIsActive() && color.red() < 80){
                 Pose2d estimate = drive.getPoseEstimate();
                 Pose2d d = estimate.minus(redLeaveWarehouse);
                 telemetry.setData("Distance from Target Pose",
                         Math.hypot(d.getX(),d.getY()));
                 telemetry.setData("Robot Pose Velocity",drive.getPoseVelocity().toString());
-                if (estimate.getX() >= 52) {
+                if (estimate.getX() >= 50 + modifier) {
                     forward = false;
+                    if (modifier != 4) modifier += 1;
                 }
-                if (estimate.getX() <= 40) {
+                if (estimate.getX() <= 42 + modifier) {
                     forward = true;
+//                    if (modifier != 3) modifier += 1;
+
                 }
                 if(forward) {
                     drive.setWeightedDrivePower(new Pose2d(1.2,0,0));
@@ -226,6 +237,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
                 else {
                     drive.setWeightedDrivePower(new Pose2d(-0.8,0,0));
                 }
+//                BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
 
             }
             drive.intake.setVelocity(-1
@@ -233,11 +245,17 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
                     intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
             drive.setWeightedDrivePower(new Pose2d());
 
+            telemetry.setData("te e ", redWarehouseToHub.duration());
+            if (30 - gameTime.seconds() < 4) {
+//                BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
+                return;
+            }
             drive.followTrajectoryAsync(redWarehouseToHub);
             time.reset();
             while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
                 drive.update();
                 linear.LinearUpdateNew();
+        //        BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
             }
 
 //            sleep(900);
@@ -250,6 +268,6 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
 
     }
     public void setLinearToBarcode() {
-        linear.setLinears(barcodeLevel == 4 ? 3 : barcodeLevel);
+        linear.setLevel(barcodeLevel == 4 ? LinearHelpers.LEVEL.THREE : LinearHelpers.LEVEL.values()[barcodeLevel]);
     }
 }

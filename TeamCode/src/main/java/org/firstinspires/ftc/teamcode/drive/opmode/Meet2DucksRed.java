@@ -38,12 +38,13 @@ public class Meet2DucksRed extends LinearOpMode {
     private double carouselSpeed = .85;
     private MotorConfigurationType carouselType;
 
-    Pose2d redStart = new Pose2d(-30,-64,m(-90));
-    Vector2d redHub = new Vector2d(-12, -47.5);
-    Vector2d blueCarousel = new Vector2d(-58.5,59);
+    Pose2d redStart = new Pose2d(-42,-64,m(-90));
+    Vector2d redHub = new Vector2d(-10, -44);
+    Vector2d redCarousel = new Vector2d(-58.5,-59);
 
     Trajectory redHubTraj;
     Trajectory redCarouselTraj;
+    Trajectory toRedCarousel;
 
 
     @Override
@@ -69,13 +70,17 @@ public class Meet2DucksRed extends LinearOpMode {
         drive.setPoseEstimate(redStart);
 
         redHubTraj = drive.trajectoryBuilder(redStart,m(45))
-                .addDisplacementMarker(this::setLinearToBarcode)
-                .splineToConstantHeading(redHub,m(45))
-                .addDisplacementMarker(() -> drive.outtakeArm.setPosition(0))
+                .addDisplacementMarker(() -> setLinearToBarcode())
+                .strafeTo(redHub)
+//                .addDisplacementMarker(() -> drive.outtakeArm.setPosition(0))
+                .build();
+
+        toRedCarousel = drive.trajectoryBuilder(new Pose2d(redHub.getX(), redHub.getY(), m(-90)))
+                .lineToSplineHeading(new Pose2d(redCarousel.getX(), redCarousel.getY(), m(-30)))
                 .build();
 
         redCarouselTraj = drive.trajectoryBuilder(new Pose2d(redHub,m(90)),m(163))
-                .splineToConstantHeading(blueCarousel,m(165))
+                .splineToConstantHeading(redCarousel,m(165))
                 .addDisplacementMarker(() -> {
                     drive.outtakeArm.setPosition(0.55);
                     linear.setLinears(0);
@@ -100,15 +105,17 @@ public class Meet2DucksRed extends LinearOpMode {
             drive.update();
             linear.LinearUpdate();
         }
-        sleep(400);
-        drive.followTrajectoryAsync(redCarouselTraj);
+        drive.outtakeArm.setPosition(0.05);
+        sleep(700);
+        drive.outtakeArm.setPosition(1);
+        drive.followTrajectoryAsync(toRedCarousel);
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()){
             drive.update();
             linear.LinearUpdate();
         }
-        sleep(2200);
-        drive.duck_wheel.setVelocity(0);
-        sleep(500);
+//        sleep(2200);
+//        drive.duck_wheel.setVelocity(0);
+//        sleep(500);
 
 
     }

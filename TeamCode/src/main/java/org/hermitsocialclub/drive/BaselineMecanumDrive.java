@@ -87,6 +87,9 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
     private FtcDashboard dashboard;
     private NanoClock clock;
+    public static Pose2d poseEndingAuton;
+
+    public static T265LocalizerRR localizerRR;
 
     private Mode mode;
 
@@ -230,7 +233,10 @@ public class BaselineMecanumDrive extends MecanumDrive {
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-        setLocalizer(new T265LocalizerRR(this,hardwareMap,resetPose));
+        if (localizerRR == null){
+            localizerRR = new T265LocalizerRR(hardwareMap);
+        }
+        setLocalizer(localizerRR);
         //telemetry.setData("Pose", T265LocalizerRR.slamra.getLastReceivedCameraUpdate().pose.toString());
         //telemetry.setData("Bot in Use", bot.constants.getClass().toString());
     }

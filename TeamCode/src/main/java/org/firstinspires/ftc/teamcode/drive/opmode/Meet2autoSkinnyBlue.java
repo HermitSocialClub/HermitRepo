@@ -77,6 +77,8 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
 
 
     ElapsedTime time = new ElapsedTime();
+    ElapsedTime gameTime = new ElapsedTime();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -89,7 +91,9 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
 //        telemetry.setData("color_in Blue",color_in.blue());
 //        telemetry.setData("color_in Green",color_in.green());
 
-        linear = new LinearHelpers(drive, telemetry);
+        linear = new LinearHelpers(drive, telemetry, gameTime);
+        linear.setMode(LinearHelpers.MODE.AUTON);
+
 
         color = hardwareMap.get(ColorSensor.class, "color");
 
@@ -115,7 +119,7 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
                 .build();
 
         cycleFromHub = drive.trajectoryBuilder(new Pose2d(blueHub, m(90)), m(50))
-                .addDisplacementMarker(() -> linear.setLinears(0))
+                .addDisplacementMarker(() -> linear.setLevel(LinearHelpers.LEVEL.ZERO))
 //                .addTemporalMarker(1.5, () -> drive.lift.setVelocity(0))
                 .splineToSplineHeading(blueBarrier, m(50))
                 .addDisplacementMarker(() -> {
@@ -140,7 +144,7 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
                     drive.intake.setVelocity(-1
                             * intakeType.getAchieveableMaxRPMFraction() *
                             intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
-                    linear.setLinears(3);
+                    linear.setLevel(LinearHelpers.LEVEL.THREE);
                 })
                 .splineToSplineHeading(new Pose2d(blueHub, m(90)), m(225))
                 .addDisplacementMarker(() -> {
@@ -190,7 +194,7 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
         drive.followTrajectoryAsync(toBlueHub);
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()) {
             drive.update();
-            linear.LinearUpdate();
+            linear.LinearUpdateNew();
         }
         drive.outtakeArm.setPosition(0.05);
         sleep(700);
@@ -201,21 +205,25 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
             time.reset();
             while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
                 drive.update();
-                linear.LinearUpdate();
+                linear.LinearUpdateNew();
             }
 //            drive.setWeightedDrivePower(new Pose2d(0.6,0,0));
             boolean forward = true;
+            int modifier = 0;
             while (opModeIsActive() && color.red() < 80){
                 Pose2d estimate = drive.getPoseEstimate();
                 Pose2d d = estimate.minus(blueLeaveWarehouse);
                 telemetry.setData("Distance from Target Pose",
                         Math.hypot(d.getX(),d.getY()));
                 telemetry.setData("Robot Pose Velocity",drive.getPoseVelocity().toString());
-                if (estimate.getX() >= 52) {
+                if (estimate.getX() >= 50 + modifier) {
                     forward = false;
+                    if (modifier != 4) modifier += 1;
                 }
-                if (estimate.getX() <= 40) {
+                if (estimate.getX() <= 42 + modifier) {
                     forward = true;
+//                    if (modifier != 3) modifier += 1;
+
                 }
                 if(forward) {
                     drive.setWeightedDrivePower(new Pose2d(1.2,0,0));
@@ -229,12 +237,14 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
                     * intakeType.getAchieveableMaxRPMFraction() *
                     intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
             drive.setWeightedDrivePower(new Pose2d());
-
+            if (30 - gameTime.seconds() < 4) {
+                return;
+            }
             drive.followTrajectoryAsync(blueWarehouseToHub);
             time.reset();
             while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
                 drive.update();
-                linear.LinearUpdate();
+                linear.LinearUpdateNew();
             }
 
 //            sleep(900);
@@ -247,6 +257,6 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
 
     }
     public void setLinearToBarcode() {
-        linear.setLinears(barcodeLevel == 4 ? 3 : barcodeLevel);
+        linear.setLevel(barcodeLevel == 4 ? LinearHelpers.LEVEL.THREE : LinearHelpers.LEVEL.values()[barcodeLevel]);
     }
 }

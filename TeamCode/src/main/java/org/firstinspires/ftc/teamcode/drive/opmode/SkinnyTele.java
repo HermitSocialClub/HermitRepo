@@ -13,7 +13,10 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.hermitsocialclub.drive.BaselineMecanumDrive;
+import org.hermitsocialclub.hydra.vision.FirstFrameSemaphore;
+import org.hermitsocialclub.hydra.vision.VisionPipeline;
 import org.hermitsocialclub.localizers.T265LocalizerPro;
 import org.hermitsocialclub.localizers.T265LocalizerRR;
 
@@ -21,12 +24,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.spartronics4915.lib.T265Localizer;
 import com.spartronics4915.lib.T265Helper;
 import org.hermitsocialclub.telecat.PersistantTelemetry;
+import org.hermitsocialclub.tomato.DuckDetect;
 import org.hermitsocialclub.util.LinearHelpers;
 
 import static org.checkerframework.checker.units.UnitsTools.m;
 import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.drive.config.DriveConstants.*;
-import static org.hermitsocialclub.localizers.T265LocalizerRR.sideMod;
+//import static org.hermitsocialclub.localizers.T265LocalizerRR.sideMod;
 import static org.hermitsocialclub.util.MoveUtils.m;
 
 @TeleOp(name = "SkinnyTele")
@@ -68,26 +72,29 @@ public class SkinnyTele extends OpMode {
     Trajectory toSharedHub_blue;
 
     Pose2d blueWarehouse = new Pose2d(65, 38, m(90));
-    Vector2d blueBarrier = new Vector2d(65, 20);
-    Pose2d blueSharedHub = new Pose2d(63, 15, m(30));
+    Vector2d blueBarrier = new Vector2d(64, 20);
+    Pose2d blueSharedHub = new Pose2d(61, 15, m(30));
 
     Pose2d redWarehouse = new Pose2d(65, -38, m(-90));
     Vector2d redBarrier = new Vector2d(65, -20);
     Pose2d redSharedHub = new Pose2d(63, -15, m(-30));
 
+
     int invert = -1;
     private boolean lastXMash = false;
     private boolean lastX2Mash = false;
 
-
+    DuckDetect detector = new DuckDetect(true);
+    FirstFrameSemaphore semaphore = new FirstFrameSemaphore();
+    VisionPipeline visionPipeline;
     @Override
 
     public void init() {
         telemetry = new PersistantTelemetry(super.telemetry);
         RUN_USING_ENCODER = true;
-        T265LocalizerRR.setSideMod(1);
+//        T265LocalizerRR.setSideMod(1);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
-        drive.setPoseEstimate(new Pose2d(0, 0,m(0)));
+//        drive.setPoseEstimate(BaselineMecanumDrive.poseEndingAuton);
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         drive.lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -98,6 +105,10 @@ public class SkinnyTele extends OpMode {
         telemetry.setData("Ticks Per Rev", liftType.getTicksPerRev());
         linears = new LinearHelpers(drive, telemetry,gameTime);
         linears.setMode(LinearHelpers.MODE.TELEOP);
+
+        visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
+        CameraStreamSource cameraStream = visionPipeline.getCamera();
+        FtcDashboard.getInstance().startCameraStream(cameraStream, 0);
 
         toSharedHub_blue = drive.trajectoryBuilder(blueWarehouse, m(-70))
                 .splineToConstantHeading(blueBarrier, m(250))
@@ -181,7 +192,7 @@ public class SkinnyTele extends OpMode {
             telemetry.setData("left_bumper", " pressed");
             drive.outtakeArm.setPosition(0);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
-        } else if (gamepad2.right_bumper){
+        } else {
             drive.outtakeArm.setPosition(1);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         }
@@ -205,12 +216,12 @@ public class SkinnyTele extends OpMode {
         }
         lastXMash = gamepad1.x;
 
-//        if (gamepad1.a && !drive.isBusy()) {
-//            drive.followTrajectory(toSharedHub_blue);
-//        }
-//        if (gamepad1.b && !drive.isBusy()) {
-//            drive.followTrajectory(toSharedHub_red);
-//        }
+        if (gamepad1.dpad_right && !drive.isBusy()) {
+            drive.followTrajectory(toSharedHub_blue);
+        }
+        if (gamepad1.dpad_left && !drive.isBusy()) {
+            drive.followTrajectory(toSharedHub_red);
+        }
 
 //        telemetry.setData("y_thing: ", gamepad1.left_stick_y);
         if (!drive.isBusy())

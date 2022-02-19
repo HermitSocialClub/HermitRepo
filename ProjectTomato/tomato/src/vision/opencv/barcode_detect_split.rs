@@ -22,36 +22,36 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect_split(
     //convert weak RGB to stronk HSV 💪
     let mut hsv = Mat::default();
     opencv::imgproc::cvt_color(&*og_mat, &mut hsv, opencv::imgproc::COLOR_RGB2HSV, 0).unwrap();
+    let width = 320;
 
-    if let Ok(shipping_element) = find_shipping_element(&hsv) {
-        opencv::imgproc::rectangle(
-            &mut *og_mat,
-            shipping_element,
-            Scalar::new(255.0, 0.0, 0.0, 100.0),
-            5,
-            opencv::imgproc::FILLED,
-            0,
-        )
-        .unwrap();
+    if let Ok(duck) = find_duck(&hsv) {
+        if duck.x > (2 * width / 5) {
+            if duck.x < (3 * width / 5) {
+                return 2i8;
+            } else {
+                return 3i8;
+            }
+        }
     }
-    return 4i8;
+    return 1i8;
 }
 
 /**
- * A method to find the shipping element in the scene
+ * A method to find the duck in the scene
  */
-fn find_shipping_element(mat: &Mat) -> Result<Rect, ()> {
-    //green filter
-    let mut shipping_element = Mat::default();
-    let lower_green: Vector<i32> = Vector::from_iter([40, 100, 0].into_iter());
-    let upper_green: Vector<i32> = Vector::from_iter([86, 255, 255].into_iter());
-    opencv::core::in_range(&mat, &lower_green, &upper_green, &mut shipping_element).unwrap();
 
-    //get green blob
+fn find_duck(mat: &Mat) -> Result<Rect, ()> {
+    //yellow filter
+    let mut shipping_element = Mat::default();
+    let lower_yellow: Vector<i32> = Vector::from_iter([22, 93, 0].into_iter());
+    let upper_yellow: Vector<i32> = Vector::from_iter([45, 255, 255].into_iter());
+    opencv::core::in_range(&mat, &lower_yellow, &upper_yellow, &mut shipping_element).unwrap();
+
+    //get yellow blob
     let contours = get_contours(&mut shipping_element, false);
 
     if contours.len() < 1 {
-        // panic!("cannot detect green shipping element");
+        // panic!("cannot detect yellow shipping element");
         return Err(());
     }
     let biggest_contour = contours.into_iter().max_by(|a, b| compare_contour_size(b, a)).unwrap();
