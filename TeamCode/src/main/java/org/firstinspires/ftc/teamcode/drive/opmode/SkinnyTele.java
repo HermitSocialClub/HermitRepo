@@ -84,7 +84,7 @@ public class SkinnyTele extends OpMode {
     private boolean lastXMash = false;
     private boolean lastX2Mash = false;
 
-    DuckDetect detector = new DuckDetect(true);
+    DuckDetect detector = new DuckDetect();
     FirstFrameSemaphore semaphore = new FirstFrameSemaphore();
     VisionPipeline visionPipeline;
     @Override

@@ -11,12 +11,11 @@ use crate::vision::opencv::barcode_detect::{compare_contour_size, get_contours};
 
 #[no_mangle]
 #[catch_panic]
-pub extern "C" fn Java_org_hermitsocialclub_tomato_BarcodeDetect_detect_split(
+pub extern "C" fn Java_org_hermitsocialclub_tomato_DuckDetect_duckDetector(
     env: JNIEnv,
     _this: jobject,
     mat: jobject,
     pipeline: jobject,
-    is_red: jboolean,
 ) -> jbyte {
     let mut og_mat = from_java_mat(env, mat);
     //convert weak RGB to stronk HSV 💪

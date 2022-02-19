@@ -4,7 +4,7 @@ import org.hermitsocialclub.hydra.vision.IVisionPipelineComponent
 import org.hermitsocialclub.hydra.vision.VisionPipeline
 import org.opencv.core.Mat
 
-class DuckDetect(val isRed: Boolean) : IVisionPipelineComponent {
+class DuckDetect() : IVisionPipelineComponent {
     var result: Byte = 0
 
     internal enum class DUCKPOS {
@@ -13,7 +13,7 @@ class DuckDetect(val isRed: Boolean) : IVisionPipelineComponent {
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {
         val pt = pipeline.telemetry
-        this.result = detect_split(mat, pipeline, isRed)
+        this.result = duckDetector(mat, pipeline)
 
 //        if (result == 0.toByte()) {
 //            pt.setData("Barcode Scanning is a no", "")
@@ -27,5 +27,5 @@ class DuckDetect(val isRed: Boolean) : IVisionPipelineComponent {
         return mat
     }
 
-    private external fun detect_split(mat: Mat, pipeline: VisionPipeline, isRed: Boolean): Byte
+    private external fun duckDetector(mat: Mat, pipeline: VisionPipeline): Byte
 }
