@@ -38,13 +38,13 @@ public class Meet2_ducksBlue extends LinearOpMode {
 
     private MotorConfigurationType intakeType;
 
-    private double carouselSpeed = -.85;
+    private double carouselSpeed = -.70;
     private MotorConfigurationType carouselType;
 
     Pose2d blueStart = new Pose2d(-42,64,m(90));
-    Vector2d blueHub = new Vector2d(-10, 44);
+    Vector2d blueHub = new Vector2d(-10, 43);
     Vector2d blueCarousel = new Vector2d(-59,60);
-    Pose2d storageUnit = new Pose2d(-60,35, m(0));
+    Pose2d storageUnit = new Pose2d(-60,40, m(0));
 
     Trajectory blueHubTraj;
     Trajectory blueCarouselTraj;
@@ -116,7 +116,7 @@ public class Meet2_ducksBlue extends LinearOpMode {
             drive.update();
             linear.LinearUpdateNew();
         }
-        drive.outtakeArm.setPosition(0.05);
+        drive.outtakeArm.setPosition(0.40);
         sleep(700);
         drive.outtakeArm.setPosition(1);
         drive.followTrajectoryAsync(toblueCarousel);
@@ -129,11 +129,17 @@ public class Meet2_ducksBlue extends LinearOpMode {
                 carouselType.getAchieveableMaxRPMFraction()
                 * carouselType.getMaxRPM()/60 *
                 Math.PI * 2, AngleUnit.RADIANS);
-        sleep(2500);
+//        drive.intake.setVelocity();
+        sleep(1200);
+        drive.intake.setVelocity(0.65
+                * intakeType.getAchieveableMaxRPMFraction() *
+                intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
+        sleep(1200);
         drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 //        sleep(1100);
         drive.duck_wheel.setPower(0);
 //        sleep(500);
+        drive.followTrajectory(toStorageUnit);
 
 
     }

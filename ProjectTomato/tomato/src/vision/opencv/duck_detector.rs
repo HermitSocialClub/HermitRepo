@@ -5,7 +5,7 @@ use opencv::core::{Mat, Point, Rect, Scalar, Size, Vector};
 use opencv::types::{VectorOfPoint, VectorOfVectorOfPoint};
 use tomato_macros::catch_panic;
 
-use crate::telemetry::get_telemetry_from_pipeline;
+use crate::telemetry::{get_telemetry_from_pipeline, PersistantTelemetry};
 use crate::vision::image_provider::from_java_mat;
 use crate::vision::opencv::barcode_detect::{compare_contour_size, get_contours};
 
@@ -22,24 +22,27 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_DuckDetect_duckDetector(
     let mut hsv = Mat::default();
     opencv::imgproc::cvt_color(&*og_mat, &mut hsv, opencv::imgproc::COLOR_RGB2HSV, 0).unwrap();
     let width = 320;
+    let pt = get_telemetry_from_pipeline(env, pipeline);
 
-    if let Ok(duck) = find_duck(&hsv) {
+    if let Ok(duck) = find_duck(&hsv, &pt) {
         if duck.x > (2 * width / 5) {
             if duck.x < (3 * width / 5) {
                 return 2i8;
             } else {
                 return 3i8;
             }
+        } else {
+            return 1i8;
         }
     }
-    return 1i8;
+    return 4i8;
 }
 
 /**
  * A method to find the duck in the scene
  */
 
-fn find_duck(mat: &Mat) -> Result<Rect, ()> {
+fn find_duck(mat: &Mat, pt: &PersistantTelemetry) -> Result<Rect, ()> {
     //yellow filter
     let mut shipping_element = Mat::default();
     let lower_yellow: Vector<i32> = Vector::from_iter([22, 93, 0].into_iter());
@@ -54,6 +57,11 @@ fn find_duck(mat: &Mat) -> Result<Rect, ()> {
         return Err(());
     }
     let biggest_contour = contours.into_iter().max_by(|a, b| compare_contour_size(b, a)).unwrap();
+
+    let size = opencv::imgproc::contour_area(&biggest_contour, false)
+        .unwrap()
+        .to_string();
+    pt.set_data("sizeThing", size);
 
     Ok(opencv::imgproc::bounding_rect(&biggest_contour).unwrap())
 }

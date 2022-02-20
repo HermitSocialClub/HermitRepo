@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
@@ -26,6 +27,8 @@ public class Meet2DucksRed extends LinearOpMode {
     private BaselineMecanumDrive drive;
     private PersistantTelemetry telemetry;
 
+    private ElapsedTime gameTime = new ElapsedTime();
+
     private VisionPipeline visionPipeline;
     private FirstFrameSemaphore semaphore;
     private BarcodeDetect detector;
@@ -35,16 +38,18 @@ public class Meet2DucksRed extends LinearOpMode {
 
     private MotorConfigurationType intakeType;
 
-    private double carouselSpeed = .85;
+    private double carouselSpeed = -.70;
     private MotorConfigurationType carouselType;
 
-    Pose2d redStart = new Pose2d(-42,-64,m(-90));
-    Vector2d redHub = new Vector2d(-10, -44);
-    Vector2d redCarousel = new Vector2d(-58.5,-59);
+    Pose2d blueStart = new Pose2d(-42,-64,m(-90));
+    Vector2d blueHub = new Vector2d(-14, -42);
+    Vector2d blueCarousel = new Vector2d(-59,-60);
+    Pose2d storageUnit = new Pose2d(-60,-40, m(0));
 
-    Trajectory redHubTraj;
-    Trajectory redCarouselTraj;
-    Trajectory toRedCarousel;
+    Trajectory blueHubTraj;
+    Trajectory blueCarouselTraj;
+    Trajectory toblueCarousel;
+    Trajectory toStorageUnit;
 
 
     @Override
@@ -56,7 +61,8 @@ public class Meet2DucksRed extends LinearOpMode {
         carouselType = drive.duck_wheel.getMotorType();
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        linear = new LinearHelpers(drive, telemetry);
+        linear = new LinearHelpers(drive, telemetry,gameTime);
+        linear.setMode(LinearHelpers.MODE.AUTON);
 
         intakeType = drive.intake.getMotorType();
 
@@ -67,26 +73,26 @@ public class Meet2DucksRed extends LinearOpMode {
         FtcDashboard.getInstance().startCameraStream(cameraStream, 0);
         barcodeLevel = detector.getResult();
 
-        drive.setPoseEstimate(redStart);
+        drive.setPoseEstimate(blueStart);
 
-        redHubTraj = drive.trajectoryBuilder(redStart,m(45))
+        blueHubTraj = drive.trajectoryBuilder(blueStart,m(-45))
                 .addDisplacementMarker(() -> setLinearToBarcode())
-                .strafeTo(redHub)
+                .strafeTo(blueHub)
 //                .addDisplacementMarker(() -> drive.outtakeArm.setPosition(0))
                 .build();
 
-        toRedCarousel = drive.trajectoryBuilder(new Pose2d(redHub.getX(), redHub.getY(), m(-90)))
-                .lineToSplineHeading(new Pose2d(redCarousel.getX(), redCarousel.getY(), m(-30)))
+        toblueCarousel = drive.trajectoryBuilder(new Pose2d(blueHub.getX(), blueHub.getY(), m(-90)))
+                .lineToSplineHeading(new Pose2d(blueCarousel.getX(), blueCarousel.getY(), m(-135)))
                 .build();
 
-        redCarouselTraj = drive.trajectoryBuilder(new Pose2d(redHub,m(90)),m(163))
-                .splineToConstantHeading(redCarousel,m(165))
+        blueCarouselTraj = drive.trajectoryBuilder(new Pose2d(blueHub,m(90)),m(163))
+                .splineToConstantHeading(blueCarousel,m(165))
                 .addDisplacementMarker(() -> {
                     drive.outtakeArm.setPosition(0.55);
-                    linear.setLinears(0);
+                    linear.setLevel(LinearHelpers.LEVEL.ZERO);
                     drive.intake.setVelocity(1
-                        * intakeType.getAchieveableMaxRPMFraction() *
-                        intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
+                            * intakeType.getAchieveableMaxRPMFraction() *
+                            intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
                     drive.duck_wheel.setVelocity(carouselSpeed *
                             carouselType.getAchieveableMaxRPMFraction()
                             * carouselType.getMaxRPM()/60 *
@@ -94,33 +100,50 @@ public class Meet2DucksRed extends LinearOpMode {
                 })
                 .build();
 
+        toStorageUnit = drive.trajectoryBuilder(new Pose2d(blueCarousel.getX(), blueCarousel.getY(), m(-135)))
+                .lineToLinearHeading(storageUnit)
+                .build();
+
         while (!isStarted()){
             barcodeLevel = detector.getResult();
         }
 
         waitForStart();
+        gameTime.reset();
 
-        drive.followTrajectoryAsync(redHubTraj);
+        drive.followTrajectoryAsync(blueHubTraj);
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()){
             drive.update();
-            linear.LinearUpdate();
+            linear.LinearUpdateNew();
         }
-        drive.outtakeArm.setPosition(0.05);
+        drive.outtakeArm.setPosition(0.40);
         sleep(700);
         drive.outtakeArm.setPosition(1);
-        drive.followTrajectoryAsync(toRedCarousel);
+        drive.followTrajectoryAsync(toblueCarousel);
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()){
             drive.update();
-            linear.LinearUpdate();
+            linear.LinearUpdateNew();
         }
-//        sleep(2200);
-//        drive.duck_wheel.setVelocity(0);
+        drive.setWeightedDrivePower(new Pose2d(0.025, 0.0, m(0)));
+        drive.duck_wheel.setVelocity(carouselSpeed *
+                carouselType.getAchieveableMaxRPMFraction()
+                * carouselType.getMaxRPM()/60 *
+                Math.PI * 2, AngleUnit.RADIANS);
+//        drive.intake.setVelocity();
+        drive.intake.setVelocity(0.65
+                * intakeType.getAchieveableMaxRPMFraction() *
+                intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
+        sleep(2500);
+        drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
+//        sleep(1100);
+        drive.duck_wheel.setPower(0);
 //        sleep(500);
+        drive.followTrajectory(toStorageUnit);
 
 
     }
 
     public void setLinearToBarcode() {
-        linear.setLinears(barcodeLevel == 3 ? 3 : barcodeLevel);
+        linear.setLevel(barcodeLevel == 4 ? LinearHelpers.LEVEL.THREE : LinearHelpers.LEVEL.values()[barcodeLevel]);
     }
 }

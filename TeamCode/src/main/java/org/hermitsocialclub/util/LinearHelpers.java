@@ -24,8 +24,8 @@ public class LinearHelpers {
     public final static int INCREMENT = 400;
 
     public enum LEVEL{
-        ZERO(0),ONE(500),TWO(1500),
-        THREE(2400),FOUR(3200);
+        ZERO(0),ONE(950),TWO(1500),
+        THREE(2550),FOUR(3200);
 
         LEVEL(int targetPosition){
             this.targetPosition = targetPosition;

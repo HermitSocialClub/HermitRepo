@@ -8,7 +8,7 @@ class DuckDetect() : IVisionPipelineComponent {
     var result: Byte = 0
 
     internal enum class DUCKPOS {
-        LEFT, CENTER, RIGHT
+        LEFT, CENTER, RIGHT, BROKEN_AS_SHIT
     }
 
     override fun apply(mat: Mat, pipeline: VisionPipeline): Mat {

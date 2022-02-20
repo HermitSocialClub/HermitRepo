@@ -59,7 +59,7 @@ public class SkinnyTele extends OpMode {
     private double intakeSpeed = 0.65;
     private MotorConfigurationType intakeType;
 
-    private double carouselSpeed = 1;
+    private double carouselSpeed = 0.70;
     private MotorConfigurationType carouselType;
 
     public static double liftP = 3.0;
@@ -79,6 +79,8 @@ public class SkinnyTele extends OpMode {
     Vector2d redBarrier = new Vector2d(65, -20);
     Pose2d redSharedHub = new Pose2d(63, -15, m(-30));
 
+    boolean leftStickButton = false;
+    boolean quantization = true;
 
     int invert = -1;
     private boolean lastXMash = false;
@@ -105,6 +107,7 @@ public class SkinnyTele extends OpMode {
         telemetry.setData("Ticks Per Rev", liftType.getTicksPerRev());
         linears = new LinearHelpers(drive, telemetry,gameTime);
         linears.setMode(LinearHelpers.MODE.TELEOP);
+
 
         visionPipeline = new VisionPipeline(hardwareMap, telemetry, detector, semaphore);
         CameraStreamSource cameraStream = visionPipeline.getCamera();
@@ -150,14 +153,42 @@ public class SkinnyTele extends OpMode {
 //        }
 //
 
-        if (gamepad2.right_stick_y < -0.05) {
-            linears.setState(LinearHelpers.STATE.UP);
-        } else if (gamepad2.right_stick_y > 0.05 && linears.getState().equals(LinearHelpers.STATE.SAME)) {
-            linears.setState(LinearHelpers.STATE.DOWN);
-        } else if (linears.getState().equals(LinearHelpers.STATE.SAME)){
-            linears.setState(LinearHelpers.STATE.SET);
+//        if (gamepad2.right_stick_y < -0.05) {
+//            linears.setState(LinearHelpers.STATE.UP);
+//        } else if (gamepad2.right_stick_y > 0.05 && linears.getState().equals(LinearHelpers.STATE.SAME)) {
+//            linears.setState(LinearHelpers.STATE.DOWN);
+//        } else if (linears.getState().equals(LinearHelpers.STATE.SAME)){
+//            linears.setState(LinearHelpers.STATE.SET);
+//        }
+
+        if (gamepad2.y){
+            quantization = !quantization;
         }
-        linears.LinearUpdateNew();
+//        leftStickButton = gamepad2.left_stick_button;
+        if(quantization){
+            if (gamepad2.right_stick_y < 0){
+                linears.setState(LinearHelpers.STATE.UP);
+            }
+            else if (gamepad2.right_stick_y > 0 && !linears.getState().equals(LinearHelpers.STATE.SAME)) {
+                linears.setState(LinearHelpers.STATE.DOWN);
+            }
+            else if (!linears.getState().equals(LinearHelpers.STATE.SAME)){
+                linears.setState(LinearHelpers.STATE.SET);
+            }
+            linears.LinearUpdateNew();
+        }
+        else {
+            trigVal = -gamepad2.right_stick_y > 0.05 ? -gamepad2.right_stick_y * 1.25 :
+                    -gamepad2.right_stick_y < -.05 ? -gamepad2.right_stick_y : 0.000;
+//        if(trigVal > .05)
+            drive.lift.setVelocity(liftType
+                    .getMaxRPM() / 60 * 2 * Math.PI * liftType.getAchieveableMaxRPMFraction() * .85 *
+                    trigVal, AngleUnit.RADIANS);
+            if (trigVal == 0) {
+                drive.lift.setPower(0.2);
+            }
+        }
+
         telemetry.setData("liftMode: ", drive.lift.getMode().toString());
         telemetry.setData("liftPID: ", drive.lift
                 .getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).toString());
@@ -176,7 +207,7 @@ public class SkinnyTele extends OpMode {
         } else drive.intake.setPower(0);
 
         if (Math.abs(gamepad2.left_stick_x) > 0.05) {
-            drive.duck_wheel.setVelocity(carouselSpeed *
+            drive.duck_wheel.setVelocity(carouselSpeed * (gamepad2.left_stick_x/Math.abs(gamepad2.left_stick_x)) *
                     carouselType.getAchieveableMaxRPMFraction()
                     * carouselType.getMaxRPM() / 60 *
                     Math.PI * 2, AngleUnit.RADIANS);
@@ -190,7 +221,7 @@ public class SkinnyTele extends OpMode {
 //        drive.outtakeArm.setDirection(Servo.Direction.REVERSE);
         if (gamepad2.left_bumper) {
             telemetry.setData("left_bumper", " pressed");
-            drive.outtakeArm.setPosition(0);
+            drive.outtakeArm.setPosition(0.40);
             telemetry.setData("Servo_Pos: ", drive.outtakeArm.getPosition());
         } else {
             drive.outtakeArm.setPosition(1);
@@ -260,6 +291,9 @@ public class SkinnyTele extends OpMode {
         field.strokeLine(x3, y3, x4, y4);
         packet.put("Camera Pose", cameraPose.toString());
         telemetry.setData("Camera Pose Estimate",cameraPose);
+        telemetry.setData("rightFollower",drive.intake.getCurrentPosition());
+        telemetry.setData("leftFollower",drive.leftFollower.getCurrentPosition());
+
 
         dash.sendTelemetryPacket(packet);
 

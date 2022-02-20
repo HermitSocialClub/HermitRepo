@@ -53,11 +53,11 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
 //    Trajectory goBack;
 
     Pose2d redStart = new Pose2d(6, -63.5, m(-90));
-    Vector2d redHub = new Vector2d(-10, -44);
+    Vector2d redHub = new Vector2d(-14, -42);
 //    Pose2d blueIntermediate = new Pose2d(6.25, 57, m(0));
     Pose2d redBarrier = new Pose2d(12, -65.50, m(0));
     Vector2d redWarehouse = new Vector2d(44, -65.50);
-    Pose2d redLeaveWarehouse = new Pose2d(40,-65.50,0);
+    Pose2d redLeaveWarehouse = new Pose2d(40,-66.50,0);
 //    Pose2d blueCarousel = new Pose2d(-12,44,m(90));
 //    Pose2d blueBarrier = new Pose2d(12,42,m(0));
 //    Pose2d bluePit = new Pose2d(48,48,m(45));
@@ -151,7 +151,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
                 })
                 .addDisplacementMarker(() -> {
                     ElapsedTime time = new ElapsedTime();
-                    drive.outtakeArm.setPosition(0.05);
+                    drive.outtakeArm.setPosition(0.40);
                     time.reset();
                     while (time.milliseconds() < 900) {
                         drive.update();
@@ -201,7 +201,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
             BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
 
         }
-        drive.outtakeArm.setPosition(0.05);
+        drive.outtakeArm.setPosition(0.40);
         sleep(700);
         drive.outtakeArm.setPosition(1);
         for (int i = 0; i < 4; i++) {
@@ -232,7 +232,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
 
                 }
                 if(forward) {
-                    drive.setWeightedDrivePower(new Pose2d(1.2,0,0));
+                    drive.setWeightedDrivePower(new Pose2d(0.8,0,0));
                 }
                 else {
                     drive.setWeightedDrivePower(new Pose2d(-0.8,0,0));
@@ -240,7 +240,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
 //                BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
 
             }
-            drive.intake.setVelocity(-1
+            drive.intake.setVelocity(-0.85
                     * intakeType.getAchieveableMaxRPMFraction() *
                     intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
             drive.setWeightedDrivePower(new Pose2d());
