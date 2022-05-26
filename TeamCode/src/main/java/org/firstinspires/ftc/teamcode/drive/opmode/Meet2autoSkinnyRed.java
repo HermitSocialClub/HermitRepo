@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.drive.config.DriveConstants.MAX_ACCEL;
 import static org.hermitsocialclub.drive.config.DriveConstants.MAX_ANG_ACCEL;
 import static org.hermitsocialclub.drive.config.DriveConstants.MAX_ANG_VELO;
@@ -47,17 +48,17 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
     Trajectory toRedHub;
     //    Trajectory toBlueBarrier;
     Trajectory cycleFromHub;
-//    Trajectory toRedWarehouse;
+    //    Trajectory toRedWarehouse;
     Trajectory redWarehouseToHub;
 //    Trajectory toBlueWarehouseBack;
 //    Trajectory goBack;
 
     Pose2d redStart = new Pose2d(6, -63.5, m(-90));
-    Vector2d redHub = new Vector2d(-14, -42);
-//    Pose2d blueIntermediate = new Pose2d(6.25, 57, m(0));
-    Pose2d redBarrier = new Pose2d(12, -65.50, m(0));
+    Vector2d redHub = new Vector2d(-12, -42.5);
+    //    Pose2d blueIntermediate = new Pose2d(6.25, 57, m(0));
+    Pose2d redBarrier = new Pose2d(12, -66.50, m(0));
     Vector2d redWarehouse = new Vector2d(44, -65.50);
-    Pose2d redLeaveWarehouse = new Pose2d(40,-66.50,0);
+    Pose2d redLeaveWarehouse = new Pose2d(40,-67.50,0);
 //    Pose2d blueCarousel = new Pose2d(-12,44,m(90));
 //    Pose2d blueBarrier = new Pose2d(12,42,m(0));
 //    Pose2d bluePit = new Pose2d(48,48,m(45));
@@ -95,6 +96,13 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
         linear.setMode(LinearHelpers.MODE.AUTON);
 
         color = hardwareMap.get(ColorSensor.class, "color");
+
+
+        while(!gamepad1.x){
+            telemetry.setData("Confidence", slamra.getLastReceivedCameraUpdate().confidence.toString());
+            telemetry.setData("Press X to: ", "exit calibration when confidence is high");
+        }
+        telemetry.setData("left: ", "calibration sequence");
 
         drive.setPoseEstimate(redStart);
 
@@ -216,7 +224,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
 //            drive.setWeightedDrivePower(new Pose2d(0.6,0,0));
             boolean forward = true;
             int modifier = 0;
-            while (opModeIsActive() && color.red() < 80){
+            while (opModeIsActive() && color.red() < 100){
                 Pose2d estimate = drive.getPoseEstimate();
                 Pose2d d = estimate.minus(redLeaveWarehouse);
                 telemetry.setData("Distance from Target Pose",
@@ -226,11 +234,11 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
                     forward = false;
                     if (modifier != 4) modifier += 1;
                 }
-                if (estimate.getX() <= 42 + modifier) {
+                else if (estimate.getX() <= 44 + modifier) {
                     forward = true;
 //                    if (modifier != 3) modifier += 1;
 
-                }
+                } else forward = false;
                 if(forward) {
                     drive.setWeightedDrivePower(new Pose2d(0.8,0,0));
                 }
@@ -255,7 +263,7 @@ public class Meet2autoSkinnyRed extends LinearOpMode {
             while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
                 drive.update();
                 linear.LinearUpdateNew();
-        //        BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
+                //        BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
             }
 
 //            sleep(900);

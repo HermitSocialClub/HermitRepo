@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.util.MoveUtils.m;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -42,7 +43,7 @@ public class Meet2DucksRed extends LinearOpMode {
     private MotorConfigurationType carouselType;
 
     Pose2d blueStart = new Pose2d(-42,-64,m(-90));
-    Vector2d blueHub = new Vector2d(-14, -42);
+    Vector2d blueHub = new Vector2d(-10, -42);
     Vector2d blueCarousel = new Vector2d(-59,-60);
     Pose2d storageUnit = new Pose2d(-60,-40, m(0));
 
@@ -58,6 +59,7 @@ public class Meet2DucksRed extends LinearOpMode {
         telemetry = new PersistantTelemetry(super.telemetry);
         drive = new BaselineMecanumDrive(hardwareMap, telemetry);
 
+
         carouselType = drive.duck_wheel.getMotorType();
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -65,6 +67,13 @@ public class Meet2DucksRed extends LinearOpMode {
         linear.setMode(LinearHelpers.MODE.AUTON);
 
         intakeType = drive.intake.getMotorType();
+//very important coding from Cole B) i helped :D - varun
+
+        while(!gamepad1.x){
+            telemetry.setData("Confidence", slamra.getLastReceivedCameraUpdate().confidence.toString());
+            telemetry.setData("Press X to: ", "exit calibration when done");
+        }
+        telemetry.setData("left: ", "calibration sequence");
 
         detector = new BarcodeDetect(true);
         this.semaphore = new FirstFrameSemaphore();
@@ -130,10 +139,11 @@ public class Meet2DucksRed extends LinearOpMode {
                 * carouselType.getMaxRPM()/60 *
                 Math.PI * 2, AngleUnit.RADIANS);
 //        drive.intake.setVelocity();
+        sleep(1200);
         drive.intake.setVelocity(0.65
                 * intakeType.getAchieveableMaxRPMFraction() *
                 intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
-        sleep(2500);
+        sleep(1200);
         drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 //        sleep(1100);
         drive.duck_wheel.setPower(0);

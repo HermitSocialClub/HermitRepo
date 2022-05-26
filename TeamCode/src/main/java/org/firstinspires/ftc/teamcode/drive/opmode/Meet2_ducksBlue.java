@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.util.MoveUtils.m;
 
 import com.acmerobotics.dashboard.FtcDashboard;
@@ -44,7 +45,8 @@ public class Meet2_ducksBlue extends LinearOpMode {
     Pose2d blueStart = new Pose2d(-42,64,m(90));
     Vector2d blueHub = new Vector2d(-10, 43);
     Vector2d blueCarousel = new Vector2d(-59,60);
-    Pose2d storageUnit = new Pose2d(-60,40, m(0));
+    Pose2d storageUnit = new Pose2d(-60,36, m(0));
+    Pose2d LA_CANADA_GAMBIT = new Pose2d(36,65.5, m(0));
 
     Trajectory blueHubTraj;
     Trajectory blueCarouselTraj;
@@ -65,6 +67,13 @@ public class Meet2_ducksBlue extends LinearOpMode {
         linear.setMode(LinearHelpers.MODE.AUTON);
 
         intakeType = drive.intake.getMotorType();
+
+
+        while(!gamepad1.x){
+            telemetry.setData("Confidence", slamra.getLastReceivedCameraUpdate().confidence.toString());
+            telemetry.setData("Press X to: ", "exit calibration when confidence is high");
+        }
+        telemetry.setData("left: ", "calibration sequence");
 
         detector = new BarcodeDetect(true);
         this.semaphore = new FirstFrameSemaphore();
@@ -110,6 +119,7 @@ public class Meet2_ducksBlue extends LinearOpMode {
 
         waitForStart();
         gameTime.reset();
+        sleep(4000);
 
         drive.followTrajectoryAsync(blueHubTraj);
         while (drive.isBusy() && !Thread.currentThread().isInterrupted()){
@@ -124,21 +134,22 @@ public class Meet2_ducksBlue extends LinearOpMode {
             drive.update();
             linear.LinearUpdateNew();
         }
-        drive.setWeightedDrivePower(new Pose2d(0.025, 0.0, m(0)));
+        drive.setWeightedDrivePower(new Pose2d(0.0125, 0.0, m(0)));
         drive.duck_wheel.setVelocity(carouselSpeed *
                 carouselType.getAchieveableMaxRPMFraction()
                 * carouselType.getMaxRPM()/60 *
                 Math.PI * 2, AngleUnit.RADIANS);
 //        drive.intake.setVelocity();
-        sleep(1200);
+        sleep(500);
         drive.intake.setVelocity(0.65
                 * intakeType.getAchieveableMaxRPMFraction() *
                 intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
-        sleep(1200);
+        sleep(2200);
         drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
 //        sleep(1100);
         drive.duck_wheel.setPower(0);
-//        sleep(500);
+//        while (gameTime)
+//        sleep((((long)(2600 - ))));
         drive.followTrajectory(toStorageUnit);
 
 

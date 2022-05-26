@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.drive.opmode;
 
+import static org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity.slamra;
 import static org.hermitsocialclub.drive.config.DriveConstants.MAX_ACCEL;
 import static org.hermitsocialclub.drive.config.DriveConstants.MAX_ANG_ACCEL;
 import static org.hermitsocialclub.drive.config.DriveConstants.MAX_ANG_VELO;
@@ -9,6 +10,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -50,8 +52,8 @@ public class Meet2autoSkinnyBlue extends LinearOpMode {
 //    Trajectory toBlueWarehouseBack;
 //    Trajectory goBack;
 
-    Pose2d blueStart = new Pose2d(6, 63.5, m(90));
-    Vector2d blueHub = new Vector2d(-10, 43);
+    Pose2d blueStart = new Pose2d(6, 63.5, m(0));
+    Vector2d blueHub = new Vector2d(-12, 44);
     Pose2d blueIntermediate = new Pose2d(6.25, 57, m(0));
     Pose2d blueBarrier = new Pose2d(12, 65.50, m(0));
     Vector2d blueWarehouse = new Vector2d(44, 65.50);
@@ -78,6 +80,7 @@ private VisionPipeline visionPipeline;
 
     ElapsedTime time = new ElapsedTime();
     ElapsedTime gameTime = new ElapsedTime();
+    private Trajectory toBlueWarehouseNew;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -90,10 +93,16 @@ private VisionPipeline visionPipeline;
 //        telemetry.setData("color_in Blue",color_in.blue());
 //        telemetry.setData("color_in Green",color_in.green());
 
-        linear = new LinearHelpers(drive, telemetry,gameTime);
+        linear = new LinearHelpers(drive, telemetry, gameTime);
         linear.setMode(LinearHelpers.MODE.AUTON);
 
         color = hardwareMap.get(ColorSensor.class, "color");
+
+//        while (!gamepad1.x) {
+//            telemetry.setData("Confidence", slamra.getLastReceivedCameraUpdate().confidence.toString());
+//            telemetry.setData("Press X to: ", "exit calibration when confidence is high");
+//        }
+//        telemetry.setData("left: ", "calibration sequence");
 
         drive.setPoseEstimate(blueStart);
 
@@ -105,10 +114,12 @@ private VisionPipeline visionPipeline;
         barcodeLevel = detector.getResult();
 
 
-
         toBlueHub = drive.trajectoryBuilder(blueStart)
                 .addDisplacementMarker(() -> this.setLinearToBarcode())
                 .strafeTo(blueHub)
+                .build();
+        toBlueWarehouseNew = drive.trajectoryBuilder(blueStart)
+                .lineToConstantHeading(blueWarehouse)
                 .build();
 //
 //        toRedWarehouse = drive.trajectoryBuilder(new Pose2d(redHub, m(90)), m(50))
@@ -136,7 +147,7 @@ private VisionPipeline visionPipeline;
                 .build();
 
 
-        blueWarehouseToHub = drive.trajectoryBuilder(blueLeaveWarehouse,m(160))
+        blueWarehouseToHub = drive.trajectoryBuilder(blueLeaveWarehouse, m(160))
                 .splineToConstantHeading(new Vector2d(blueBarrier.getX(), blueBarrier.getY()), m(200))
                 .addDisplacementMarker(() -> {
                     drive.intake.setVelocity(-1
@@ -175,7 +186,7 @@ private VisionPipeline visionPipeline;
 
         drive.lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         drive.duck_wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        while (!isStarted()){
+        while (!isStarted()) {
             barcodeLevel = detector.getResult();
             RobotLog.d(barcodeLevel.toString());
         }
@@ -183,7 +194,9 @@ private VisionPipeline visionPipeline;
         waitForStart();
         gameTime.reset();
 
+
         barcodeLevel = detector.getResult();
+        drive.followTrajectory(toBlueWarehouseNew);
 
 //        while(opModeIsActive()){
 //            drive.lift.setTargetPosition((int) 0.75 * linear.TICKS_PER_REV + linear.startingPosition);
@@ -193,80 +206,82 @@ private VisionPipeline visionPipeline;
 
 
 //
-        drive.followTrajectoryAsync(toBlueHub);
-        while (drive.isBusy() && !Thread.currentThread().isInterrupted()) {
-            drive.update();
-            linear.LinearUpdateNew();
-            BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
-
-        }
-        drive.outtakeArm.setPosition(0.40);
-        sleep(700);
-        drive.outtakeArm.setPosition(1);
-        for (int i = 0; i < 4; i++) {
-            telemetry.setData("Cycle Number: ", i + 1);
-            drive.followTrajectoryAsync(cycleFromHub);
-            time.reset();
-            while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
-                drive.update();
-                linear.LinearUpdateNew();
-
-            }
-//            drive.setWeightedDrivePower(new Pose2d(0.6,0,0));
-            boolean forward = true;
-            int modifier = 0;
-            while (opModeIsActive() && color.red() < 100){
-                Pose2d estimate = drive.getPoseEstimate();
-                Pose2d d = estimate.minus(blueLeaveWarehouse);
-                telemetry.setData("Distance from Target Pose",
-                        Math.hypot(d.getX(),d.getY()));
-                telemetry.setData("Robot Pose Velocity",drive.getPoseVelocity().toString());
-                if (estimate.getX() >= 45 + modifier) {
-                    forward = false;
-                    if (modifier != 8) modifier += 2;
-                }
-                if (estimate.getX() <= 40 + modifier) {
-                    forward = true;
-//                    if (modifier != 3) modifier += 1;
-
-                }
-                if(forward) {
-                    drive.setWeightedDrivePower(new Pose2d(0.8,0,0));
-                }
-                else {
-                    drive.setWeightedDrivePower(new Pose2d(-0.8,0,0));
-                }
-//                BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
-
-            }
-            drive.intake.setVelocity(-1
-                    * intakeType.getAchieveableMaxRPMFraction() *
-                    intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
-            drive.setWeightedDrivePower(new Pose2d());
-
-            telemetry.setData("te e ", blueWarehouseToHub.duration());
-            if (30 - gameTime.seconds() < 4) {
-//                BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
-                return;
-            }
-            drive.followTrajectoryAsync(blueWarehouseToHub);
-            time.reset();
-            while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
-                drive.update();
-                linear.LinearUpdateNew();
-                //        BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
-            }
-
-//            sleep(900);
-        }
-
-//        drive.followTrajectory(toBlueWarehouse);
-//        while(opModeIsActive()){
+//        drive.followTrajectoryAsync(toBlueHub);
+//        while (drive.isBusy() && !Thread.currentThread().isInterrupted()) {
+//            drive.update();
+//            linear.LinearUpdateNew();
+//            BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
 //
 //        }
-
+//        drive.outtakeArm.setPosition(0.40);
+//        sleep(700);
+//        drive.outtakeArm.setPosition(1);
+//        for (int i = 0; i < 4; i++) {
+//            telemetry.setData("Cycle Number: ", i + 1);
+//            drive.followTrajectoryAsync(cycleFromHub);
+//            time.reset();
+//            while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
+//                drive.update();
+//                linear.LinearUpdateNew();
+//
+//            }
+////            drive.setWeightedDrivePower(new Pose2d(0.6,0,0));
+//            boolean forward = true;
+//            int modifier = 0;
+//            while (opModeIsActive() && color.red() < 80){
+//                Pose2d estimate = drive.getPoseEstimate();
+//                Pose2d d = estimate.minus(blueLeaveWarehouse);
+//                telemetry.setData("Distance from Target Pose",
+//                        Math.hypot(d.getX(),d.getY()));
+//                telemetry.setData("Robot Pose Velocity",drive.getPoseVelocity().toString());
+//            if (estimate.getX() >= 50 + modifier) {
+//                    forward = false;
+//                    if (modifier != 4) modifier += 1;
+//                }
+//                else if (estimate.getX() <= 44 + modifier) {
+//                    forward = true;
+////                    if (modifier != 3) modifier += 1;
+//
+//                }else forward = false;
+//                if(forward) {
+//                    drive.setWeightedDrivePower(new Pose2d(0.8,0,0));
+//                }
+//                else {
+//                    drive.setWeightedDrivePower(new Pose2d(-0.8,0,0));
+//                }
+////                BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
+//
+//            }
+//            drive.intake.setVelocity(-1
+//                    * intakeType.getAchieveableMaxRPMFraction() *
+//                    intakeType.getMaxRPM() / 60 * Math.PI * 2, AngleUnit.RADIANS);
+//            drive.setWeightedDrivePower(new Pose2d());
+//
+//            telemetry.setData("te e ", blueWarehouseToHub.duration());
+//            if (30 - gameTime.seconds() < 4) {
+////                BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
+//                return;
+//            }
+//            drive.followTrajectoryAsync(blueWarehouseToHub);
+//            time.reset();
+//            while (!Thread.currentThread().isInterrupted() && drive.isBusy()) {
+//                drive.update();
+//                linear.LinearUpdateNew();
+//                //        BaselineMecanumDrive.poseEndingAuton = drive.getPoseEstimate();
+//            }
+//
+////            sleep(900);
+//        }
+//
+////        drive.followTrajectory(toBlueWarehouse);
+////        while(opModeIsActive()){
+////
+////        }
+//
+//    }
     }
     public void setLinearToBarcode() {
         linear.setLevel(barcodeLevel == 4 ? LinearHelpers.LEVEL.THREE : LinearHelpers.LEVEL.values()[barcodeLevel]);
     }
+
 }
