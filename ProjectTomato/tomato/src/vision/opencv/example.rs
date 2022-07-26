@@ -1,12 +1,15 @@
 use std::ops::DerefMut;
 
+use catch_panic::catch_panic;
 use jni::sys::jobject;
 use jni::JNIEnv;
 use opencv::core::{Point, Scalar};
 
+use crate::util::catch_panic_handler;
 use crate::vision::image_provider::from_java_mat;
 
 #[no_mangle]
+#[catch_panic(default = "std::ptr::null_mut()", handler = "catch_panic_handler")]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_NativeTestPipelineComponent_apply(
     env: JNIEnv,
     mat: jobject,

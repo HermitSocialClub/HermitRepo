@@ -1,16 +1,17 @@
 // use opencv::prelude::*;
+use catch_panic::catch_panic;
 use jni::sys::{jboolean, jbyte, jobject};
 use jni::JNIEnv;
 use opencv::core::{Mat, Point, Rect, Scalar, Size, Vector};
 use opencv::types::{VectorOfPoint, VectorOfVectorOfPoint};
-use tomato_macros::catch_panic;
 
 use crate::telemetry::{get_telemetry_from_pipeline, PersistantTelemetry};
+use crate::util::catch_panic_handler;
 use crate::vision::image_provider::from_java_mat;
 use crate::vision::opencv::barcode_detect::{compare_contour_size, get_contours};
 
 #[no_mangle]
-#[catch_panic]
+#[catch_panic(handler = "catch_panic_handler")]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_DuckDetect_duckDetector(
     env: JNIEnv,
     _this: jobject,

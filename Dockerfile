@@ -11,7 +11,7 @@ RUN apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1 git build-
                         libncurses5 libclang-dev python clang --no-install-recommends
 
 # Rust
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2021-09-04 -t armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain nightly-2022-07-25 -t armv7-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android
 ENV PATH /root/.cargo/bin:$PATH
 
 # Gradle

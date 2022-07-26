@@ -7,11 +7,12 @@ pub mod telemetry;
 pub mod util;
 pub mod vision;
 
+use catch_panic::catch_panic;
 use jni::sys::jobject;
 use jni::JNIEnv;
 use opencv::prelude::MatTraitConst;
-use tomato_macros::catch_panic;
 
+use crate::util::catch_panic_handler;
 use crate::vision::image_provider::{from_java_mat, get_java_mat_ptr};
 
 #[no_mangle]
@@ -20,7 +21,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_LibTomato_splat(_env: JNIEnv)
 }
 
 #[no_mangle]
-#[catch_panic]
+#[catch_panic(handler = "catch_panic_handler")]
 pub extern "C" fn Java_org_hermitsocialclub_tomato_LibTomato_panicTest(_testing: JNIEnv) {
     panic!("Hopefully this doesn't crash everything");
 }
@@ -32,7 +33,7 @@ pub extern "C" fn Java_org_hermitsocialclub_tomato_LibTomato_panicTest(_testing:
 /// **The returned ByteBuffer is only valid for the lifetime
 /// of the given Mat.**
 #[no_mangle]
-#[catch_panic(default = "std::ptr::null_mut()")]
+#[catch_panic(default = "std::ptr::null_mut()", handler = "catch_panic_handler")]
 pub extern "C" fn Java_org_hermitsocialclub_hydra_vision_util_VisionUtils_matAsByteBuffer(
     env: JNIEnv,
     mat: jobject,

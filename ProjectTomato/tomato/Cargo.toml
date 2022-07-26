@@ -12,6 +12,7 @@ edition = "2021"
 crate_type = ["staticlib", "dylib"]
 
 [dependencies]
+catch_panic = "1.0.0"
 # ftc265-sys = { path = "../ftc265-sys" }
 jni = "0.19.0"
 lazy_static = "1.4.0"
@@ -19,4 +20,3 @@ lazy_static = "1.4.0"
 # uses the clang provided by the Android SDK
 opencv = { version = "0.54.0", features = ["clang-runtime"] }
 #tflite = { version = "0.9.6", default-features = false }
-tomato_macros = { path = "../tomato_macros" }
